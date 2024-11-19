@@ -1,0 +1,16 @@
+To create the vector
+
+Function len whit validation of type
+Arr/str -> normal
+int -> ex.: 10 = 2 len
+float -> ex.: 10.5 = [2, 1]
+
+To create the math's fun:
+pow, sqrt, random, round, roundUp, roundDown
+
+To create the fun:
+num.to_fixed(2.5, 2) # 2.50 
+num.to_fixed(1, 2) # 1.00 
+
+better templete string
+"Hello, my name is &people.name"

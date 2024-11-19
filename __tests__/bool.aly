@@ -1,0 +1,15 @@
+let idade = 18
+let adulto = idade >= 18 
+
+print("Tem $idade e adulto = $adulto")
+
+print(idade > 10)
+print(idade == 10)
+print(idade == 18)
+print(idade < 18)
+print(idade <= 19)
+print(idade <= 10)
+print(idade >= 20)
+print(idade >= "18")
+print(idade >= 18 && idade > 60)
+print(idade >= 18 && idade <= 60)

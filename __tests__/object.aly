@@ -1,0 +1,19 @@
+const pessoa = {
+    nome: "Jefferson",
+    idade : 19,
+    adulto: @idade > 18,
+    doc: {
+        cpf: "111.222.333-00",
+        rg: {
+            num: 19
+        }
+    }
+}
+
+print("pessoa")
+print(pessoa)
+
+print(pessoa.type)
+print(pessoa.nome)
+print(pessoa.nome.type)
+print("Hello, world! My name is $pessoa.nome, portador do CPF $pessoa.doc.cpf")

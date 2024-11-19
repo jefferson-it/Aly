@@ -1,0 +1,21 @@
+const lista_num = [ 0 2 3 4 5 ]
+const lista_str = [ "Arroz", "Carne", "Feijão" ]
+
+const matriz = [
+    [0, 2],
+    [1, 2]
+]
+
+
+print("lista_num:")
+print(lista_num)
+
+
+print("lista_str:")
+print(lista_str)
+
+print("matriz")
+print(matriz)
+
+
+print(lista_num.1)

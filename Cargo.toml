@@ -1,0 +1,10 @@
+[package]
+name = "Aly"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+regex = "1.3.9"
+crossterm = "0.20"
+eval = "^0.4"
+linked-hash-map = "0.5.4"

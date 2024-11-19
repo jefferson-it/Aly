@@ -1,0 +1,15 @@
+let idade = 18
+
+print(idade)
+
+idade = 19
+
+print("idade mudou $idade")
+
+const nome = "Jefferson"
+
+print(nome);
+
+nome = "Pedro"
+
+print(nome);
