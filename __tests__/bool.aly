@@ -1,5 +1,5 @@
 let idade = 18
-let adulto = idade >= 18 
+let adulto = idade gte 18 
 
 print("Tem $idade e adulto = $adulto")
 
