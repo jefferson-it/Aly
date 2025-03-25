@@ -2,6 +2,18 @@ mod conditions {
     use crate::{aly::Aly, lexer::Lexer, native::{exec_rust, process_value, types::Validator}};
 
     pub fn exec_cond(run: &mut Aly, expressions: Vec<Lexer>) -> Box<dyn Validator> {
+        let find = Vec::new(
+            vec!["eq", "=="],
+            vec!["neq", "!="],
+            vec!["lt", "<"],
+            vec!["gt", ">"],
+            vec!["lte", "<="],
+            vec!["gte", ">="],
+            vec!["and", "&&"],
+            vec!["or", "||"],
+            vec!["xor", "^"],
+        );
+        
         let mut expr = vec![];
 
         for exp in expressions {
@@ -12,6 +24,10 @@ mod conditions {
             } else {
                 expr.push(exp.literal);
             }
+        }
+
+        for item in expr {
+            println!("{}", item);
         }
 
         let res = match exec_rust(expr.join(" ")) {
