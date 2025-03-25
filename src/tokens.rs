@@ -32,7 +32,7 @@ mod tokens {
         Loop,
         Match,
         Struct, // struct
-        Model, // Class
+        Model,  // Class
         // Math Operator
         Addition,
         Subtraction,
@@ -40,12 +40,12 @@ mod tokens {
         Multiplication,
         Modulus,
         Percent,
-        // Relational Operator  
-        Equal,           
+        // Relational Operator
+        Equal,
         NotEqual,
-        LessThan,    
+        LessThan,
         LessThanOrEqual,
-        GreaterThan, 
+        GreaterThan,
         GreaterThanOrEqual,
         // Conditional Operator
         Not,
@@ -53,17 +53,17 @@ mod tokens {
         Or,
         Xor,
         // Another
-        Comma, // ,
-        Semicolon, // ;
-        Colon, // :
-        Dot, // .
-        CommentLine, // #
+        Comma,        // ,
+        Semicolon,    // ;
+        Colon,        // :
+        Dot,          // .
+        CommentLine,  // #
         CommentMulti, // ## ... ##
         SimpleQuote,
         DupleQuote,
-        None
+        None,
     }
-    
+
     impl Clone for Tokens {
         fn clone(&self) -> Self {
             match self {
@@ -118,10 +118,10 @@ mod tokens {
                 Tokens::None => Tokens::None,
                 Tokens::SimpleQuote => Tokens::SimpleQuote,
                 Tokens::DupleQuote => Tokens::DupleQuote,
-            }            
+            }
         }
     }
-    
+
     impl fmt::Display for Tokens {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "{}", self.literal())
@@ -284,16 +284,16 @@ mod tokens {
             "*" => Tokens::Multiplication,
             "|" => Tokens::Modulus,
             "%" => Tokens::Percent,
-            "eq" => Tokens::Equal,
-            "neq" => Tokens::NotEqual,
-            "lt" => Tokens::LessThan,
-            "lte" => Tokens::LessThanOrEqual,
-            "gt" => Tokens::GreaterThan,
-            "gte" => Tokens::GreaterThanOrEqual,
-            "not" => Tokens::Not,
-            "and" => Tokens::And,
-            "or" => Tokens::Or,
-            "xor" => Tokens::Xor,
+            "eq" | "EQ" => Tokens::Equal,
+            "neq" | "NEQ" => Tokens::NotEqual,
+            "lt" | "LT" => Tokens::LessThan,
+            "lte" | "LTE" => Tokens::LessThanOrEqual,
+            "gt" | "GT" => Tokens::GreaterThan,
+            "gte" | "GTE" => Tokens::GreaterThanOrEqual,
+            "not" | "NOT" => Tokens::Not,
+            "and" | "AND" => Tokens::And,
+            "or" | "OR" => Tokens::Or,
+            "xor" | "XOR" => Tokens::Xor,
             "," => Tokens::Comma,
             ";" => Tokens::Semicolon,
             ":" => Tokens::Colon,
@@ -312,7 +312,7 @@ mod tokens {
                     Tokens::None
                 }
             }
-        }       
+        }
     }
 
     pub fn get_literal(tk: Tokens) -> String {
@@ -322,7 +322,6 @@ mod tokens {
     pub fn get_id(tk: Tokens) -> String {
         tk.id()
     }
-
 }
 
 pub use tokens::*;

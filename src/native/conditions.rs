@@ -27,8 +27,12 @@ mod conditions {
 
         let mut expr_final = expr.join(""); 
 
-        for item in find{
-            expr_final = expr_final.replace(item[0], item[1])
+        for item in &find {
+            if expr_final.contains(item[0]) {
+                expr_final = expr_final.replace(item[0], item[1]);
+            } else if expr_final.contains(&item[0].to_uppercase()) {
+                expr_final = expr_final.replace(&item[0].to_uppercase(), item[1]);
+            }
         }
         
         let res = match exec_rust(expr_final) {
