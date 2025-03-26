@@ -3,7 +3,7 @@ mod create_object {
 
     use linked_hash_map::LinkedHashMap;
 
-    use crate::{aly::Aly, lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, tokens::Tokens, validators::structures::{is_closed_brace, is_opened_brace}};
+    use crate::{aly::get_runtime, lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, tokens::Tokens, validators::structures::{is_closed_brace, is_opened_brace}};
 
     #[derive(Clone)]
     pub struct Object {
@@ -25,14 +25,55 @@ mod create_object {
                 literal: final_data
             }
         }
+
+        fn entries(&self) -> ValueData {
+            let mut entries: Vec<
+                Vec<ValueData>
+            > = vec![];
+
+            for (key, data) in &self.literal {
+                entries.push(vec![
+                    ValueData::String(key.clone()),
+                    data.clone()
+                ]);
+            }   
+
+            // if let Some(run) = get_runtime() {
+            //     if let Some(ref rt) = *run{
+            //         println!("Runtime here")
+            //     }
+            // }            
+
+            return ValueData::String(String::new());
+        }
+
         // getter
         pub fn get_item(&self, prop: String) -> ValueData {
-            if let Some(res) = self.literal.get(&prop) {
-                return res.clone()
-            } else {
-                ValueData::String("None".to_owned())
+            match prop.as_str() {
+                "entries" => {
+                    // let item = self.entries();
+
+                    ValueData::String(String::new())
+                },
+                _ => {
+                    match self.literal.get(&prop) {
+                        Some(res) => res.clone(),
+                        None => ValueData::String("None".to_owned()),
+                    }        
+                }
             }
         }
+
+        pub fn len(&self) -> usize {
+            let mut keys: usize = 0;
+            
+            for _ in &self.literal {
+                keys += 1;
+            }
+
+            return keys;
+        }
+    
 
         // Printer
         pub fn to_string(&self, json: bool) -> String {
@@ -105,7 +146,9 @@ mod create_object {
         }
     }
 
-    pub fn create_object(run: &mut Aly, lexers: Vec<Lexer>) -> Box<dyn Validator> {
+    pub fn create_object(lexers: Vec<Lexer>) -> Box<dyn Validator> {
+        // let run = get_runtime();
+
         let mut another_obj = 0;
         let mut to_process  = vec![];
         let mut props: Vec<Lexer> = vec![];
@@ -173,7 +216,7 @@ mod create_object {
                 }
             }
         }
-
+        
         fn push_data(item: Lexer, prop: String, datas: &mut HashMap<String, Vec<Lexer>>) {
             if item.token.id() == Tokens::Comma.id() {
                 return;
@@ -189,9 +232,7 @@ mod create_object {
         let props_str: Vec<String> = props.iter().map(|f| f.literal.clone()).collect();
 
         for prop in &props_str {
-
             if let Some(item) = datas.get(prop) {
-
                 if item.iter().find(|t| t.token.id() == "this").is_some() {
                     let mut new_exp = vec![];
                     let mut is_this = false;
@@ -215,19 +256,18 @@ mod create_object {
     
                                 is_this = false;
                             }
-    
                             new_exp.push(exp.clone());
                         }
                     }
 
-                    let value = process_value(run, new_exp);
+                    let value = process_value( new_exp);
     
                     final_result.insert(prop.to_string(), value);
                     
                     continue;
                 }
     
-                let value = process_value(run, item.clone());
+                let value = process_value( item.clone());
     
                 final_result.insert(prop.to_string(), value);
             } else {

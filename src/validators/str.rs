@@ -1,7 +1,7 @@
 mod str {
     use regex::Regex;
 
-    use crate::{aly::Aly, lexer::Lexer, tokens::get_token};
+    use crate::{aly::get_runtime, lexer::Lexer, tokens::get_token};
 
     pub fn split_str(code: &str) -> Vec<String> {
         let re = Regex::new(r#"("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|\S+)"#).unwrap();
@@ -68,7 +68,9 @@ mod str {
         return data;
     }
 
-    pub fn use_template_str(aly: &Aly, _str_: String) -> String {
+    pub fn use_template_str(_str_: String) -> String {
+        let aly = get_runtime();
+
         let mut output = String::new();
         let variables_capture = Regex::new(r#"\$([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)"#).unwrap();
         let mut final_str = _str_.clone();

@@ -14,3 +14,6 @@ num.to_fixed(1, 2) # 1.00
 
 better templete string
 "Hello, my name is &people.name"
+
+
+separe math from interpreter.rs

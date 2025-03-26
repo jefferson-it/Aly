@@ -1,5 +1,5 @@
 mod vector {
-    use crate::{aly::Aly, lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, runtime::interpreter::exec, tokens::Tokens, validators::structures::{is_close, is_opened}};
+    use crate::{aly::get_runtime, lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, runtime::interpreter::exec, tokens::Tokens, validators::structures::{is_close, is_opened}};
 
 
     #[derive(Clone)]
@@ -27,7 +27,7 @@ mod vector {
         }
 
         pub fn to_string(&self, json: bool) -> String {
-            let mut string = String::from("Object (#data");
+            let mut string = String::from("Vector (#data");
 
             if json {
                 string = string.replace("#data", &self.to_json(0));
@@ -36,6 +36,10 @@ mod vector {
             string.push_str(")");
 
             string
+        }
+
+        pub fn len(&self) -> usize {
+            self.0.len()
         }
 
         pub fn to_json(&self, child: i32) -> String {
@@ -73,10 +77,11 @@ mod vector {
 
     // Pub create
 
-    pub fn create_array(run: &mut Aly, lexer: Vec<Lexer>) -> Box<dyn Validator>{
+    pub fn create_array(lexer: Vec<Lexer>) -> Box<dyn Validator>{
         let mut another = 0;
         let mut new_vec = vec![];
         let mut values = vec![];
+        // let run = get_runtime();
 
         for item in lexer[1..lexer.len() - 1].to_vec() {
             if item.token.id() == Tokens::Comma.id() { continue; }
@@ -93,7 +98,7 @@ mod vector {
                 if another == 0 {
                     let mut res: Box<dyn Validator> = Box::new(String::new());
 
-                    exec(run, &mut new_vec, &mut res);
+                    exec(&mut new_vec, &mut res);
     
                     new_vec.clear();
     
@@ -108,7 +113,7 @@ mod vector {
                 continue;
             }
 
-            let val = process_value(run, vec![item.clone()]);
+            let val = process_value(vec![item.clone()]);
 
             values.push(val.clone());
         } 

@@ -9,6 +9,7 @@ dependencies = [
  "crossterm",
  "eval",
  "linked-hash-map",
+ "once_cell",
  "regex",
 ]
 
@@ -142,6 +143,12 @@ dependencies = [
  "wasi",
  "windows-sys 0.52.0",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.21.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d75b0bedcc4fe52caa0e03d9f1151a323e4aa5e2d78ba3580400cd3c9e2bc4bc"
 
 [[package]]
 name = "parking_lot"

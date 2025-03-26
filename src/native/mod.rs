@@ -10,7 +10,7 @@ mod native {
 
     use eval::eval;
 
-    use crate::{aly::Aly, lexer::Lexer, runtime::interpreter::exec, tokens::Tokens, validators::{is_any_value, reference::is_reference, str::{is_template_str, put_quoted_str, replace_spined, use_template_str}}};
+    use crate::{aly::{get_runtime, Aly}, lexer::Lexer, runtime::interpreter::exec, tokens::Tokens, validators::{is_any_value, reference::is_reference, str::{is_template_str, put_quoted_str, replace_spined, use_template_str}}};
 
     use super::types::{Validator, ValueData};
     
@@ -23,7 +23,8 @@ mod native {
         }
     } 
 
-    pub fn tomb(run: &mut Aly, x: String) -> Box<dyn Validator> {
+    pub fn tomb(x: String) -> Box<dyn Validator> {
+        let run = get_runtime();
         let variables: Vec<&str> = x.split(" ").collect();
 
         for var in variables {
@@ -54,16 +55,18 @@ mod native {
     }
 
     // Process
-    pub fn process_value(aly: &mut Aly, mut lexers: Vec<Lexer>) -> ValueData {
+    pub fn process_value(mut lexers: Vec<Lexer>) -> ValueData {
+        let aly = get_runtime();
+
         if lexers.len() == 0 {
             return ValueData::String("None".to_owned());   
         } else if lexers.len() > 1 {
             let mut val: Box<dyn Validator> = Box::new(String::new());
             
-            exec(aly, &mut lexers, &mut val);
+            exec(&mut lexers, &mut val);
 
             let (_, res) = val.valid();
-
+            
             return res;
         } else {
             let val = lexers[0].clone();
@@ -73,7 +76,7 @@ mod native {
                 res = format!("address_{}", val.literal.replace("&", ""));
             } else if is_any_value(&val.literal) {
                 if is_template_str(&val.literal) {
-                    res = use_template_str(aly, val.literal);
+                    res = use_template_str(val.literal);
                 } else {
                     res = val.literal;
                 }
@@ -93,13 +96,13 @@ mod native {
     }
 
     // IO
-    pub fn fun_print(_: &mut Aly, x: String) -> Box<dyn Validator> {
+    pub fn fun_print(x: String) -> Box<dyn Validator> {
         println!("{}", replace_spined(x));
 
         return Box::new("None".to_owned());
     }
     
-    pub fn fun_input(_: &mut Aly, x: String) -> Box<dyn Validator> {
+    pub fn fun_input(x: String) -> Box<dyn Validator> {
         let mut output = String::new();
         
         print!("{}\n> ", replace_spined(x));

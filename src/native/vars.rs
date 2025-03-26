@@ -6,6 +6,7 @@ mod vars {
         lexer::Lexer, native::types::{Type, Validator, ValueData}, tokens::Tokens
     };
 
+    #[derive(Clone)]
     pub struct Var {
         name: String,
         value: ValueData,
@@ -13,6 +14,7 @@ mod vars {
         mutable: bool,
     }
 
+    
     impl Var {
         pub fn new<T: Validator>(name: String, value: T, mut_: bool) -> Var {
             let (d_type, val) = value.valid();
@@ -40,7 +42,6 @@ mod vars {
                     )
                 );
             }
-
             let (d_type, val) = new_value.valid();
    
             match self.data_type {

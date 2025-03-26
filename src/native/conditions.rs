@@ -1,7 +1,9 @@
 mod conditions {
-    use crate::{aly::Aly, lexer::Lexer, native::{exec_rust, process_value, types::Validator}};
+    use crate::{aly::get_runtime, lexer::Lexer, native::{exec_rust, process_value, types::Validator}};
 
-    pub fn exec_cond(run: &mut Aly, expressions: Vec<Lexer>) -> Box<dyn Validator> {
+    pub fn exec_cond(expressions: Vec<Lexer>) -> Box<dyn Validator> {
+        let run = get_runtime();
+
         let find: Vec<Vec<&str>> = vec![
             vec!["lte", "<="],
             vec!["gte", ">="],
@@ -18,7 +20,7 @@ mod conditions {
 
         for exp in expressions {
             if exp.token.id() == "reference" {
-                let item = process_value(run, [exp].to_vec());
+                let item = process_value([exp].to_vec());
                 expr.push(item.to_string(false));
             } else {
                 expr.push(exp.literal);

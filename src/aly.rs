@@ -2,16 +2,41 @@
 mod aly {
     use std::env;
 
-    use crate::{lexer::Lexer, native::{fs::read_file, fun_input, fun_print, process_value, tomb, types::{Type, Validator, ValueData}, vars::*}, runtime::parser::get_lexer, tokens::Tokens, validators::{str::remove_quoted_str, structures::{is_close, is_opened}}, Act};
-    
+    use crate::{lexer::Lexer, native::{fs::read_file, fun_input, fun_print, process_value, tomb, types::{Type, Validator, ValueData}, vars::*}, runtime::parser::get_lexer, tokens::Tokens, validators::{str::{put_quoted_str, remove_quoted_str}, structures::{is_close, is_opened}}, Act};
+
+
+
+    #[derive(Clone)]
     pub struct Aly {
         // args: Vec<String>,
-        action: Act,
+        action: Option<Act>,
         datas: Vec<Var>
     }
 
+    static mut RUNTIME: Aly = Aly {
+        action: None,
+        datas: vec![],
+    };
+
+    pub fn get_runtime() -> &'static mut Aly {
+        unsafe { &mut RUNTIME }
+    }
+
+
     impl Aly {
-        pub fn new(action: Act) -> Aly {
+        
+        pub fn def_action(&mut self, act: Act) {
+            let ok = match self.action {
+                Some(_) => panic!("Action is defined, can't change"),
+                None => true,
+            };
+
+            if ok {
+                self.action = Some(act);
+            }
+        }
+
+        pub fn new() -> Aly {
             let cwd = match env::current_dir() {
                 Err(why) => panic!("Erro ao iniciar o programa, {why}"),
                 Ok(item) => item,
@@ -19,7 +44,7 @@ mod aly {
 
             Aly {
                 // args: vec![],
-                action,
+                action: None,
                 datas: vec![
                     Var::new(String::from("_dir_call"), format!("\"{}\"",  cwd.display().to_string()), false)
                 ]
@@ -28,22 +53,29 @@ mod aly {
 
         // Runtime
         pub fn run(&mut self, file: String){
-            self.datas.push(Var::new(String::from("print"), fun_print as fn(&mut Aly, String) -> Box<dyn Validator>, false));
-            self.datas.push(Var::new(String::from("input"), fun_input as fn(&mut Aly, String) -> Box<dyn Validator>, false));
-            self.datas.push(Var::new(String::from("tomb"), tomb as fn(&mut Aly, String) -> Box<dyn Validator>, false));
+            self.datas.push(Var::new(String::from("print"), fun_print as fn(String) -> Box<dyn Validator>, false));
+            self.datas.push(Var::new(String::from("input"), fun_input as fn(String) -> Box<dyn Validator>, false));
+            self.datas.push(Var::new(String::from("tomb"), tomb as fn(String) -> Box<dyn Validator>, false));
 
-            match self.action {
-                Act::Run => self.run_code(file),
-                Act::Cli => {},
-                Act::Comp => {},
-            }
+            match &self.action {
+                Some(act) => {
+                    match act {
+                        Act::Run => self.run_code(file),
+                        Act::Cli => {},
+                        Act::Comp => {},
+                    }
+                },
+                None => {
+                    println!("An action has not been defined")
+                }
+            };
         }
         // Internal Functions 
         fn run_code(&mut self, path: String) {
             let file_to_run = read_file(path);
             let codes: Vec<&str> = file_to_run.trim().split("\n").collect();
 
-            get_lexer(self, codes);
+            get_lexer(codes);
         }
 
         // Variable manager
@@ -55,7 +87,7 @@ mod aly {
             if lexers[0].token.id() != "def_let" {
                 let name = &lexers[0];
                 let identifier = &lexers[1];
-                let value = process_value(self, (&lexers[2..]).to_vec());
+                let value = process_value( (&lexers[2..]).to_vec());
                 let var = self.get_var(name.clone());
 
                 match identifier.token {
@@ -63,7 +95,7 @@ mod aly {
                     _ => panic!("")
                 };
 
-                                
+
                 let result = match var {
                     Ok(v) => v.change_value(value),
                     Err(err) => panic!("{err}"),
@@ -89,7 +121,7 @@ mod aly {
             } 
             
             let identifier = &lexers[2];
-            let value = process_value(self, (&lexers[3..]).to_vec());
+            let value = process_value((&lexers[3..]).to_vec());
 
             match identifier.token {
                 Tokens::Identifier => (),
@@ -105,12 +137,11 @@ mod aly {
             let name = &lexers[1];
 
             if lexers.len() == 2 {
-
                 return;
             } 
             
             let identifier = &lexers[2];
-            let value = process_value(self, (&lexers[3..]).to_vec());
+            let value = process_value((&lexers[3..]).to_vec());
 
             match identifier.token {
                 Tokens::Identifier => (),
@@ -183,7 +214,8 @@ mod aly {
                     fun_body.push(lex.clone());
 
                     if another_fun == 0 {
-                        let res = process_value(self, fun_body.clone());
+                        let res = process_value(fun_body.clone());
+
                         let lexer_res = Lexer::new(Tokens::Value, res.to_string(true), lex.line);
 
                         params.push(lexer_res);
@@ -205,8 +237,15 @@ mod aly {
                         Type::Function => {
                             match ok.get_value() {
                                 ValueData::NativeFunction(fun) => {
-                                    let param = remove_quoted_str(process_value(self, params).to_string(false));
-                                    fun(self, param)
+                                    let param = remove_quoted_str(process_value(params).to_string(false));
+
+                                    let res = fun(param);
+
+                                    let (type_d, val) = res.valid();
+
+                                    Box::new(
+                                        put_quoted_str(val.literal()) 
+                                    )
                                 },
                                 _ => {
                                     Box::new("None".to_owned())

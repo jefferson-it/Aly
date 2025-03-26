@@ -6,10 +6,9 @@ const matriz = [
     [1, 2]
 ]
 
-
 print("lista_num:")
 print(lista_num)
-
+print("len $lista_num.len")
 
 print("lista_str:")
 print(lista_str)

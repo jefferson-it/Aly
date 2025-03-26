@@ -1,6 +1,5 @@
-let nome1 ="Jefferson"
+let nome1 = "Jefferson"
 const idade = 19
-let _any_
 
 print("Meu nome é ", nome1) 
 print("Meu nome é $nome1") 

@@ -1,7 +1,7 @@
 const pessoa = {
     nome: "Jefferson",
     idade : 19,
-    adulto: @idade > 18,
+    adulto: @idade eq 18,
     doc: {
         cpf: "111.222.333-00",
         rg: {
@@ -11,9 +11,13 @@ const pessoa = {
 }
 
 print("pessoa")
-# print(pessoa)
+print(pessoa)
 
-# print(pessoa.type)
-# print(pessoa.nome)
-# print(pessoa.nome.type)
-# print("Hello, world! My name is $pessoa.nome, portador do CPF $pessoa.doc.cpf")
+print(pessoa.type)
+print(pessoa.nome)
+print(pessoa.nome.type)
+print("Hello, world! My name is $pessoa.nome, portador do CPF $pessoa.doc.cpf")
+
+print("Pessoa $pessoa.len")
+print("Doc $pessoa.doc.len")
+print("Entries pessoa $pessoa.entries")

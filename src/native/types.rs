@@ -1,8 +1,9 @@
 mod types {
     use core::fmt;
 
-    use crate::{aly::Aly, lexer::Lexer, native::{create_object::Object, vector::Vector}, validators::{conversor_to_bool, conversor_to_float, conversor_to_int, is_bool, is_num, numeric::{is_float, is_int}, str::{is_any_str, put_quoted_str, remove_quoted_str}}};
+    use crate::{lexer::Lexer, native::{create_object::Object, vector::Vector}, validators::{conversor_to_bool, conversor_to_float, conversor_to_int, is_bool, is_num, numeric::{is_float, is_int}, str::{is_any_str, put_quoted_str, remove_quoted_str}}};
 
+    #[derive(Clone)]
     pub enum Type {
         Int,
         Float,
@@ -45,7 +46,7 @@ mod types {
         Vec(Vector),
         Object(Object),
         Function(Vec<Lexer>),   
-        NativeFunction(fn(&mut Aly, String) -> Box<dyn Validator>),
+        NativeFunction(fn(String) -> Box<dyn Validator>),
     }
 
     impl ValueData {
@@ -60,6 +61,19 @@ mod types {
                         s.to_string()
                     }
                 },
+                ValueData::Bool(bool)  => bool.to_string(),
+                ValueData::Vec(vec) => vec.to_json(0),
+                ValueData::Function(_) => "Function".to_owned(),
+                ValueData::NativeFunction(_) => "NativeFunction".to_owned(),
+                ValueData::Object(obj) => obj.to_string(false),
+            }
+        }
+
+        pub fn literal(&self) -> String{
+            match self {
+                ValueData::Int(int) => int.to_string(),
+                ValueData::Float(f) => f.to_string(),
+                ValueData::String(s) => s.clone(),
                 ValueData::Bool(bool)  => bool.to_string(),
                 ValueData::Vec(vec) => vec.to_json(0),
                 ValueData::Function(_) => "Function".to_owned(),
@@ -125,7 +139,17 @@ mod types {
         
             match prop {
                 "type" => ValueData::String(type_data.to_string()),
-                "len" => ValueData::Int(value.to_string(false).len().try_into().unwrap()),
+                "len" => {
+                    let len_value  = match value {
+                        ValueData::Vec(vector) => vector.len(),
+                        ValueData::Object(obj) => {
+                            obj.len()
+                        }
+                        _ => value.to_string(false).len().try_into().unwrap()
+                    };
+
+                    ValueData::Int(len_value.try_into().unwrap())
+                },
                 "is_mut" => ValueData::Bool(is_mut),
                 "to_int" => {
                     let mut val = value.to_string(false).trim().to_string();
@@ -161,6 +185,7 @@ mod types {
                             _ => {
                                 match self {
                                     ValueData::Vec(vec) => {
+                                        
                                         let x = conversor_to_int(item.to_owned());
 
                                         vec.get_index(x.try_into().unwrap())
@@ -238,7 +263,7 @@ mod types {
     }
 
     
-    impl Validator for fn(&mut Aly, String) -> Box<dyn Validator> {
+    impl Validator for fn(String) -> Box<dyn Validator> {
         fn valid(&self) -> (Type, ValueData) {
             (Type::NativeFunction, ValueData::NativeFunction(*self)) 
         }
@@ -261,6 +286,10 @@ mod types {
             } else if is_float(self) {
                 (Type::Int, ValueData::Float(conversor_to_float(self.clone())))
             } else {
+                if self.chars().all(|c| c.is_alphanumeric() || c.is_ascii_punctuation()) {
+                    return (Type::String, ValueData::String(remove_quoted_str(self.clone()))); 
+                }
+
                 (Type::None, ValueData::String("None".to_owned())) 
             }
         }

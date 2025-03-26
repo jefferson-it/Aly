@@ -1,8 +1,8 @@
 mod parser {
-    use crate::{aly::Aly, lexer::Lexer, native::types::Validator, runtime::interpreter::exec, tokens::{get_token, Tokens}, validators::{is_char, is_conditional_exp, is_num, numeric::is_math_operator, str::split_str, structures::{close_str, has_open_str, is_close, is_opened, open_str}}};
+    use crate::{lexer::Lexer, native::types::Validator, runtime::interpreter::exec, tokens::{get_token, Tokens}, validators::{is_char, is_conditional_exp, is_num, numeric::is_math_operator, str::split_str, structures::{close_str, has_open_str, is_close, is_opened, open_str}}};
 
     // To interpreter code
-    pub fn get_lexer(run: &mut Aly, lines: Vec<&str>) {
+    pub fn get_lexer(lines: Vec<&str>) {
         let mut lexers = vec![];
         let mut to_end = 0;
         let mut is_str = Tokens::None;
@@ -54,7 +54,7 @@ mod parser {
             if to_end == 0 {
                 let mut val: Box<dyn Validator> = Box::new(String::new());
                 
-                exec(run, &mut lexers, &mut val);
+                exec(&mut lexers, &mut val);
             } else if to_end < 0 {
                 panic!("Error on line {ind}: Closing a brace, but not open!")   
             }
