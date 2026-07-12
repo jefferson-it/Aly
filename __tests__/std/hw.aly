@@ -1,0 +1,45 @@
+# Hardware native module tests
+
+# 1. Memory allocation & management
+let ptr = hw.alloc(8)
+print("Allocated address: " + ptr)
+
+# Write to simulated memory
+hw.write_mem(ptr, 0, 42)
+hw.write_mem(ptr, 1, 100)
+
+# Read from simulated memory
+let v1 = hw.read_mem(ptr, 0)
+let v2 = hw.read_mem(ptr, 1)
+print("Read values: " + v1 + ", " + v2) # Should be 42, 100
+
+# Free memory
+let success = hw.free(ptr)
+print("Free success: " + success) # Should be true
+
+# 2. CPU Registers
+hw.write_reg("eax", 123)
+hw.write_reg("ebx", 456)
+let eax = hw.read_reg("eax")
+let ebx = hw.read_reg("ebx")
+print("Registers: eax=" + eax + ", ebx=" + ebx) # eax=123, ebx=456
+
+# 3. CPU execution step
+hw.cpu_step("MOV eax 777")
+print("After MOV: eax=" + hw.read_reg("eax")) # 777
+
+hw.cpu_step("ADD eax 111")
+print("After ADD: eax=" + hw.read_reg("eax")) # 888
+
+hw.cpu_step("SUB eax 55")
+print("After SUB: eax=" + hw.read_reg("eax")) # 833
+
+# 4. CPU Interrupts and Ports
+hw.out_port(80, 255)
+print("I/O Port 80 value: " + hw.in_port(80)) # 255
+
+hw.write_reg("eax", 1)
+hw.write_reg("ebx", 999)
+hw.trigger_interrupt(0x80)
+
+print("Hardware tests completed!")

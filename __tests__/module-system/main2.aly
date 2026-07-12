@@ -1,0 +1,3 @@
+import "lib/helper.aly"
+let msg = greet("World")
+print(msg)

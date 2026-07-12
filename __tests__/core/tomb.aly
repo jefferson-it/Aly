@@ -1,0 +1,18 @@
+let nome
+print(nome)
+
+nome = "Pedro" ## Variável Nome ##
+
+##
+A função nativa 'tomb' faz com que uma variável ou mais, seja imutável
+Exemplo do código, nome poderia ser alterada a qualquer momento, mas ao passar &nome para tomb, 
+none passou a ser uma constante
+##
+tomb(&nome)
+
+print("Var 'nome' agora é imutável, $nome")
+
+# Erro esperado
+
+nome = "Peter" 
+print("Var 'nome' agora é imutável, $nome")

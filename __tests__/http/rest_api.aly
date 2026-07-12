@@ -1,0 +1,106 @@
+# REST API Server Example
+# Demonstrates Express.js-style routing
+
+http.serve(3000)
+
+# In-memory database (simulated)
+let users = []
+let next_id = 1
+
+# GET all users
+http.get("/api/users", fun(req) {
+    # Convert array to string representation
+    let result = "[" 
+    let i = 0
+    loop i lt len(users) {
+        if i gt 0 {
+            let result = result + ","
+        }
+        let result = result + users[i]
+        let i = i + 1
+    }
+    let result = result + "]"
+    result
+})
+
+# GET single user
+http.get("/api/users/:id", fun(req) {
+    let parts = req.split(",")
+    let path = parts[1]
+    let path_parts = path.split("/")
+    let id_str = path_parts[3]
+    
+    # Search for user
+    let i = 0
+    loop i lt len(users) {
+        if users[i].index_of("\"id\": " + id_str) ne -1 {
+            users[i]
+        }
+        let i = i + 1
+    }
+    "{\"error\": \"User not found\"}"
+})
+
+# POST create user
+http.post("/api/users", fun(req) {
+    let parts = req.split(",")
+    let body = parts[2]
+    
+    # Add id to user object
+    let user = "{\"id\": " + str(next_id) + ", " + body
+    let user = user.substring(1)
+    
+    users.push(user)
+    let next_id = next_id + 1
+    
+    user
+})
+
+# PUT update user
+http.put("/api/users/:id", fun(req) {
+    let parts = req.split(",")
+    let path = parts[1]
+    let body = parts[2]
+    
+    let path_parts = path.split("/")
+    let id_str = path_parts[3]
+    
+    # Update user
+    let i = 0
+    loop i lt len(users) {
+        if users[i].index_of("\"id\": " + id_str) ne -1 {
+            users[i] = "{\"id\": " + id_str + ", " + body.substring(1)
+        }
+        let i = i + 1
+    }
+    body
+})
+
+# DELETE user
+http.delete("/api/users/:id", fun(req) {
+    let parts = req.split(",")
+    let path = parts[1]
+    let path_parts = path.split("/")
+    let id_str = path_parts[3]
+    
+    let i = 0
+    loop i lt len(users) {
+        if users[i].index_of("\"id\": " + id_str) ne -1 {
+            users.remove(i)
+            "{\"success\": true}"
+        }
+        let i = i + 1
+    }
+    "{\"error\": \"User not found\"}"
+})
+
+# Start server
+http.listen(fun() {
+    print("REST API Server running on http://localhost:3000")
+    print("Try:")
+    print("  GET    http://localhost:3000/api/users")
+    print("  POST   http://localhost:3000/api/users -d '{\\"name\\": \\"Alice\\"}'")
+    print("  GET    http://localhost:3000/api/users/1")
+    print("  PUT    http://localhost:3000/api/users/1 -d '{\\"name\\": \\"Bob\\"}'")
+    print("  DELETE http://localhost:3000/api/users/1")
+})

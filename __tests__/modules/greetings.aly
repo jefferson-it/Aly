@@ -1,0 +1,6 @@
+const greeting = "Hello from imported file!"
+const author = "Aly"
+
+fun say_hello(name) {
+    print("Hello, " + name + "!")
+}

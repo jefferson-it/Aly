@@ -1,0 +1,40 @@
+const win = new Window("Aly CSS/SCSS GUI Demo", 400, 450)
+
+# Import the stylesheet!
+win.importStyle("__tests__/gui/style.css")
+
+const hdr = new Header("Aly Stylesheets!")
+const lbl = new Label("Interact with widgets below:")
+const input = new Input("Type here...")
+const btn = new Button("Click Me")
+
+fun on_btn_click() {
+    let val = input.value
+    lbl.innerText = "You typed: " + val
+    
+    # Inline style modification!
+    lbl.style("color: #34c759; font-size: 20")
+    
+    print("Button clicked! Input value is: " + val)
+}
+
+btn.onClick(on_btn_click)
+
+win.insert(hdr)
+win.insert(lbl)
+win.insert(input)
+win.insert(btn)
+
+# Apply classes from the imported CSS stylesheet!
+win.addClass("dark-mode")
+hdr.addClass("title-header")
+input.addClass("input-style")
+btn.addClass("btn-primary")
+
+# Individual inline style override
+lbl.style("color: #8e8e93; font-size: 16")
+
+# Dynamic property setter testing
+# btn.setStyle("background-color", "#34c759")
+
+win.loop()

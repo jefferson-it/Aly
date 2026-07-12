@@ -1,0 +1,48 @@
+# HTTP module tests
+# These tests require internet access and a live endpoint.
+# They use httpbin.org for echo-style testing.
+
+# --- http.get ---
+print("Testing http.get...")
+let get_result = http.get("https://httpbin.org/get")
+print(get_result)
+
+print("")
+
+# --- http.post ---
+print("Testing http.post...")
+let post_result = http.post("https://httpbin.org/post", '{"test":"value"}')
+print(post_result)
+
+print("")
+
+# --- http.status_code ---
+print("Testing http.status_code...")
+let status = http.status_code("https://httpbin.org/get")
+print("Status code:")
+print(status)
+print("Expected: 200")
+
+print("")
+
+# --- http.head ---
+print("Testing http.head...")
+let head_info = http.head("https://httpbin.org/get")
+print("Head response:")
+print(head_info)
+
+print("")
+
+# --- http.request (generic) ---
+print("Testing http.request...")
+let req_result = http.request("GET", "https://httpbin.org/get", "")
+print(req_result)
+
+print("")
+
+# --- http.delete ---
+print("Testing http.delete...")
+let del_result = http.delete("https://httpbin.org/delete")
+print(del_result)
+
+print("All HTTP tests completed!")

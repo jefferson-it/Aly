@@ -1,0 +1,60 @@
+# datetime module tests
+
+# --- namespace functions ---
+
+let now = datetime.now()
+print("now: $now")
+print("type: $now.type")
+
+print("year: $now.year")
+print("month: $now.month")
+print("day: $now.day")
+print("hour: $now.hour")
+print("minute: $now.minute")
+print("second: $now.second")
+print("timezone: $now.timezone")
+print("timestamp: $now.timestamp")
+print("weekday: $now.weekday")
+print("weekday_name: $now.weekday_name")
+
+print("to_iso: $now.to_iso")
+print("to_date: $now.to_date")
+print("to_time: $now.to_time")
+
+let utc = datetime.utc()
+print("utc: $utc")
+print("utc timezone: $utc.timezone")
+
+let dt = datetime.from_iso("2024-01-15T10:30:00+00:00")
+print("from_iso: $dt")
+print("from_iso year: $dt.year")
+print("from_iso month: $dt.month")
+print("from_iso day: $dt.day")
+
+let parsed = datetime.parse("2024-12-25", "%Y-%m-%d")
+print("parsed: $parsed")
+print("parsed day: $parsed.day")
+
+let from_ts = datetime.from_timestamp("1700000000")
+print("from_timestamp: $from_ts")
+
+let dur = datetime.duration("3600")
+print("duration: $dur")
+print("duration type: $dur.type")
+
+# --- method calls ---
+
+let fmt_result = dt.format("%Y/%m/%d")
+print("format: $fmt_result")
+
+let later = dt.add("86400")
+print("add 1 day: $later")
+print("later day: $later.day")
+
+let earlier = dt.subtract("86400")
+print("subtract 1 day: $earlier")
+print("earlier day: $earlier.day")
+
+let diff_secs = dt.diff("2024-02-15T10:30:00+00:00")
+print("diff seconds: $diff_secs")
+print("diff type: $diff_secs.type")

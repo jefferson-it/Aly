@@ -1,0 +1,9 @@
+let a = 10
+let b = 15
+let c = a | b
+let d = 10 - 1
+let e = 10%
+let f = 50 % 10 
+let g = 50 % 10 + 60 % 2 
+
+print("a $a\nb: $b\nc: $c\nd: $d\ne $e\nf: $f\ng: $g")

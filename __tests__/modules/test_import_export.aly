@@ -1,0 +1,5 @@
+import "lib.aly"
+
+print(version)
+let result = add(5, 3)
+print(result)

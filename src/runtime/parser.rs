@@ -127,7 +127,7 @@ mod parser {
                         format!(" {}", letter)
                     }
                 } else if is_num(letter) {
-                    if is_num(previous) || is_char(previous) || previous == " " {
+                    if is_num(previous) || is_char(previous) || previous == " " || previous == "." {
                         letter.to_string()
                     } else {
                         format!(" {}", letter)

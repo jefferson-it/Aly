@@ -1,0 +1,30 @@
+# Test schema (class-like) syntax
+schema Person {
+    name: "John",
+    age: 25,
+    fun greet() {
+        print("Hello, my name is " + @name)
+    }
+}
+
+# Create an instance
+let p = new Person()
+print("Name: $p.name")
+print("Age: $p.age")
+p.greet()
+
+# Instance with constructor args
+schema Car {
+    brand: "Unknown",
+    year: 2000,
+    fun info() {
+        print("This car is a " + @brand + " from " + @year)
+    }
+}
+
+let c = new Car("Toyota", 2024)
+print("Brand: $c.brand")
+print("Year: $c.year")
+c.info()
+
+print("Schema test completed!")

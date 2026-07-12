@@ -1,0 +1,31 @@
+# Middleware Example
+# Demonstrates request/response middleware pattern
+
+http.serve(3000)
+
+# Middleware: Logging
+fun logging_middleware(req, res, next) {
+    print(req.method + " " + req.path)
+    let response = next()
+    print("Response status: " + str(res.status))
+    response
+})
+
+# Apply middleware to all routes
+http.use(fun(req, res, next) {
+    # Add CORS headers
+    res.set_header("Access-Control-Allow-Origin", "*")
+    res.set_header("Content-Type", "application/json")
+    next()
+})
+
+# Route with middleware chain
+http.get("/api/protected", fun(req) {
+    # Check auth header
+    req.get_header("Authorization")
+})
+
+# Start server
+http.listen(fun() {
+    print("Server with middleware running on port 3000")
+})

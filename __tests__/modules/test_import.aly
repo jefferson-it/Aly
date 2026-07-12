@@ -1,0 +1,5 @@
+import "greetings.aly"
+
+print(greeting)
+print(author)
+say_hello("Mundo")

@@ -1,0 +1,15 @@
+let idade = 18
+let adulto = idade gte 18 
+
+print("Tem $idade e adulto = $adulto")
+
+print(idade gt 10)
+print(idade eq 10)
+print(idade eq 18)
+print(idade lt 18)
+print(idade lte 19)
+print(idade lte 10)
+print(idade GTE 20)
+print(idade gte "18")
+print(idade gte 18 and idade gt 60)
+print(idade gte 18 and idade lte 60)

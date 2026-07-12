@@ -1,0 +1,10 @@
+let myVar = 42
+export myVar
+
+const myConst = "public"
+export myConst
+
+fun helper() {
+    return "exported function"
+}
+export helper

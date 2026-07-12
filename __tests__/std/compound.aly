@@ -1,0 +1,19 @@
+# Compound assignment tests
+let x = 20
+x += 5
+print("x += 5 => $x")
+print("Assert: 25")
+
+x -= 3
+print("x -= 3 => $x")
+print("Assert: 22")
+
+x *= 2
+print("x *= 2 => $x")
+print("Assert: 44")
+
+# Modulus (| is the modulus operator in Aly)
+let y = 17
+y |= 5
+print("y |= 5 => $y")
+print("Assert: 2")

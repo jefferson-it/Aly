@@ -1,0 +1,63 @@
+# 1. Test do loop
+let count = 0
+let x = 10
+
+do loop {
+    count++
+} loop x lt 5
+
+print("Do loop ran once count (expected 1): $count")
+
+let count2 = 0
+let y = 0
+do loop {
+    count2++
+    y++
+} loop y lt 3
+
+print("Do loop multiple times count2 (expected 3): $count2")
+
+# 2. Test functions
+fun add(a, b) {
+    return a + b
+}
+
+let result = add(2, 3)
+print("Function add result (expected 5): $result")
+
+# 3. Test multiple returns & destructuring declaration
+fun stats(val1, val2) {
+    let sum = val1 + val2
+    let diff = val1 - val2
+    return sum, diff
+}
+
+let sum_val, diff_val = stats(10, 4)
+print("Multiple return let declaration: sum (expected 14) = $sum_val, diff (expected 6) = $diff_val")
+
+# 4. Test destructuring assignment (on already declared variables)
+sum_val = 0
+diff_val = 0
+
+sum_val, diff_val = stats(20, 5)
+print("Multiple return assignment: sum (expected 25) = $sum_val, diff (expected 15) = $diff_val")
+
+# 5. Test discard variable (_)
+_ = 100
+let _ = 200
+
+# Multiple return with discard
+let sum_val2, _ = stats(10, 4)
+print("Multiple return with let discard: sum (expected 14) = $sum_val2")
+
+sum_val2 = 0
+sum_val2, _ = stats(30, 10)
+print("Multiple return assignment with discard: sum (expected 40) = $sum_val2")
+
+# Discard as function parameter
+fun ignore_first(_, val) {
+    return val
+}
+
+let ignore_res = ignore_first(999, 42)
+print("Ignore parameter: expected 42, got $ignore_res")

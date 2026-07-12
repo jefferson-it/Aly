@@ -1,0 +1,37 @@
+# Basic HTTP Server Example
+# Run: cargo run -- run __tests__/http/basic_server.aly
+# Then test: curl http://localhost:3000
+
+print("Starting HTTP server on port 3000...")
+
+# Simple GET handler
+http.get("/", fun(req) {
+    "Hello from Aly HTTP Server!"
+})
+
+# GET with path parameter
+http.get("/hello/:name", fun(req) {
+    # req format: "METHOD,PATH,BODY"
+    let parts = req.split(",")
+    let path = parts[1]
+    let name_parts = path.split("/")
+    let name = name_parts[2]
+    "Hello " + name + "!"
+})
+
+# POST handler with body
+http.post("/api/data", fun(req) {
+    let parts = req.split(",")
+    let body = parts[2]
+    "Received: " + body
+})
+
+# JSON response helper
+fun json_response(data) {
+    data
+}
+
+# Start listening (this blocks)
+http.listen(fun() {
+    print("Server is running on http://localhost:3000")
+})
