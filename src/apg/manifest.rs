@@ -60,7 +60,7 @@ impl Manifest {
         let value: toml::Value = toml::from_str(&content)?;
 
         let package = value.get("package").ok_or("Missing [package] section")?.clone();
-        let mut package_obj: PackageInfo = serde_json::from_value(package)?;
+        let mut package_obj: PackageInfo = package.try_into()?;
 
         let dependencies = value.get("dependencies")
             .and_then(|v| if v.as_table().is_some() { Some(v.as_table().unwrap().clone()) } else { None });
@@ -72,7 +72,7 @@ impl Manifest {
                 let spec_value = spec.clone();
                 deps_vec.push(Dependency {
                     name: name.to_string(),
-                    spec: serde_json::from_value(spec_value)
+                    spec: spec_value.try_into()
                         .unwrap_or(DependencySpec::Simple(spec.to_string())),
                 });
             }
@@ -90,7 +90,7 @@ impl Manifest {
         let value: toml::Value = toml::from_str(&content)?;
 
         let package = value.get("package").ok_or("Missing [package] section")?.clone();
-        let mut package_obj: PackageInfo = serde_json::from_value(package)?;
+        let mut package_obj: PackageInfo = package.try_into()?;
 
         let dependencies = value.get("dependencies")
             .and_then(|v| if v.as_table().is_some() { Some(v.as_table().unwrap().clone()) } else { None });
@@ -102,7 +102,7 @@ impl Manifest {
                 let spec_value = spec.clone();
                 deps_vec.push(Dependency {
                     name: name.to_string(),
-                    spec: serde_json::from_value(spec_value)
+                    spec: spec_value.try_into()
                         .unwrap_or(DependencySpec::Simple(spec.to_string())),
                 });
             }
@@ -131,7 +131,7 @@ impl Manifest {
         let value: toml::Value = toml::from_str(&content)?;
 
         let package = value.get("package").ok_or("Missing [package] section")?.clone();
-        let mut package_obj: PackageInfo = serde_json::from_value(package)?;
+        let mut package_obj: PackageInfo = package.try_into()?;
 
         let dependencies = value.get("dependencies")
             .and_then(|v| if v.as_table().is_some() { Some(v.as_table().unwrap().clone()) } else { None });
@@ -143,7 +143,7 @@ impl Manifest {
                 let spec_value = spec.clone();
                 deps_vec.push(Dependency {
                     name: name.to_string(),
-                    spec: serde_json::from_value(spec_value)
+                    spec: spec_value.try_into()
                         .unwrap_or(DependencySpec::Simple(spec.to_string())),
                 });
             }
@@ -163,66 +163,72 @@ impl Manifest {
     pub fn write(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
         let mut table = toml::Value::Table(toml::map::Map::new());
         
-        let mut package_table = toml::Value::Table(toml::map::Map::new());
-        let package_table = package_table.as_table_mut().unwrap();
-        package_table.insert("name".to_string(), toml::Value::String(self.package.name.clone()));
-        package_table.insert("version".to_string(), toml::Value::String(self.package.version.clone()));
-        if let Some(desc) = &self.package.description {
-            package_table.insert("description".to_string(), toml::Value::String(desc.clone()));
-        }
-        if let Some(license) = &self.package.license {
-            package_table.insert("license".to_string(), toml::Value::String(license.clone()));
-        }
-        if let Some(authors) = &self.package.authors {
-            let authors_array = authors.iter().map(|a| toml::Value::String(a.clone())).collect();
-            package_table.insert("authors".to_string(), toml::Value::Array(authors_array));
-        }
-        if let Some(repo) = &self.package.repository {
-            package_table.insert("repository".to_string(), toml::Value::String(repo.clone()));
-        }
-        if let Some(homepage) = &self.package.homepage {
-            package_table.insert("homepage".to_string(), toml::Value::String(homepage.clone()));
-        }
-        if let Some(keywords) = &self.package.keywords {
-            let keywords_array = keywords.iter().map(|k| toml::Value::String(k.clone())).collect();
-            package_table.insert("keywords".to_string(), toml::Value::Array(keywords_array));
+        let mut package_table_val = toml::Value::Table(toml::map::Map::new());
+        {
+            let package_table = package_table_val.as_table_mut().unwrap();
+            package_table.insert("name".to_string(), toml::Value::String(self.package.name.clone()));
+            package_table.insert("version".to_string(), toml::Value::String(self.package.version.clone()));
+            if let Some(desc) = &self.package.description {
+                package_table.insert("description".to_string(), toml::Value::String(desc.clone()));
+            }
+            if let Some(license) = &self.package.license {
+                package_table.insert("license".to_string(), toml::Value::String(license.clone()));
+            }
+            if let Some(authors) = &self.package.authors {
+                let authors_array = authors.iter().map(|a| toml::Value::String(a.clone())).collect();
+                package_table.insert("authors".to_string(), toml::Value::Array(authors_array));
+            }
+            if let Some(repo) = &self.package.repository {
+                package_table.insert("repository".to_string(), toml::Value::String(repo.clone()));
+            }
+            if let Some(homepage) = &self.package.homepage {
+                package_table.insert("homepage".to_string(), toml::Value::String(homepage.clone()));
+            }
+            if let Some(keywords) = &self.package.keywords {
+                let keywords_array = keywords.iter().map(|k| toml::Value::String(k.clone())).collect();
+                package_table.insert("keywords".to_string(), toml::Value::Array(keywords_array));
+            }
         }
         
-        table.as_table_mut().unwrap().insert("package".to_string(), package_table);
+        table.as_table_mut().unwrap().insert("package".to_string(), package_table_val);
         
         if let Some(deps) = &self.dependencies {
-            let mut deps_table = toml::Value::Table(toml::map::Map::new());
-            let deps_table = deps_table.as_table_mut().unwrap();
-            
-            for dep in deps {
-                match &dep.spec {
-                    DependencySpec::Simple(version) => {
-                        deps_table.insert(dep.name.clone(), toml::Value::String(version.clone()));
-                    },
-                    DependencySpec::Detailed { git, branch, tag, commit, path } => {
-                        let mut dep_table = toml::Value::Table(toml::map::Map::new());
-                        let dep_table = dep_table.as_table_mut().unwrap();
-                        if let Some(git_url) = git {
-                            dep_table.insert("git".to_string(), toml::Value::String(git_url.clone()));
+            let mut deps_table_val = toml::Value::Table(toml::map::Map::new());
+            {
+                let deps_table = deps_table_val.as_table_mut().unwrap();
+                
+                for dep in deps {
+                    match &dep.spec {
+                        DependencySpec::Simple(version) => {
+                            deps_table.insert(dep.name.clone(), toml::Value::String(version.clone()));
+                        },
+                        DependencySpec::Detailed { git, branch, tag, commit, path } => {
+                            let mut dep_table_val = toml::Value::Table(toml::map::Map::new());
+                            {
+                                let dep_table = dep_table_val.as_table_mut().unwrap();
+                                if let Some(git_url) = git {
+                                    dep_table.insert("git".to_string(), toml::Value::String(git_url.clone()));
+                                }
+                                if let Some(branch_name) = branch {
+                                    dep_table.insert("branch".to_string(), toml::Value::String(branch_name.clone()));
+                                }
+                                if let Some(tag_name) = tag {
+                                    dep_table.insert("tag".to_string(), toml::Value::String(tag_name.clone()));
+                                }
+                                if let Some(commit_hash) = commit {
+                                    dep_table.insert("commit".to_string(), toml::Value::String(commit_hash.clone()));
+                                }
+                                if let Some(path_str) = path {
+                                    dep_table.insert("path".to_string(), toml::Value::String(path_str.clone()));
+                                }
+                            }
+                            deps_table.insert(dep.name.clone(), dep_table_val);
                         }
-                        if let Some(branch_name) = branch {
-                            dep_table.insert("branch".to_string(), toml::Value::String(branch_name.clone()));
-                        }
-                        if let Some(tag_name) = tag {
-                            dep_table.insert("tag".to_string(), toml::Value::String(tag_name.clone()));
-                        }
-                        if let Some(commit_hash) = commit {
-                            dep_table.insert("commit".to_string(), toml::Value::String(commit_hash.clone()));
-                        }
-                        if let Some(path_str) = path {
-                            dep_table.insert("path".to_string(), toml::Value::String(path_str.clone()));
-                        }
-                        deps_table.insert(dep.name.clone(), dep_table);
                     }
                 }
             }
             
-            table.as_table_mut().unwrap().insert("dependencies".to_string(), deps_table);
+            table.as_table_mut().unwrap().insert("dependencies".to_string(), deps_table_val);
         }
         
         let content = toml::to_string(&table)?;

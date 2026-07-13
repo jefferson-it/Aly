@@ -10,7 +10,10 @@ mod json_mod {
         let input = remove_quoted_str(x.trim().to_string());
         let v: serde_json::Value = match serde_json::from_str(&input) {
             Ok(v) => v,
-            Err(e) => panic!("json.parse error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [json.parse]: {}", e);
+                return Box::new(ValueData::String("None".to_owned()));
+            }
         };
         Box::new(json_to_aly(v))
     }
@@ -25,7 +28,10 @@ mod json_mod {
                     let wrapped = format!("\"{}\"", x);
                     match serde_json::from_str(&wrapped) {
                         Ok(v) => v,
-                        Err(e) => panic!("json.stringify error: {}", e),
+                        Err(e) => {
+                            eprintln!("RuntimeError [json.stringify]: {}", e);
+                            serde_json::Value::String(x.clone())
+                        }
                     }
                 }
             }

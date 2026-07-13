@@ -295,6 +295,47 @@ impl CodeGenerator {
 
                 self.emit_line("}");
             }
+            Stmt::Throw(expr) => {
+                let c_expr = self.gen_expr(expr);
+                self.emit_line(&format!("// throw {c_expr}"));
+                self.emit_line("exit(1);");
+            }
+            Stmt::Try {
+                body,
+                catch_var,
+                catch_body,
+                finally_body,
+            } => {
+                self.emit_line("// try");
+                self.emit_line("{");
+                self.indent += 1;
+                for s in body {
+                    self.gen_stmt(s);
+                }
+                self.indent -= 1;
+                self.emit_line("}");
+                
+                let catch_var_str = catch_var.as_deref().unwrap_or("err");
+                self.emit_line(&format!("// catch ({catch_var_str})"));
+                self.emit_line("{");
+                self.indent += 1;
+                for s in catch_body {
+                    self.gen_stmt(s);
+                }
+                self.indent -= 1;
+                self.emit_line("}");
+
+                if !finally_body.is_empty() {
+                    self.emit_line("// finally");
+                    self.emit_line("{");
+                    self.indent += 1;
+                    for s in finally_body {
+                        self.gen_stmt(s);
+                    }
+                    self.indent -= 1;
+                    self.emit_line("}");
+                }
+            }
         }
     }
 

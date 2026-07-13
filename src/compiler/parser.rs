@@ -39,10 +39,13 @@ fn group_statements(source: &str) -> Vec<Vec<Lexer>> {
         exp = exp.replace("  ", " ");
 
         if depth < 0 {
-            panic!("Compiler Error: Unexpected closing brace");
+            eprintln!(
+                "SyntaxError: chave fechada sem correspondente de abertura no código fonte."
+            );
+            depth = 0;
         }
 
-        let tokens = tokenize_line_preserve_semicolons(&exp.trim());
+        let tokens = tokenize_line_preserve_semicolons(exp.trim());
 
         let mut filtered = Vec::new();
         for tok in &tokens {
@@ -89,12 +92,8 @@ fn split_on_semicolons(tokens: &[Lexer]) -> Vec<Vec<Lexer>> {
 
     for tok in tokens {
         match tok.token {
-            Tokens::LeftParenthesis
-            | Tokens::LeftBrace
-            | Tokens::LeftBracket => depth += 1,
-            Tokens::RightParenthesis
-            | Tokens::RightBrace
-            | Tokens::RightBracket => {
+            Tokens::LeftParenthesis | Tokens::LeftBrace | Tokens::LeftBracket => depth += 1,
+            Tokens::RightParenthesis | Tokens::RightBrace | Tokens::RightBracket => {
                 if depth > 0 {
                     depth -= 1;
                 }
@@ -133,9 +132,13 @@ fn tokenize_line_preserve_semicolons(line: &str) -> Vec<Lexer> {
 
     exp = exp.replace("  ", " ");
 
-    let re = regex::Regex::new(r#"("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|\S+)"#).unwrap();
+    let re = match regex::Regex::new(r#"("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*'|\S+)"#) {
+        Ok(r) => r,
+        Err(_) => return Vec::new(),
+    };
+
     let expressions: Vec<String> = re
-        .find_iter(&exp.trim())
+        .find_iter(exp.trim())
         .map(|m| m.as_str().to_string())
         .collect();
 
@@ -167,6 +170,8 @@ fn parse_statement(tokens: &mut Vec<Lexer>) -> Option<Stmt> {
         Tokens::Fun => Some(parse_fun(tokens)),
         Tokens::Return => Some(parse_return(tokens)),
         Tokens::Match => Some(parse_match(tokens)),
+        Tokens::Try => Some(parse_try(tokens)),
+        Tokens::Throw => Some(parse_throw(tokens)),
         _ => {
             if tokens.len() >= 4
                 && tokens[0].token == Tokens::Reference
@@ -184,14 +189,12 @@ fn parse_statement(tokens: &mut Vec<Lexer>) -> Option<Stmt> {
 fn parse_let(tokens: &mut Vec<Lexer>) -> Stmt {
     tokens.remove(0);
     if tokens.is_empty() {
-        panic!("Compiler Error: Expected variable name after 'let'");
+        eprintln!("SyntaxError: esperado nome de variável após 'let'.");
+        return Stmt::Expr(Expr::None);
     }
     let name = tokens.remove(0).literal;
     if tokens.is_empty() || tokens[0].token != Tokens::Identifier {
-        return Stmt::Let {
-            name,
-            init: None,
-        };
+        return Stmt::Let { name, init: None };
     }
     tokens.remove(0);
     let init = Some(parse_expression(tokens));
@@ -201,11 +204,13 @@ fn parse_let(tokens: &mut Vec<Lexer>) -> Stmt {
 fn parse_const(tokens: &mut Vec<Lexer>) -> Stmt {
     tokens.remove(0);
     if tokens.is_empty() {
-        panic!("Compiler Error: Expected constant name after 'const'");
+        eprintln!("SyntaxError: esperado nome de constante após 'const'.");
+        return Stmt::Expr(Expr::None);
     }
     let name = tokens.remove(0).literal;
     if tokens.is_empty() || tokens[0].token != Tokens::Identifier {
-        panic!("Compiler Error: Expected '=' after constant name '{name}'");
+        eprintln!("SyntaxError: esperado '=' após o nome da constante '{}'.", name);
+        return Stmt::Expr(Expr::None);
     }
     tokens.remove(0);
     let init = parse_expression(tokens);
@@ -246,9 +251,13 @@ fn parse_loop(tokens: &mut Vec<Lexer>) -> Stmt {
     let has_semicolons = tokens.iter().any(|t| t.literal == ";");
 
     if has_semicolons {
-        let init = if tokens[0].token == Tokens::Let {
+        let init = if tokens.is_empty() {
+            None
+        } else if tokens[0].token == Tokens::Let {
             Some(Box::new(parse_let(tokens)))
-        } else if tokens[0].token != Tokens::Semicolon && tokens[0].token != Tokens::Reference {
+        } else if tokens[0].token != Tokens::Semicolon
+            && tokens[0].token != Tokens::Reference
+        {
             let name = tokens.remove(0).literal;
             if !tokens.is_empty() && tokens[0].token == Tokens::Identifier {
                 tokens.remove(0);
@@ -312,7 +321,11 @@ fn parse_do_loop(tokens: &mut Vec<Lexer>) -> Stmt {
     let body = parse_block(tokens);
 
     if tokens.is_empty() || tokens[0].token != Tokens::Loop {
-        panic!("Compiler Error: Expected 'loop' after 'do' block");
+        eprintln!("SyntaxError: esperado 'loop' após bloco 'do'.");
+        return Stmt::DoWhile {
+            body,
+            condition: Expr::Bool(false),
+        };
     }
     tokens.remove(0);
 
@@ -324,12 +337,17 @@ fn parse_fun(tokens: &mut Vec<Lexer>) -> Stmt {
     tokens.remove(0);
 
     if tokens.is_empty() {
-        panic!("Compiler Error: Expected function name after 'fun'");
+        eprintln!("SyntaxError: esperado nome de função após 'fun'.");
+        return Stmt::Expr(Expr::None);
     }
     let name = tokens.remove(0).literal;
 
     if tokens.is_empty() || tokens[0].token != Tokens::LeftParenthesis {
-        panic!("Compiler Error: Expected '(' after function name '{name}'");
+        eprintln!(
+            "SyntaxError: esperado '(' após o nome da função '{}'.",
+            name
+        );
+        return Stmt::Expr(Expr::None);
     }
     tokens.remove(0);
 
@@ -343,7 +361,7 @@ fn parse_fun(tokens: &mut Vec<Lexer>) -> Stmt {
     }
 
     if !tokens.is_empty() {
-        tokens.remove(0);
+        tokens.remove(0); // consume ')'
     }
 
     let body = parse_block(tokens);
@@ -360,11 +378,76 @@ fn parse_return(tokens: &mut Vec<Lexer>) -> Stmt {
     }
 }
 
+/// Parse `throw <expr>`
+fn parse_throw(tokens: &mut Vec<Lexer>) -> Stmt {
+    tokens.remove(0); // consume 'throw'
+    if tokens.is_empty() {
+        eprintln!("SyntaxError: esperado expressão após 'throw'.");
+        return Stmt::Throw(Expr::None);
+    }
+    let expr = parse_expression(tokens);
+    Stmt::Throw(expr)
+}
+
+/// Parse `try { … } catch(err) { … } finally { … }`
+///
+/// Both `catch` and `finally` are optional but at least one must be present
+/// in valid Aly code. The parser is lenient and accepts either or both.
+fn parse_try(tokens: &mut Vec<Lexer>) -> Stmt {
+    tokens.remove(0); // consume 'try'
+    let body = parse_block(tokens);
+
+    // Optional catch
+    let (catch_var, catch_body) = if !tokens.is_empty() && tokens[0].token == Tokens::Catch {
+        tokens.remove(0); // consume 'catch'
+
+        // Optional `(var)` binding
+        let var = if !tokens.is_empty() && tokens[0].token == Tokens::LeftParenthesis {
+            tokens.remove(0);
+            let name = if !tokens.is_empty() && tokens[0].token != Tokens::RightParenthesis {
+                Some(tokens.remove(0).literal)
+            } else {
+                None
+            };
+            if !tokens.is_empty() && tokens[0].token == Tokens::RightParenthesis {
+                tokens.remove(0);
+            }
+            name
+        } else {
+            None
+        };
+
+        let body = parse_block(tokens);
+        (var, body)
+    } else {
+        (None, Vec::new())
+    };
+
+    // Optional finally
+    let finally_body = if !tokens.is_empty() && tokens[0].token == Tokens::Finally {
+        tokens.remove(0);
+        parse_block(tokens)
+    } else {
+        Vec::new()
+    };
+
+    Stmt::Try {
+        body,
+        catch_var,
+        catch_body,
+        finally_body,
+    }
+}
+
 fn parse_match(tokens: &mut Vec<Lexer>) -> Stmt {
     tokens.remove(0);
     let scrutinee = parse_expression(tokens);
     if tokens.is_empty() || tokens[0].token != Tokens::LeftBrace {
-        panic!("Compiler Error: Expected '{{' after 'match' expression");
+        eprintln!("SyntaxError: esperado '{{' após expressão 'match'.");
+        return Stmt::Match {
+            scrutinee,
+            arms: Vec::new(),
+        };
     }
     tokens.remove(0);
 
@@ -457,9 +540,7 @@ fn parse_match(tokens: &mut Vec<Lexer>) -> Stmt {
 fn parse_pattern(tokens: &mut Vec<Lexer>) -> Pattern {
     if tokens.len() == 1 && tokens[0].literal == "_" {
         Pattern::Wildcard
-    } else if tokens.len() == 3
-        && tokens[1].literal == "..    "
-    {
+    } else if tokens.len() == 3 && tokens[1].literal == ".." {
         Pattern::Range(
             Expr::Var(tokens[0].literal.clone()),
             Expr::Var(tokens[2].literal.clone()),
@@ -471,7 +552,8 @@ fn parse_pattern(tokens: &mut Vec<Lexer>) -> Pattern {
 
 fn parse_block(tokens: &mut Vec<Lexer>) -> Vec<Stmt> {
     if tokens.is_empty() || tokens[0].token != Tokens::LeftBrace {
-        panic!("Compiler Error: Expected '{{' to open block");
+        eprintln!("SyntaxError: esperado '{{' para abrir bloco.");
+        return Vec::new();
     }
     tokens.remove(0);
 
@@ -540,7 +622,13 @@ fn parse_compound_assign(tokens: &mut Vec<Lexer>) -> Stmt {
         Tokens::Subtraction => "-",
         Tokens::Multiplication => "*",
         Tokens::Division => "/",
-        _ => panic!("Compiler Error: Unknown compound operator '{}'", op_token.literal),
+        _ => {
+            eprintln!(
+                "SyntaxError: operador composto desconhecido '{}'.",
+                op_token.literal
+            );
+            "+"
+        }
     };
 
     Stmt::Expr(Expr::BinOp {
@@ -566,10 +654,11 @@ fn parse_condition_expr(tokens: &mut Vec<Lexer>) -> Expr {
 }
 
 fn parse_expression(tokens: &mut Vec<Lexer>) -> Expr {
-    parse_binaryExpr(tokens, 0)
+    parse_binary_expr(tokens, 0)
 }
 
-fn parse_binaryExpr(tokens: &mut Vec<Lexer>, min_prec: u8) -> Expr {
+#[allow(non_snake_case)]
+fn parse_binary_expr(tokens: &mut Vec<Lexer>, min_prec: u8) -> Expr {
     let mut left = parse_unary(tokens);
 
     while !tokens.is_empty() {
@@ -579,7 +668,7 @@ fn parse_binaryExpr(tokens: &mut Vec<Lexer>, min_prec: u8) -> Expr {
             break;
         }
         let op = tokens.remove(0).literal.clone();
-        let right = parse_binaryExpr(tokens, prec + 1);
+        let right = parse_binary_expr(tokens, prec + 1);
         left = Expr::BinOp {
             left: Box::new(left),
             op,
@@ -627,7 +716,11 @@ fn parse_primary(tokens: &mut Vec<Lexer>) -> Expr {
         Tokens::Value => {
             tokens.remove(0);
             let lit = &tok.literal;
-            if lit.contains('.') && lit.chars().any(|c| c.is_ascii_digit()) && !lit.starts_with('"') && !lit.starts_with('\'') {
+            if lit.contains('.')
+                && lit.chars().any(|c| c.is_ascii_digit())
+                && !lit.starts_with('"')
+                && !lit.starts_with('\'')
+            {
                 if let Ok(f) = lit.parse::<f64>() {
                     Expr::Float(f)
                 } else {
@@ -737,31 +830,11 @@ fn parse_call_args(tokens: &mut Vec<Lexer>) -> Vec<Expr> {
     tokens.remove(0);
 
     let mut args = Vec::new();
-    let mut depth = 0;
 
     while !tokens.is_empty() {
-        if tokens[0].token == Tokens::LeftParenthesis {
-            depth += 1;
-            args.last_mut().map(|e: &mut Expr| {
-                let mut inner = vec![std::mem::replace(e, Expr::None)];
-                inner.push(tokens.remove(0));
-                while depth > 0 && !tokens.is_empty() {
-                    if tokens[0].token == Tokens::LeftParenthesis {
-                        depth += 1;
-                    } else if tokens[0].token == Tokens::RightParenthesis {
-                        depth -= 1;
-                    }
-                    inner.push(tokens.remove(0));
-                }
-                *e = parse_expression(&mut inner);
-                e
-            });
-        } else if tokens[0].token == Tokens::RightParenthesis {
-            if depth == 0 {
-                tokens.remove(0);
-                break;
-            }
-            depth -= 1;
+        if tokens[0].token == Tokens::RightParenthesis {
+            tokens.remove(0);
+            break;
         } else if tokens[0].token == Tokens::Comma {
             tokens.remove(0);
         } else {
@@ -837,10 +910,7 @@ fn parse_object_literal(tokens: &mut Vec<Lexer>) -> Expr {
     while !tokens.is_empty() && depth > 0 {
         if tokens[0].token == Tokens::LeftBrace {
             depth += 1;
-            entries.push((
-                tokens.remove(0).literal.clone(),
-                parse_primary(tokens),
-            ));
+            entries.push((tokens.remove(0).literal.clone(), parse_primary(tokens)));
         } else if tokens[0].token == Tokens::RightBrace {
             depth -= 1;
             if depth == 0 {

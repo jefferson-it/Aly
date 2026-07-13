@@ -20,7 +20,10 @@ mod codec_mod {
                 let decoded = String::from_utf8_lossy(&bytes).to_string();
                 Box::new(put_quoted_str(decoded))
             }
-            Err(e) => panic!("base64.decode error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [base64.decode]: {}", e);
+                Box::new(put_quoted_str(String::new()))
+            }
         }
     }
 
@@ -39,7 +42,10 @@ mod codec_mod {
                 let decoded = String::from_utf8_lossy(&bytes).to_string();
                 Box::new(put_quoted_str(decoded))
             }
-            Err(e) => panic!("hex.decode error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [hex.decode]: {}", e);
+                Box::new(put_quoted_str(String::new()))
+            }
         }
     }
 }

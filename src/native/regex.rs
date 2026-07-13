@@ -11,7 +11,10 @@ mod regex_mod {
 
         let re = match regex::Regex::new(&pattern) {
             Ok(r) => r,
-            Err(e) => panic!("regex.match error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [regex.match]: padrão inválido '{}': {}", pattern, e);
+                return Box::new(ValueData::String("None".to_owned()));
+            }
         };
 
         if let Some(cap) = re.captures(&text) {
@@ -35,7 +38,10 @@ mod regex_mod {
 
         let re = match regex::Regex::new(&pattern) {
             Ok(r) => r,
-            Err(e) => panic!("regex.test error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [regex.test]: padrão inválido '{}': {}", pattern, e);
+                return Box::new(ValueData::Bool(false));
+            }
         };
 
         Box::new(ValueData::Bool(re.is_match(&text)))
@@ -49,7 +55,10 @@ mod regex_mod {
 
         let re = match regex::Regex::new(&pattern) {
             Ok(r) => r,
-            Err(e) => panic!("regex.replace error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [regex.replace]: padrão inválido '{}': {}", pattern, e);
+                return Box::new(put_quoted_str(text.clone()));
+            }
         };
 
         let result = re.replace_all(&text, replacement.as_str());

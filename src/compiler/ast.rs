@@ -5,6 +5,13 @@ pub enum Stmt {
     Assign { target: Expr, value: Expr },
     Expr(Expr),
     Return(Option<Expr>),
+    Throw(Expr),
+    Try {
+        body: Vec<Stmt>,
+        catch_var: Option<String>,
+        catch_body: Vec<Stmt>,
+        finally_body: Vec<Stmt>,
+    },
     If {
         condition: Expr,
         then_body: Vec<Stmt>,

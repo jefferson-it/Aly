@@ -18,13 +18,15 @@ mod number {
                 } else if char == '.' {
                     value.push(char);
                 } else {
-                    panic!("{}", format!("Erro on line {}: the {} is invalid to float value", lex.line, char))
+                    eprintln!("TypeError [numeric]: caractere '{}' inválido para valor float na linha {}.", char, lex.line);
+                    return Box::new(String::from("0.0"));
                 }
             }           
         }
 
         if !is_float(&value.clone()) {
-            panic!("{}", format!("Erro on line {}: the {} is invalid float", l, value))
+            eprintln!("TypeError [numeric]: valor '{}' inválido para float na linha {}.", value, l);
+            return Box::new(String::from("0.0"));
         }
 
         return Box::new(value);

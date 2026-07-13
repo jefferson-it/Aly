@@ -21,14 +21,20 @@ mod csv_mod {
 
         let headers: Vec<String> = match reader.headers() {
             Ok(h) => h.iter().map(|s| s.to_string()).collect(),
-            Err(e) => panic!("csv.parse error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [csv.parse]: cabeçalho inválido: {}", e);
+                return Box::new(ValueData::Vec(Vector::new(vec![])));
+            }
         };
 
         let mut rows = vec![];
         for result in reader.records() {
             let record = match result {
                 Ok(r) => r,
-                Err(e) => panic!("csv.parse error: {}", e),
+                Err(e) => {
+                    eprintln!("RuntimeError [csv.parse]: linha inválida: {}", e);
+                    continue;
+                }
             };
 
             let mut obj = Object::new(vec![], HashMap::new());

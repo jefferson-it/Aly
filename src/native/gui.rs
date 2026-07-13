@@ -363,7 +363,10 @@ pub fn create_widget(widget_type: &str, args: Vec<ValueData>) -> ValueData {
             spinner.set_value(val);
             FltkWidget::Spinner(spinner)
         }
-        _ => panic!("Unknown widget type: {}", widget_type),
+        _ => {
+            eprintln!("RuntimeError [gui]: tipo de widget desconhecido '{}'. Faltando implementação.", widget_type);
+            FltkWidget::Label(fltk::frame::Frame::default())
+        }
     };
     
     let shared = Rc::new(RefCell::new(fltk_widget));

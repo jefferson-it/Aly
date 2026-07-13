@@ -44,23 +44,41 @@ mod crypto_mod {
         let key = std_arg(&args, 1);
         let data = std_arg(&args, 2);
 
-        let result: Vec<u8> = match algorithm.as_str() {
+        let result: Option<Vec<u8>> = match algorithm.as_str() {
             "sha256" => {
-                let mut mac = hmac::Hmac::<sha2::Sha256>::new_from_slice(key.as_bytes())
-                    .expect("HMAC invalid key length");
-                mac.update(data.as_bytes());
-                mac.finalize().into_bytes().to_vec()
+                match hmac::Hmac::<sha2::Sha256>::new_from_slice(key.as_bytes()) {
+                    Ok(mut mac) => {
+                        mac.update(data.as_bytes());
+                        Some(mac.finalize().into_bytes().to_vec())
+                    }
+                    Err(e) => {
+                        eprintln!("RuntimeError [crypto.hmac]: chave HMAC inválida: {}", e);
+                        None
+                    }
+                }
             }
             "sha512" => {
-                let mut mac = hmac::Hmac::<sha2::Sha512>::new_from_slice(key.as_bytes())
-                    .expect("HMAC invalid key length");
-                mac.update(data.as_bytes());
-                mac.finalize().into_bytes().to_vec()
+                match hmac::Hmac::<sha2::Sha512>::new_from_slice(key.as_bytes()) {
+                    Ok(mut mac) => {
+                        mac.update(data.as_bytes());
+                        Some(mac.finalize().into_bytes().to_vec())
+                    }
+                    Err(e) => {
+                        eprintln!("RuntimeError [crypto.hmac]: chave HMAC inválida: {}", e);
+                        None
+                    }
+                }
             }
-            _ => panic!("crypto.hmac: unsupported algorithm '{}'. Use 'sha256' or 'sha512'", algorithm),
+            _ => {
+                eprintln!("RuntimeError [crypto.hmac]: algoritmo não suportado '{}'. Use 'sha256' ou 'sha512'.", algorithm);
+                None
+            }
         };
 
-        Box::new(put_quoted_str(hex_digest(&result)))
+        match result {
+            Some(res) => Box::new(put_quoted_str(hex_digest(&res))),
+            None => Box::new(put_quoted_str(String::new())),
+        }
     }
 }
 

@@ -11,11 +11,17 @@ mod gzip_mod {
         let mut encoder = flate2::write::GzEncoder::new(Vec::new(), flate2::Compression::default());
         match encoder.write_all(input.as_bytes()) {
             Ok(_) => {},
-            Err(e) => panic!("gzip.compress error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [gzip.compress]: {}", e);
+                return Box::new(put_quoted_str(String::new()));
+            }
         }
         let compressed = match encoder.finish() {
             Ok(c) => c,
-            Err(e) => panic!("gzip.compress error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [gzip.compress]: {}", e);
+                return Box::new(put_quoted_str(String::new()));
+            }
         };
         Box::new(put_quoted_str(String::from_utf8_lossy(&compressed).to_string()))
     }
@@ -27,7 +33,10 @@ mod gzip_mod {
         let mut decoded = String::new();
         match decoder.read_to_string(&mut decoded) {
             Ok(_) => Box::new(put_quoted_str(decoded)),
-            Err(e) => panic!("gzip.decompress error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [gzip.decompress]: {}", e);
+                Box::new(put_quoted_str(String::new()))
+            }
         }
     }
 }

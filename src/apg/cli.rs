@@ -179,7 +179,7 @@ pub fn publish() {
             println!("O APG fará o seguinte:");
             println!("  1. Validar aly.toml e todas as dependências");
             println!("  2. Verificar se a versão {} segue o semver", version);
-            println!("  3. Verificar licença {} ...", manifest.package.license.unwrap_or_else(|| \"N/A\".to_string()));
+            println!("  3. Verificar licença {} ...", manifest.package.license.unwrap_or_else(|| "N/A".to_string()));
             println!("  4. Criar tag {} no repositório", version);
             println!("  5. Gerar PR para o registro oficial (apg-registry)");
             println!();
@@ -241,7 +241,7 @@ pub fn uninstall(package: &str) {
 
 pub fn registry() {
     println!("Gerenciamento de Registros APG");
-    println!("=====================\");
+    println!("=====================");
     println!();
     println!("Registros configurados:");
     println!("  - official: https://github.com/aly/apg-registry (padrão)");
@@ -256,121 +256,121 @@ pub fn registry() {
 }
 
 pub fn doctor() {
-    println!("Verificando saúde do sistema APG...\");
+    println!("Verificando saúde do sistema APG...");
     println!();
     
     // Verificar Git
-    if let Ok(output) = std::process::Command::new(\"git\").arg(\"--version\").output() {
+    if let Ok(output) = std::process::Command::new("git").arg("--version").output() {
         if output.status.success() {
             let version = String::from_utf8_lossy(&output.stdout);
-            println!("✓ Git: {}", version.trim());
+            println!("[OK] Git: {}", version.trim());
         } else {
-            println!("✗ Git: Não encontrado ou não disponível\");
+            println!("[ERRO] Git: Nao encontrado ou nao disponivel");
         }
     } else {
-        println!("✗ Git: Não encontrado ou não disponível\");
+        println!("[ERRO] Git: Nao encontrado ou nao disponivel");
     }
     
     // Verificar Rust
-    if let Ok(output) = std::process::Command::new(\"rustc\").arg(\"--version\").output() {
+    if let Ok(output) = std::process::Command::new("rustc").arg("--version").output() {
         if output.status.success() {
             let version = String::from_utf8_lossy(&output.stdout);
-            println!("✓ Rust: {}", version.trim());
+            println!("[OK] Rust: {}", version.trim());
         } else {
-            println!("✗ Rust: Não encontrado ou não disponível\");
+            println!("[ERRO] Rust: Nao encontrado ou nao disponivel");
         }
     } else {
-        println!("✗ Rust: Não encontrado ou não disponível\");
+        println!("[ERRO] Rust: Nao encontrado ou nao disponivel");
     }
     
     // Verificar diretório do projeto
     let project_dir = std::env::current_dir();
     match project_dir {
         Ok(dir) => {
-            let aly_toml = dir.join(\"aly.toml\");
+            let aly_toml = dir.join("aly.toml");
             if aly_toml.exists() {
-                println!("✓ Projeto Aly detectado: {}/{}\", dir.display(), aly_toml.file_name().unwrap().to_string_lossy());
+                println!("[OK] Projeto Aly detectado: {}/{}", dir.display(), aly_toml.file_name().unwrap().to_string_lossy());
                 
-                if Path::new(\"aly.lock\").exists() {
-                    match parse_lockfile(\"aly.lock\") {
+                if Path::new("aly.lock").exists() {
+                    match parse_lockfile("aly.lock") {
                         Ok(lockfile) => {
-                            println!("  Lockfile: {} pacotes\", lockfile.packages.len());
+                            println!("  Lockfile: {} pacotes", lockfile.packages.len());
                         },
-                        Err(e) => println!("  ✗ Lockfile: Erro ao ler: {}\", e),
+                        Err(e) => println!("  [ERRO] Lockfile: Erro ao ler: {}", e),
                     }
                 } else {
-                    println!("  ⚠ Lockfile: Não encontrado (execute 'apg lock' para gerar)\");
+                    println!("  [AVISO] Lockfile: Nao encontrado (execute 'apg lock' para gerar)");
                 }
             } else {
-                println!("✗ Projeto Aly: Não encontrado (execute 'apg init' para criar)\");
+                println!("[ERRO] Projeto Aly: Nao encontrado (execute 'apg init' para criar)");
             }
         },
-        Err(e) => println!("✗ Diretório atual: Erro - {}\", e),
+        Err(e) => println!("[ERRO] Diretório atual: Erro - {}", e),
     }
     
     // Verificar cache
     if let Some(home) = dirs::home_dir() {
-        let cache_dir = home.join(\".cache\").join(\"apg\");
+        let cache_dir = home.join(".cache").join("apg");
         if cache_dir.exists() {
-            println!("✓ Cache APG: {} (execute 'apg clean' para limpar)\", cache_dir.display());
+            println!("✓ Cache APG: {} (execute 'apg clean' para limpar)", cache_dir.display());
         } else {
-            println!("⚠ Cache APG: Não encontrado (será criado automaticamente)\");
+            println!("⚠ Cache APG: Não encontrado (será criado automaticamente)");
         }
     }
     
     println!();
-    println!("Status: OK - O APG está pronto para uso!\");
+    println!("Status: OK - O APG está pronto para uso!");
 }
 
 pub fn clean() {
-    println!("Limpando cache do APG...\");
+    println!("Limpando cache do APG...");
     
     let home_dir = match dirs::home_dir() {
         Some(dir) => dir,
         None => {
-            println!("Erro: Não foi possível determinar o diretório home\");
+            println!("Erro: Não foi possível determinar o diretório home");
             return;
         }
     };
     
-    let cache_dir = home_dir.join(\".cache\").join(\"apg\");
+    let cache_dir = home_dir.join(".cache").join("apg");
     
     if !cache_dir.exists() {
-        println!("Cache não encontrado em {}\", cache_dir.display());
+        println!("Cache não encontrado em {}", cache_dir.display());
         return;
     }
     
     match std::fs::remove_dir_all(&cache_dir) {
-        Ok(_) => println!("Cache limpo com sucesso: {}\", cache_dir.display()),
-        Err(e) => println!("Erro ao limpar cache: {}\", e),
+        Ok(_) => println!("Cache limpo com sucesso: {}", cache_dir.display()),
+        Err(e) => println!("Erro ao limpar cache: {}", e),
     }
 }
 
 pub fn info(package: &str) {
-    println!("Obtendo informações sobre pacote: {} ...\", package);
-    println!("(Funcionalidade de informações será implementada)\");
+    println!("Obtendo informações sobre pacote: {} ...", package);
+    println!("(Funcionalidade de informações será implementada)");
 }
 
 pub fn graph() {
-    println!("Gerando grafo de dependências...\");
-    if let Err(e) = get_dependency_graph(\".\") {
-        println!("Erro: {}\", e);
+    println!("Gerando grafo de dependências...");
+    if let Err(e) = get_dependency_graph(".") {
+        println!("Erro: {}", e);
     } else {
-        println!("Grafo gerado (visualização será implementada)\");
+        println!("Grafo gerado (visualização será implementada)");
     }
 }
 
 pub fn lock() {
-    println!("Gerando lockfile...\");
-    if let Err(e) = generate_lockfile(\".\") {
-        println!("Erro: {}\", e);
+    println!("Gerando lockfile...");
+    if let Err(e) = generate_lockfile(".") {
+        println!("Erro: {}", e);
     } else {
-        println!("Lockfile aly.lock gerado com sucesso\");
-        println!("Execute 'apg update' para verificar atualizações.\");
+        println!("Lockfile aly.lock gerado com sucesso");
+        println!("Execute 'apg update' para verificar atualizações.");
     }
 }
 
 pub fn vendor() {
-    println!("Vendendo dependências...\");
-    println!("(Funcionalidade de vendoring será implementada)\");
+    println!("Vendendo dependências...");
+    println!("(Funcionalidade de vendoring será implementada)");
 }

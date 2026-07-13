@@ -75,7 +75,10 @@ mod std_lib {
 
         match fs::read_to_string(&path) {
             Ok(content) => ok_str(content),
-            Err(err) => panic!("fs.read error on '{}': {}", path, err),
+            Err(err) => {
+                eprintln!("RuntimeError [fs.read]: erro ao ler '{}': {}", path, err);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -143,7 +146,10 @@ mod std_lib {
 
         let entries = match fs::read_dir(&path) {
             Ok(rd) => rd,
-            Err(err) => panic!("fs.list error on '{}': {}", path, err),
+            Err(err) => {
+                eprintln!("RuntimeError [fs.list]: erro ao listar '{}': {}", path, err);
+                return Box::new(ValueData::Vec(Vector::new(vec![])));
+            }
         };
 
         let mut names = vec![];
@@ -358,7 +364,11 @@ mod std_lib {
             }
         }
         
-        panic!("Segmentation Fault: Read from invalid memory address {:#x} with offset {}", addr, offset);
+        eprintln!(
+            "RuntimeError [hw.read_mem]: Segmentation Fault: leitura de endereço inválido {:#x} com offset {}",
+            addr, offset
+        );
+        ok_int(-1)
     }
 
     // hw.write_mem(address, offset, value) -> bool
@@ -376,7 +386,11 @@ mod std_lib {
             }
         }
         
-        panic!("Segmentation Fault: Write to invalid memory address {:#x} with offset {}", addr, offset);
+        eprintln!(
+            "RuntimeError [hw.write_mem]: Segmentation Fault: escrita em endereço inválido {:#x} com offset {}",
+            addr, offset
+        );
+        ok_bool(false)
     }
 
     // hw.read_reg(name) -> int
@@ -387,7 +401,10 @@ mod std_lib {
         let regs = SIM_REGISTERS.lock().unwrap();
         match regs.get(&name) {
             Some(val) => ok_int(*val),
-            None => panic!("Hardware Error: Register '{}' does not exist", name),
+            None => {
+                eprintln!("RuntimeError [hw.read_reg]: registrador '{}' não existe.", name);
+                ok_int(0)
+            }
         }
     }
 
@@ -402,7 +419,8 @@ mod std_lib {
             regs.insert(name, val);
             ok_bool(true)
         } else {
-            panic!("Hardware Error: Register '{}' does not exist", name)
+            eprintln!("RuntimeError [hw.write_reg]: registrador '{}' não existe.", name);
+            ok_bool(false)
         }
     }
 
@@ -461,63 +479,79 @@ mod std_lib {
         
         match op.as_str() {
             "MOV" => {
-                if parts.len() < 3 { panic!("Syntax Error in CPU step: MOV requires target and source"); }
+                if parts.len() < 3 {
+                    eprintln!("SyntaxError [hw.cpu_step]: MOV requer destino e fonte.");
+                    return ok_bool(false);
+                }
                 let dest = parts[1].to_lowercase();
                 let src = parts[2].to_lowercase();
-                
+
                 let val = if let Ok(num) = src.parse::<i32>() {
                     num
                 } else if let Some(r_val) = regs.get(&src) {
                     *r_val
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid source '{}'", src);
+                    eprintln!("SyntaxError [hw.cpu_step]: fonte inválida '{}' para MOV.", src);
+                    return ok_bool(false);
                 };
-                
+
                 if regs.contains_key(&dest) {
                     regs.insert(dest, val);
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid destination register '{}'", dest);
+                    eprintln!("SyntaxError [hw.cpu_step]: registrador destino inválido '{}' para MOV.", dest);
+                    return ok_bool(false);
                 }
             }
             "ADD" => {
-                if parts.len() < 3 { panic!("Syntax Error in CPU step: ADD requires target and source"); }
+                if parts.len() < 3 {
+                    eprintln!("SyntaxError [hw.cpu_step]: ADD requer destino e fonte.");
+                    return ok_bool(false);
+                }
                 let dest = parts[1].to_lowercase();
                 let src = parts[2].to_lowercase();
-                
+
                 let val = if let Ok(num) = src.parse::<i32>() {
                     num
                 } else if let Some(r_val) = regs.get(&src) {
                     *r_val
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid source '{}'", src);
+                    eprintln!("SyntaxError [hw.cpu_step]: fonte inválida '{}' para ADD.", src);
+                    return ok_bool(false);
                 };
-                
+
                 if let Some(dest_val) = regs.get_mut(&dest) {
                     *dest_val += val;
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid destination register '{}'", dest);
+                    eprintln!("SyntaxError [hw.cpu_step]: registrador destino inválido '{}' para ADD.", dest);
+                    return ok_bool(false);
                 }
             }
             "SUB" => {
-                if parts.len() < 3 { panic!("Syntax Error in CPU step: SUB requires target and source"); }
+                if parts.len() < 3 {
+                    eprintln!("SyntaxError [hw.cpu_step]: SUB requer destino e fonte.");
+                    return ok_bool(false);
+                }
                 let dest = parts[1].to_lowercase();
                 let src = parts[2].to_lowercase();
-                
+
                 let val = if let Ok(num) = src.parse::<i32>() {
                     num
                 } else if let Some(r_val) = regs.get(&src) {
                     *r_val
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid source '{}'", src);
+                    eprintln!("SyntaxError [hw.cpu_step]: fonte inválida '{}' para SUB.", src);
+                    return ok_bool(false);
                 };
-                
+
                 if let Some(dest_val) = regs.get_mut(&dest) {
                     *dest_val -= val;
                 } else {
-                    panic!("Syntax Error in CPU step: Invalid destination register '{}'", dest);
                 }
             }
-            _ => panic!("Hardware Error: Unsupported CPU instruction '{}'", op),
+            }
+            _ => {
+                eprintln!("RuntimeError [hw.cpu_step]: instrução CPU desconhecida '{}'.", op);
+            }
         }
         
         ok_bool(true)

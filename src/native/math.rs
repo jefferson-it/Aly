@@ -12,7 +12,7 @@ mod math {
         x.split(|c: char| c == ',' || c.is_whitespace())
             .map(|part| part.trim())
             .filter(|part| !part.is_empty())
-            .map(|part| conversor_to_float(part.to_owned()))
+            .map(|part| conversor_to_float(part.to_owned()) as f64)
             .collect()
     }
 
@@ -44,22 +44,20 @@ mod math {
     // pow(base, exponent)
     pub fn fun_pow(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.len() < 2 {
-            panic!("Error on pow: expected pow(base, exponent)");
+            eprintln!("TypeError [pow]: esperado pow(base, expoente).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].powf(args[1]))
     }
 
     // sqrt(value)
     pub fn fun_sqrt(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on sqrt: expected sqrt(value)");
+            eprintln!("TypeError [sqrt]: esperado sqrt(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].sqrt())
     }
 
@@ -71,135 +69,122 @@ mod math {
     // round(value) -> nearest integer
     pub fn fun_round(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on round: expected round(value)");
+            eprintln!("TypeError [round]: esperado round(valor).");
+            return Box::new(ValueData::Int(0));
         }
-
         to_value(args[0].round())
     }
 
     // roundUp(value) -> ceil
     pub fn fun_round_up(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on roundUp: expected roundUp(value)");
+            eprintln!("TypeError [roundUp]: esperado roundUp(valor).");
+            return Box::new(ValueData::Int(0));
         }
-
         to_value(args[0].ceil())
     }
 
     // roundDown(value) -> floor
     pub fn fun_round_down(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on roundDown: expected roundDown(value)");
+            eprintln!("TypeError [roundDown]: esperado roundDown(valor).");
+            return Box::new(ValueData::Int(0));
         }
-
         to_value(args[0].floor())
     }
 
     // to_fixed(value, precision) -> string with fixed decimal places
     pub fn fun_to_fixed(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.len() < 2 {
-            panic!("Error on to_fixed: expected to_fixed(value, precision)");
+            eprintln!("TypeError [to_fixed]: esperado to_fixed(valor, precisão).");
+            return Box::new(put_quoted_str(String::new()));
         }
-
         let precision = args[1].max(0.0) as usize;
         let formatted = format!("{:.*}", precision, args[0]);
-
         Box::new(put_quoted_str(formatted))
     }
 
     // abs(value) -> absolute value
     pub fn fun_abs(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on abs: expected abs(value)");
+            eprintln!("TypeError [abs]: esperado abs(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].abs())
     }
 
     // min(a, b) -> smaller of two values
     pub fn fun_min(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.len() < 2 {
-            panic!("Error on min: expected min(a, b)");
+            eprintln!("TypeError [min]: esperado min(a, b).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].min(args[1]))
     }
 
     // max(a, b) -> larger of two values
     pub fn fun_max(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.len() < 2 {
-            panic!("Error on max: expected max(a, b)");
+            eprintln!("TypeError [max]: esperado max(a, b).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].max(args[1]))
     }
 
     // sin(value) -> sine of angle in radians
     pub fn fun_sin(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on sin: expected sin(value)");
+            eprintln!("TypeError [sin]: esperado sin(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].sin())
     }
 
     // cos(value) -> cosine of angle in radians
     pub fn fun_cos(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on cos: expected cos(value)");
+            eprintln!("TypeError [cos]: esperado cos(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].cos())
     }
 
     // tan(value) -> tangent of angle in radians
     pub fn fun_tan(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on tan: expected tan(value)");
+            eprintln!("TypeError [tan]: esperado tan(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].tan())
     }
 
     // log(x) -> base-10 logarithm
     pub fn fun_log(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on log: expected log(value)");
+            eprintln!("TypeError [log]: esperado log(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].log10())
     }
 
     // ln(x) -> natural logarithm (base e)
     pub fn fun_ln(x: String) -> Box<dyn Validator> {
         let args = parse_args(x);
-
         if args.is_empty() {
-            panic!("Error on ln: expected ln(value)");
+            eprintln!("TypeError [ln]: esperado ln(valor).");
+            return Box::new(ValueData::Float(0.0));
         }
-
         to_value(args[0].ln())
     }
 }

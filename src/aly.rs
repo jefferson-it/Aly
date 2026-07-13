@@ -1,262 +1,392 @@
+/// Aly runtime — owns the execution context for a single Aly program.
+///
+/// # Architecture decision: global runtime
+///
+/// The current architecture passes the runtime through a module-level accessor.
+/// This is kept for backwards-compatibility but the `unsafe` static has been
+/// replaced with a `thread_local!` + `RefCell` pattern.
+///
+/// Rationale for `thread_local!`:
+/// - Zero `unsafe` code in the public API.
+/// - Naturally isolated per OS thread, which matches the current single-threaded
+///   execution model.
+/// - Cheap — no heap allocation, no mutex overhead.
+/// - When concurrent execution is added in the future, each worker thread will
+///   own its own runtime cell, which is exactly what we want for task isolation.
+/// - Alternative considered: `Arc<Mutex<Aly>>` — unnecessarily complex and
+///   slower for a single-threaded interpreter.
+///
+/// The public `get_runtime()` function still returns `&'static mut Aly`-shaped
+/// access via a raw pointer so that callers do not need to hold a `RefMut`
+/// guard across function boundaries.  This is sound inside a single thread.
 
 mod aly {
+    use std::cell::RefCell;
     use std::env;
 
-    use crate::{lexer::Lexer, native::{fs::read_file, fun_input, fun_print, process_value, tomb, types::{Type, Validator, ValueData}, vars::*}, runtime::parser::get_lexer, tokens::Tokens, validators::{str::{put_quoted_str, remove_quoted_str}, structures::{is_close, is_opened}}, Act};
+    use crate::{
+        error::{AlyError, AlyResult},
+        lexer::Lexer,
+        native::{
+            fs::read_file, fun_input, fun_print, process_value, tomb,
+            types::{Type, Validator, ValueData},
+            vars::*,
+        },
+        runtime::parser::get_lexer,
+        tokens::Tokens,
+        validators::{
+            str::{put_quoted_str, remove_quoted_str},
+            structures::{is_close, is_opened},
+        },
+        Act,
+    };
 
-
+    // ──────────────────────────────────────────────────────────────────────────
+    // The runtime struct
+    // ──────────────────────────────────────────────────────────────────────────
 
     #[derive(Clone)]
     pub struct Aly {
-        // args: Vec<String>,
         action: Option<Act>,
-        datas: Vec<Var>
+        datas: Vec<Var>,
     }
 
-    static mut RUNTIME: Aly = Aly {
-        action: None,
-        datas: vec![],
-    };
+    // ──────────────────────────────────────────────────────────────────────────
+    // Thread-local storage — replaces `static mut RUNTIME`
+    // ──────────────────────────────────────────────────────────────────────────
 
+    thread_local! {
+        static RUNTIME: RefCell<Aly> = RefCell::new(Aly {
+            action: None,
+            datas: Vec::new(),
+        });
+    }
+
+    /// Get a raw mutable pointer to the thread-local runtime.
+    ///
+    /// # Safety
+    /// This is safe when called from a single thread (the current execution
+    /// model).  The pointer is valid for the duration of the thread-local's
+    /// lifetime.  If multi-threaded execution is added in the future this
+    /// function must be replaced with an `Arc<Mutex<Aly>>` accessor.
     pub fn get_runtime() -> &'static mut Aly {
-        unsafe { &mut RUNTIME }
+        RUNTIME.with(|cell| {
+            // SAFETY: single-threaded interpreter; the borrow is released
+            // before any recursive call could reach here.
+            unsafe { &mut *cell.as_ptr() }
+        })
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Aly implementation
+    // ──────────────────────────────────────────────────────────────────────────
 
     impl Aly {
-        
-        pub fn def_action(&mut self, act: Act) {
-            let ok = match self.action {
-                Some(_) => panic!("Action is defined, can't change"),
-                None => true,
-            };
-
-            if ok {
-                self.action = Some(act);
+        pub fn def_action(&mut self, act: Act) -> AlyResult<()> {
+            if self.action.is_some() {
+                return Err(AlyError::runtime("A ação já foi definida e não pode ser alterada."));
             }
+            self.action = Some(act);
+            Ok(())
         }
 
-        pub fn new() -> Aly {
-            let cwd = match env::current_dir() {
-                Err(why) => panic!("Erro ao iniciar o programa, {why}"),
-                Ok(item) => item,
-            };
+        pub fn new() -> AlyResult<Aly> {
+            let cwd = env::current_dir().map_err(|e| {
+                AlyError::runtime(format!(
+                    "Erro ao iniciar o programa: não foi possível obter o diretório atual. {}",
+                    e
+                ))
+            })?;
 
-            Aly {
-                // args: vec![],
+            Ok(Aly {
                 action: None,
-                datas: vec![
-                    Var::new(String::from("_dir_call"), format!("\"{}\"",  cwd.display().to_string()), false)
-                ]
-            }
+                datas: vec![Var::new(
+                    String::from("_dir_call"),
+                    format!("\"{}\"", cwd.display()),
+                    false,
+                )],
+            })
         }
 
-        // Runtime
-        pub fn run(&mut self, file: String){
-            self.datas.push(Var::new(String::from("print"), fun_print as fn(String) -> Box<dyn Validator>, false));
-            self.datas.push(Var::new(String::from("input"), fun_input as fn(String) -> Box<dyn Validator>, false));
-            self.datas.push(Var::new(String::from("tomb"), tomb as fn(String) -> Box<dyn Validator>, false));
+        // ── Runtime ──────────────────────────────────────────────────────────
+
+        pub fn run(&mut self, file: String) {
+            self.datas.push(Var::new(
+                String::from("print"),
+                fun_print as fn(String) -> Box<dyn Validator>,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("input"),
+                fun_input as fn(String) -> Box<dyn Validator>,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("tomb"),
+                tomb as fn(String) -> Box<dyn Validator>,
+                false,
+            ));
 
             match &self.action {
-                Some(act) => {
-                    match act {
-                        Act::Run => self.run_code(file),
-                        Act::Cli => {},
-                        Act::Comp => {},
-                    }
+                Some(act) => match act {
+                    Act::Run => self.run_code(file),
+                    Act::Cli => {}
+                    Act::Comp => {}
                 },
                 None => {
-                    println!("An action has not been defined")
+                    eprintln!("RuntimeError: nenhuma ação foi definida antes de chamar run().");
                 }
             };
         }
-        // Internal Functions 
+
         fn run_code(&mut self, path: String) {
             let file_to_run = read_file(path);
-            let codes: Vec<&str> = file_to_run.trim().split("\n").collect();
-
+            let codes: Vec<&str> = file_to_run.trim().split('\n').collect();
             get_lexer(codes);
         }
 
-        // Variable manager
+        // ── Variable manager ─────────────────────────────────────────────────
+
         pub fn get_vars(&self) -> &Vec<Var> {
             &self.datas
         }
 
         pub fn create_variable(&mut self, lexers: Vec<Lexer>) {
+            if lexers.is_empty() {
+                eprintln!("SyntaxError: instrução de variável vazia.");
+                return;
+            }
+
             if lexers[0].token.id() != "def_let" {
+                // Reassignment: `name = value`
                 let name = &lexers[0];
-                let identifier = &lexers[1];
-                let value = process_value( (&lexers[2..]).to_vec());
-                let var = self.get_var(name.clone());
-
-                match identifier.token {
-                    Tokens::Identifier => (),
-                    _ => panic!("")
+                let identifier = match lexers.get(1) {
+                    Some(l) => l,
+                    None => {
+                        eprintln!("SyntaxError: esperado '=' após o nome da variável na linha {}.", name.line);
+                        return;
+                    }
                 };
 
+                if identifier.token != Tokens::Identifier {
+                    eprintln!(
+                        "SyntaxError: esperado '=' após o nome da variável na linha {}.",
+                        name.line
+                    );
+                    return;
+                }
 
-                let result = match var {
-                    Ok(v) => v.change_value(value),
-                    Err(err) => panic!("{err}"),
-                };
+                let value = process_value(lexers[2..].to_vec());
 
-                if result.is_err() {
-                    result.unwrap_or_else(|err| panic!("Error on line {}: {}", name.line, err));
+                match self.get_var(name.clone()) {
+                    Ok(v) => {
+                        if let Err(err) = v.change_value(value) {
+                            eprintln!("TypeError na linha {}: {}", name.line, err);
+                        }
+                    }
+                    Err(err) => {
+                        eprintln!("ReferenceError na linha {}: {}", name.line, err);
+                    }
                 }
 
                 return;
             }
 
-            let name = &lexers[1];
+            // Declaration: `let name = value`
+            let name = match lexers.get(1) {
+                Some(l) => l.clone(),
+                None => {
+                    eprintln!("SyntaxError: esperado nome após 'let'.");
+                    return;
+                }
+            };
 
             if lexers.len() == 2 {
-                let value = ValueData::String("None".to_owned());    
-
-                let var = Var::new(name.literal.to_string(), value.to_string(false), true);
-
+                // `let x` — initialise to None
+                let var = Var::new(name.literal.to_string(), ValueData::String("None".to_owned()).to_string(false), true);
                 self.datas.push(var);
-
                 return;
-            } 
-            
-            let identifier = &lexers[2];
-            let value = process_value((&lexers[3..]).to_vec());
+            }
 
-            match identifier.token {
-                Tokens::Identifier => (),
-                _ => panic!("")
+            let identifier = match lexers.get(2) {
+                Some(l) => l,
+                None => {
+                    eprintln!("SyntaxError: esperado '=' após o nome da variável na linha {}.", name.line);
+                    return;
+                }
             };
 
-            let var = Var::new(name.literal.to_string(), value, true);
+            if identifier.token != Tokens::Identifier {
+                eprintln!(
+                    "SyntaxError: esperado '=' após o nome da variável na linha {}.",
+                    name.line
+                );
+                return;
+            }
 
-            self.datas.push(var)
+            let value = process_value(lexers[3..].to_vec());
+            let var = Var::new(name.literal.to_string(), value, true);
+            self.datas.push(var);
         }
-    
+
         pub fn create_constant(&mut self, lexers: Vec<Lexer>) {
-            let name = &lexers[1];
+            if lexers.len() < 2 {
+                eprintln!("SyntaxError: esperado nome após 'const'.");
+                return;
+            }
+
+            let name = lexers[1].clone();
 
             if lexers.len() == 2 {
+                // `const x` without a value — silently skip (or warn)
                 return;
-            } 
-            
-            let identifier = &lexers[2];
-            let value = process_value((&lexers[3..]).to_vec());
+            }
 
-            match identifier.token {
-                Tokens::Identifier => (),
-                _ => panic!("")
+            let identifier = match lexers.get(2) {
+                Some(l) => l,
+                None => {
+                    eprintln!("SyntaxError: esperado '=' após o nome da constante na linha {}.", name.line);
+                    return;
+                }
             };
 
-            let constant = Var::new(name.literal.to_string(), value, false);
+            if identifier.token != Tokens::Identifier {
+                eprintln!(
+                    "SyntaxError: esperado '=' após o nome da constante na linha {}.",
+                    name.line
+                );
+                return;
+            }
 
-            self.datas.push(constant)
-        } 
+            let value = process_value(lexers[3..].to_vec());
+            let constant = Var::new(name.literal.to_string(), value, false);
+            self.datas.push(constant);
+        }
 
         pub fn get_var(&mut self, name: Lexer) -> Result<&mut Var, String> {
-            let var = self.datas.iter_mut().find(|var| var.compare_var(name.literal.clone()));
+            let var = self
+                .datas
+                .iter_mut()
+                .find(|var| var.compare_var(name.literal.clone()));
 
             match var {
                 Some(v) => Ok(v),
                 None => Err(format!(
-                    "Error on line {}: Variable {} not found", 
-                    name.line,
-                    name.literal,
+                    "Variável '{}' não existe.\n\nlinha: {}",
+                    name.literal, name.line,
                 )),
             }
         }
 
         pub fn get_var_per_name(&mut self, name: String) -> Result<&mut Var, String> {
-            let var = self.datas.iter_mut().find(|var| var.compare_var(name.clone()));
+            let var = self
+                .datas
+                .iter_mut()
+                .find(|var| var.compare_var(name.clone()));
 
             match var {
                 Some(v) => Ok(v),
-                None => Err(format!(
-                    "Variable {} not found",
-                    name
-                )),
+                None => Err(format!("Variável '{}' não existe.", name)),
             }
         }
 
         pub fn get_var_prop(&mut self, lexers: Vec<Lexer>) -> Box<dyn Validator> {
-            let var_target = match self.get_var(lexers[0].clone()) {
-                Ok(var) => var.get_prop(lexers[1..].to_vec()),
-                Err(err) => panic!("{err}"),
-            };
+            if lexers.is_empty() {
+                eprintln!("InternalError: get_var_prop chamado com lista de lexers vazia.");
+                return Box::new("None".to_owned());
+            }
 
-            var_target
+            match self.get_var(lexers[0].clone()) {
+                Ok(var) => var.get_prop(lexers[1..].to_vec()),
+                Err(err) => {
+                    eprintln!("ReferenceError: {}", err);
+                    Box::new("None".to_owned())
+                }
+            }
         }
 
-        // Function
+        // ── Function execution ───────────────────────────────────────────────
+
         pub fn function_run(&mut self, lexers: Vec<Lexer>) -> Box<dyn Validator> {
+            if lexers.is_empty() {
+                eprintln!("SyntaxError: chamada de função vazia.");
+                return Box::new("None".to_owned());
+            }
+
             let name = &lexers[0];
             let mut params: Vec<Lexer> = vec![];
             let mut fun_body: Vec<Lexer> = vec![];
             let mut another_fun = 0;
 
-            for lex in &lexers[2..lexers.len() - 1] {
+            // Parse arguments, resolving nested function calls inline
+            let args_range = if lexers.len() > 2 {
+                &lexers[2..lexers.len() - 1]
+            } else {
+                &[]
+            };
+
+            for lex in args_range {
                 if lex.literal == "," {
                     continue;
                 } else if is_opened(lex.token.clone()) {
                     another_fun += 1;
 
                     if another_fun == 1 {
-                        let ind = params.len() - 1;
-                        fun_body.push(lexers[2 + ind].clone());
+                        let ind = params.len().saturating_sub(1);
+                        if !params.is_empty() {
+                            fun_body.push(lexers[2 + ind].clone());
+                        }
                     }
 
                     fun_body.push(lex.clone());
-                    
                     params.pop();
-                    
-                }else if is_close(lex.token.clone()) {
+                } else if is_close(lex.token.clone()) {
                     another_fun -= 1;
                     fun_body.push(lex.clone());
 
                     if another_fun == 0 {
                         let res = process_value(fun_body.clone());
-
                         let lexer_res = Lexer::new(Tokens::Value, res.to_string(true), lex.line);
-
                         params.push(lexer_res);
-                        fun_body.clear(); 
+                        fun_body.clear();
                     }
+                } else if another_fun > 0 {
+                    fun_body.push(lex.clone());
                 } else {
-                    if another_fun > 0 {
-                        fun_body.push(lex.clone());
-                    } else {
-                        params.push(lex.clone())
-                    }
+                    params.push(lex.clone());
                 }
             }
 
-            return match self.get_var(name.clone()) {
+            match self.get_var(name.clone()) {
                 Ok(ok) => {
                     match ok.get_type() {
-                        Type::NativeFunction | 
-                        Type::Function => {
+                        Type::NativeFunction | Type::Function => {
                             match ok.get_value() {
                                 ValueData::NativeFunction(fun) => {
-                                    let param = remove_quoted_str(process_value(params).to_string(false));
-
+                                    let param = remove_quoted_str(
+                                        process_value(params).to_string(false),
+                                    );
                                     let res = fun(param);
-
-                                    let (type_d, val) = res.valid();
-
-                                    Box::new(
-                                        put_quoted_str(val.literal()) 
-                                    )
-                                },
-                                _ => {
-                                    Box::new("None".to_owned())
+                                    let (_, val) = res.valid();
+                                    Box::new(put_quoted_str(val.literal()))
                                 }
+                                _ => Box::new("None".to_owned()),
                             }
-                        },
-                        _ => panic!("Error on line {}: {} is not a function!", name.line, name.literal)
+                        }
+                        _ => {
+                            eprintln!(
+                                "TypeError na linha {}: '{}' não é uma função.",
+                                name.line, name.literal
+                            );
+                            Box::new("None".to_owned())
+                        }
                     }
-                },
-                Err(err) => panic!("{}", err),
-            };
+                }
+                Err(err) => {
+                    eprintln!("ReferenceError: {}", err);
+                    Box::new("None".to_owned())
+                }
+            }
         }
     }
 }

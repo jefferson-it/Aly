@@ -178,23 +178,33 @@ mod types {
                                 let x = conversor_to_int(item.to_owned());
                                 let val = value.to_string(false);
                                 if x <= -1 {
-                                    return ValueData::String(val.chars().last().unwrap().to_string());
+                                    if let Some(ch) = val.chars().last() {
+                                        return ValueData::String(ch.to_string());
+                                    } else {
+                                        return ValueData::String("None".to_owned());
+                                    }
                                 }
-                                return ValueData::String(val.chars().nth(x.try_into().unwrap()).unwrap().to_string());
+                                if let Ok(idx) = usize::try_from(x) {
+                                    if let Some(ch) = val.chars().nth(idx) {
+                                        return ValueData::String(ch.to_string());
+                                    }
+                                }
+                                return ValueData::String("None".to_owned());
                             },
                             _ => {
                                 match self {
                                     ValueData::Vec(vec) => {
-                                        
                                         let x = conversor_to_int(item.to_owned());
-
-                                        vec.get_index(x.try_into().unwrap())
+                                        if let Ok(idx) = usize::try_from(x) {
+                                            vec.get_index(idx)
+                                        } else {
+                                            ValueData::String("None".to_owned())
+                                        }
                                     },
-                                    _ => panic!(
-                                        "Error on line {}: The type {} is not indexable", 
-                                        line,
-                                        type_data
-                                    )
+                                    _ => {
+                                        eprintln!("RuntimeError [types]: o tipo {} não é indexável na linha {}.", type_data, line);
+                                        ValueData::String("None".to_owned())
+                                    }
                                 }
                             }
                         }

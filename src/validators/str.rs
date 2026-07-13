@@ -111,7 +111,8 @@ mod str {
                     }
                 },
                 None => {
-                    panic!("Error -> The variable {var_expect} is not defined");
+                    eprintln!("ReferenceError [str]: a variável '{}' usada no template string não está definida.", var_expect);
+                    final_str = final_str.replace(&format!("${}", cap), "None");
                 }
             }
         }

@@ -63,7 +63,10 @@ mod client_lib {
         let url = arg(&args, 0);
         match request_raw("GET", &url, None) {
             Ok(body) => ok_str(body),
-            Err(e) => panic!("http.get error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.get]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -73,7 +76,10 @@ mod client_lib {
         let body = arg(&args, 1);
         match request_raw("POST", &url, Some(&body)) {
             Ok(b) => ok_str(b),
-            Err(e) => panic!("http.post error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.post]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -83,7 +89,10 @@ mod client_lib {
         let body = arg(&args, 1);
         match request_raw("PUT", &url, Some(&body)) {
             Ok(b) => ok_str(b),
-            Err(e) => panic!("http.put error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.put]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -92,7 +101,10 @@ mod client_lib {
         let url = arg(&args, 0);
         match request_raw("DELETE", &url, None) {
             Ok(body) => ok_str(body),
-            Err(e) => panic!("http.delete error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.delete]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -102,7 +114,10 @@ mod client_lib {
         let body = arg(&args, 1);
         match request_raw("PATCH", &url, Some(&body)) {
             Ok(b) => ok_str(b),
-            Err(e) => panic!("http.patch error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.patch]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 
@@ -114,7 +129,10 @@ mod client_lib {
         let body_opt = if body.is_empty() { None } else { Some(body.as_str()) };
         match request_raw(&method, &url, body_opt) {
             Ok(b) => ok_str(b),
-            Err(e) => panic!("http.request error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [http.request]: {}", e);
+                ok_str(String::new())
+            }
         }
     }
 

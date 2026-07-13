@@ -9,9 +9,10 @@ mod path {
             Some(ex) => {
                 if ex == "aly" {
                     return file.to_owned();
-                }else {
+                } else {
                     let example = file.replace(ex, "aly");
-                    panic!("Erro!! {file} não é um arquivo válido! Tente o algo como {example}");   
+                    eprintln!("ImportError [path]: '{}' não é um arquivo válido de extensão .aly! Tente algo como '{}'", file, example);
+                    return example;
                 }
             },
             None => {

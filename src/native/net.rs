@@ -18,14 +18,18 @@ mod net_mod {
         let addr = format!("{}:{}", host, port);
         let mut stream = match TcpStream::connect(&addr) {
             Ok(s) => s,
-            Err(e) => panic!("net.tcp_send: failed to connect to '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.tcp_send]: falha ao conectar a '{}': {}", addr, e);
+                return Box::new(put_quoted_str(String::new()));
+            }
         };
 
         stream.set_read_timeout(Some(Duration::from_secs(5))).ok();
 
         if !data.is_empty() {
             if let Err(e) = stream.write_all(data.as_bytes()) {
-                panic!("net.tcp_send: write error on '{}': {}", addr, e);
+                eprintln!("RuntimeError [net.tcp_send]: erro de escrita em '{}': {}", addr, e);
+                return Box::new(put_quoted_str(String::new()));
             }
         }
 
@@ -56,7 +60,10 @@ mod net_mod {
         let addr = format!("0.0.0.0:{}", port);
         let listener = match TcpListener::bind(&addr) {
             Ok(l) => l,
-            Err(e) => panic!("net.tcp_serve: failed to bind '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.tcp_serve]: falha ao vincular '{}': {}", addr, e);
+                return Box::new("None".to_owned());
+            }
         };
 
         for stream in listener.incoming() {
@@ -65,12 +72,14 @@ mod net_mod {
                     let mut buf = [0u8; 4096];
                     let _ = s.read(&mut buf);
                     if let Err(e) = s.write_all(response.as_bytes()) {
-                        panic!("net.tcp_serve: write error: {}", e);
+                        eprintln!("RuntimeError [net.tcp_serve]: erro de escrita: {}", e);
                     }
                     let _ = s.flush();
                     break;
                 }
-                Err(e) => panic!("net.tcp_serve: connection error: {}", e),
+                Err(e) => {
+                    eprintln!("RuntimeError [net.tcp_serve]: erro de conexão: {}", e);
+                }
             }
         }
 
@@ -88,7 +97,10 @@ mod net_mod {
         let addr = format!("0.0.0.0:{}", port);
         let listener = match TcpListener::bind(&addr) {
             Ok(l) => l,
-            Err(e) => panic!("net.tcp_listen: failed to bind '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.tcp_listen]: falha ao vincular '{}': {}", addr, e);
+                return Box::new("None".to_owned());
+            }
         };
 
         for stream in listener.incoming() {
@@ -126,7 +138,9 @@ mod net_mod {
                         }
                     }
                 }
-                Err(e) => panic!("net.tcp_listen: connection error: {}", e),
+                Err(e) => {
+                    eprintln!("RuntimeError [net.tcp_listen]: erro de conexão: {}", e);
+                }
             }
         }
 
@@ -142,12 +156,15 @@ mod net_mod {
 
         let socket = match UdpSocket::bind("0.0.0.0:0") {
             Ok(s) => s,
-            Err(e) => panic!("net.udp_send: failed to create socket: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.udp_send]: falha ao criar socket: {}", e);
+                return Box::new("None".to_owned());
+            }
         };
 
         let addr = format!("{}:{}", host, port);
         if let Err(e) = socket.send_to(data.as_bytes(), &addr) {
-            panic!("net.udp_send: send error to '{}': {}", addr, e);
+            eprintln!("RuntimeError [net.udp_send]: erro de envio para '{}': {}", addr, e);
         }
 
         Box::new("None".to_owned())
@@ -165,7 +182,10 @@ mod net_mod {
         let addr = format!("0.0.0.0:{}", port);
         let socket = match UdpSocket::bind(&addr) {
             Ok(s) => s,
-            Err(e) => panic!("net.udp_recv: failed to bind '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.udp_recv]: falha ao vincular '{}': {}", addr, e);
+                return Box::new("None".to_owned());
+            }
         };
 
         socket.set_read_timeout(Some(Duration::from_secs(30))).ok();
@@ -180,7 +200,10 @@ mod net_mod {
                 obj.set_item("port".to_owned(), ValueData::Int(src.port() as i64));
                 Box::new(ValueData::Object(obj))
             }
-            Err(e) => panic!("net.udp_recv: recv error on '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.udp_recv]: erro de recebimento em '{}': {}", addr, e);
+                Box::new("None".to_owned())
+            }
         }
     }
 
@@ -192,12 +215,16 @@ mod net_mod {
 
         let (mut socket, _) = match tungstenite::connect(&url) {
             Ok(s) => s,
-            Err(e) => panic!("net.ws_connect: failed to connect to '{}': {}", url, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.ws_connect]: falha ao conectar a '{}': {}", url, e);
+                return Box::new(put_quoted_str(String::new()));
+            }
         };
 
         if !data.is_empty() {
             if let Err(e) = socket.send(tungstenite::Message::Text(data)) {
-                panic!("net.ws_connect: send error: {}", e);
+                eprintln!("RuntimeError [net.ws_connect]: erro de envio: {}", e);
+                return Box::new(put_quoted_str(String::new()));
             }
         }
 
@@ -205,7 +232,10 @@ mod net_mod {
             Ok(tungstenite::Message::Text(t)) => t,
             Ok(tungstenite::Message::Binary(b)) => String::from_utf8_lossy(&b).to_string(),
             Ok(_) => String::new(),
-            Err(e) => panic!("net.ws_connect: read error: {}", e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.ws_connect]: erro de leitura: {}", e);
+                String::new()
+            }
         };
 
         let _ = socket.close(None);
@@ -225,7 +255,10 @@ mod net_mod {
         let addr = format!("0.0.0.0:{}", port);
         let listener = match TcpListener::bind(&addr) {
             Ok(l) => l,
-            Err(e) => panic!("net.ws_server: failed to bind '{}': {}", addr, e),
+            Err(e) => {
+                eprintln!("RuntimeError [net.ws_server]: falha ao vincular '{}': {}", addr, e);
+                return Box::new("None".to_owned());
+            }
         };
 
         for stream in listener.incoming() {
@@ -307,7 +340,9 @@ mod net_mod {
                         }
                     }
                 }
-                Err(e) => panic!("net.ws_server: connection error: {}", e),
+                Err(e) => {
+                    eprintln!("RuntimeError [net.ws_server]: erro de conexão: {}", e);
+                }
             }
         }
 
