@@ -22,6 +22,28 @@ print(10 | 3)     # 1   (modulus)
 print(20 % 150)   # 30  (20 percent of 150)
 ```
 
+## Compound Assignment
+
+Compound assignment operators combine an arithmetic operation with assignment.
+
+| Operator | Meaning                 | Example      | Equivalent to |
+| -------- | ----------------------- | ------------ | ------------- |
+| `+=`     | addition assignment     | `x += 3`     | `x = x + 3`   |
+| `-=`     | subtraction assignment  | `x -= 2`     | `x = x - 2`   |
+| `*=`     | multiplication assignment | `x *= 4`   | `x = x * 4`   |
+| `/=`     | division assignment     | `x /= 2`     | `x = x / 2`   |
+| `%=`     | percentage assignment   | `x %= 150`   | `x = x % 150` |
+
+```aly
+let x = 10
+x += 5      # x becomes 15
+x -= 3      # x becomes 12
+x *= 2      # x becomes 24
+x /= 4      # x becomes 6
+x %= 50     # x becomes 30 (50% of 60)
+print(x)    # 30
+```
+
 ## Relational
 
 Relational operators use word forms and produce a boolean:

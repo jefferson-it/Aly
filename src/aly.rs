@@ -38,8 +38,15 @@ mod aly {
             str::{put_quoted_str, remove_quoted_str},
             structures::{is_close, is_opened},
         },
-        Act,
     };
+
+    /// Action types for the Aly runtime
+    #[derive(Clone, Debug)]
+    pub enum Act {
+        Run,
+        Cli,
+        Comp,
+    }
 
     // ──────────────────────────────────────────────────────────────────────────
     // The runtime struct
@@ -158,29 +165,63 @@ mod aly {
             }
 
             if lexers[0].token.id() != "def_let" {
-                // Reassignment: `name = value`
+                // Reassignment: `name = value` or compound: `name += value`
                 let name = &lexers[0];
-                let identifier = match lexers.get(1) {
-                    Some(l) => l,
+                let op_token = match lexers.get(1) {
+                    Some(l) => &l.token,
                     None => {
                         eprintln!("SyntaxError: esperado '=' após o nome da variável na linha {}.", name.line);
                         return;
                     }
                 };
 
-                if identifier.token != Tokens::Identifier {
-                    eprintln!(
-                        "SyntaxError: esperado '=' após o nome da variável na linha {}.",
-                        name.line
-                    );
-                    return;
-                }
+                // Check for compound assignment operators
+                let compound_op = match op_token {
+                    Tokens::PlusEqual => Some("+"),
+                    Tokens::MinusEqual => Some("-"),
+                    Tokens::TimesEqual => Some("*"),
+                    Tokens::DivideEqual => Some("/"),
+                    Tokens::ModulusEqual => Some("%"),
+                    Tokens::Identifier => None, // regular assignment
+                    _ => {
+                        eprintln!(
+                            "SyntaxError: esperado '=' ou operador de atribuição composto após o nome da variável na linha {}.",
+                            name.line
+                        );
+                        return;
+                    }
+                };
 
-                let value = process_value(lexers[2..].to_vec());
+                let value_lexers = if compound_op.is_some() {
+                    // For compound: get the value after the operator
+                    if lexers.len() < 3 {
+                        eprintln!("SyntaxError: esperado valor após o operador na linha {}.", name.line);
+                        return;
+                    }
+                    // Get current value and combine with new value
+                    match self.get_var(name.clone()) {
+                        Ok(v) => {
+                            let current_val = v.get_value().to_string(false);
+                            let new_val = process_value(lexers[2..].to_vec()).to_string(false);
+                            // Build expression: current op new_value
+                            let op = compound_op.unwrap();
+                            let combined = format!("{} {} {}", current_val, op, new_val);
+                            vec![Lexer::new(Tokens::Value, combined, name.line)]
+                        }
+                        Err(err) => {
+                            eprintln!("ReferenceError na linha {}: {}", name.line, err);
+                            return;
+                        }
+                    }
+                } else {
+                    // Regular assignment: get the value after '='
+                    lexers[2..].to_vec()
+                };
 
                 match self.get_var(name.clone()) {
                     Ok(v) => {
-                        if let Err(err) = v.change_value(value) {
+                        let final_value = process_value(value_lexers);
+                        if let Err(err) = v.change_value(final_value) {
                             eprintln!("TypeError na linha {}: {}", name.line, err);
                         }
                     }

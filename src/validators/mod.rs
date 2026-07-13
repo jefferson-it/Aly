@@ -50,6 +50,18 @@ mod validators {
         }
     }
 
+    // Compound assignment operators
+    pub fn is_compound_assign(tok: Tokens) -> bool {
+        matches!(
+            tok,
+            Tokens::PlusEqual
+                | Tokens::MinusEqual
+                | Tokens::TimesEqual
+                | Tokens::DivideEqual
+                | Tokens::ModulusEqual
+        )
+    }
+
     // Conversor
 
     pub fn conversor_to_int(item: String) -> i32 {

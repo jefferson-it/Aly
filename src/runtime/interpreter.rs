@@ -15,6 +15,7 @@ mod interpreter {
         },
         tokens::Tokens,
         validators::{
+            is_compound_assign,
             is_conditional_exp,
             numeric::{def_value_float, is_math_operator},
             str::{put_quoted_str, remove_quoted_str},
@@ -79,6 +80,9 @@ mod interpreter {
                 } else {
                     "math"
                 }
+            } else if is_compound_assign(lex.token.clone()) {
+                // Compound assignment: +=, -=, *=, /=, %=
+                to_made = "compound_assign"
             } else if is_conditional_exp(lex.token.clone()) {
                 to_made = if to_made.contains("_dec") {
                     if line_is_dec(previous.clone()) {
@@ -223,6 +227,63 @@ mod interpreter {
             }
             "conditional" => {
                 *val = exec_cond(previous);
+            }
+            "compound_assign" => {
+                // Handles: name += value, name -= value, etc.
+                // The form is: [name, operator, value...]
+                if previous.len() >= 2 {
+                    let target = &previous[0];
+                    let op = &previous[1].token;
+
+                    // Get the value after the operator
+                    let value_lexers = if previous.len() > 2 {
+                        (&previous[2..]).to_vec()
+                    } else {
+                        eprintln!("SyntaxError: esperado valor após o operador de atribuição composto.");
+                        return;
+                    };
+
+                    // Get current value of variable
+                    let current_val = match run.get_var_per_name(target.literal.clone()) {
+                        Ok(v) => v.get_value().to_string(false),
+                        Err(_) => {
+                            eprintln!("ReferenceError: variável '{}' não definida.", target.literal);
+                            return;
+                        }
+                    };
+
+                    // Get new value
+                    let new_val = process_value(value_lexers).to_string(false);
+
+                    // Build compound expression
+                    let op_str = match op {
+                        Tokens::PlusEqual => "+",
+                        Tokens::MinusEqual => "-",
+                        Tokens::TimesEqual => "*",
+                        Tokens::DivideEqual => "/",
+                        Tokens::ModulusEqual => "|",  // Using | for modulus
+                        _ => return,
+                    };
+
+                    let expr = format!("{} {} {}", current_val, op_str, new_val);
+
+                    match exec_rust(expr) {
+                        Err(err) => {
+                            eprintln!("RuntimeError: {}", err.message);
+                        }
+                        Ok(res) => {
+                            // Update the variable
+                            match run.get_var(target.clone()) {
+                                Ok(v) => {
+                                    if let Err(err) = v.change_value(res) {
+                                        eprintln!("TypeError: {}", err);
+                                    }
+                                }
+                                Err(_) => {}
+                            }
+                        }
+                    }
+                }
             }
             "use_prop" => *val = run.get_var_prop(previous),
             "create_object" => *val = create_object(previous),

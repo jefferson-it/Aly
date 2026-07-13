@@ -44,6 +44,12 @@ mod tokens {
         Multiplication,
         Modulus,
         Percent,
+        // Compound Assignment Operators
+        PlusEqual,       // +=
+        MinusEqual,      // -=
+        TimesEqual,      // *=
+        DivideEqual,     // /=
+        ModulusEqual,    // %=
         // Relational Operator
         Equal,
         NotEqual,
@@ -56,6 +62,7 @@ mod tokens {
         And,
         Or,
         Xor,
+        Ternary,        // ?: conditional
         // Another
         Comma,        // ,
         Semicolon,    // ;
@@ -116,6 +123,11 @@ mod tokens {
                 Tokens::Multiplication => "*",
                 Tokens::Modulus => "|",
                 Tokens::Percent => "%",
+                Tokens::PlusEqual => "+=",
+                Tokens::MinusEqual => "-=",
+                Tokens::TimesEqual => "*=",
+                Tokens::DivideEqual => "/=",
+                Tokens::ModulusEqual => "%=",
                 Tokens::Equal => "eq",
                 Tokens::NotEqual => "neq",
                 Tokens::LessThan => "lt",
@@ -126,6 +138,7 @@ mod tokens {
                 Tokens::And => "and",
                 Tokens::Or => "or",
                 Tokens::Xor => "xor",
+                Tokens::Ternary => "?",
                 Tokens::Comma => ",",
                 Tokens::Semicolon => ";",
                 Tokens::Colon => ":",
@@ -177,6 +190,11 @@ mod tokens {
                 Tokens::Multiplication => "math_multiplication",
                 Tokens::Modulus => "math_modulus",
                 Tokens::Percent => "math_percent",
+                Tokens::PlusEqual => "compound_plus",
+                Tokens::MinusEqual => "compound_minus",
+                Tokens::TimesEqual => "compound_times",
+                Tokens::DivideEqual => "compound_divide",
+                Tokens::ModulusEqual => "compound_modulus",
                 Tokens::Equal => "relational_equal",
                 Tokens::NotEqual => "relational_not_equal",
                 Tokens::LessThan => "relational_less",
@@ -187,6 +205,7 @@ mod tokens {
                 Tokens::And => "conditional_and",
                 Tokens::Or => "conditional_or",
                 Tokens::Xor => "conditional_xor",
+                Tokens::Ternary => "ternary",
                 Tokens::Comma => "comma",
                 Tokens::Semicolon => "semicolon",
                 Tokens::Colon => "colon",
@@ -239,6 +258,11 @@ mod tokens {
             "*" => Tokens::Multiplication,
             "|" => Tokens::Modulus,
             "%" => Tokens::Percent,
+            "+=" => Tokens::PlusEqual,
+            "-=" => Tokens::MinusEqual,
+            "*=" => Tokens::TimesEqual,
+            "/=" => Tokens::DivideEqual,
+            "%=" => Tokens::ModulusEqual,
             "eq" | "EQ" => Tokens::Equal,
             "neq" | "NEQ" => Tokens::NotEqual,
             "lt" | "LT" => Tokens::LessThan,
@@ -249,6 +273,7 @@ mod tokens {
             "and" | "AND" => Tokens::And,
             "or" | "OR" => Tokens::Or,
             "xor" | "XOR" => Tokens::Xor,
+            "?" => Tokens::Ternary,
             "," => Tokens::Comma,
             ";" => Tokens::Semicolon,
             ":" => Tokens::Colon,

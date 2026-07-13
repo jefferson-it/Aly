@@ -33,13 +33,13 @@ pub enum AlyErrorKind {
 impl fmt::Display for AlyErrorKind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
-            AlyErrorKind::Syntax => "SyntaxError",
-            AlyErrorKind::Runtime => "RuntimeError",
-            AlyErrorKind::Type => "TypeError",
-            AlyErrorKind::Reference => "ReferenceError",
-            AlyErrorKind::Import => "ImportError",
-            AlyErrorKind::Exception => "Exception",
-            AlyErrorKind::Internal => "InternalError",
+            AlyErrorKind::Syntax => "Erro de Sintaxe",
+            AlyErrorKind::Runtime => "Erro em Tempo de Execução",
+            AlyErrorKind::Type => "Erro de Tipo",
+            AlyErrorKind::Reference => "Erro de Referência",
+            AlyErrorKind::Import => "Erro de Importação",
+            AlyErrorKind::Exception => "Exceção",
+            AlyErrorKind::Internal => "Erro Interno",
         };
         write!(f, "{}", name)
     }
