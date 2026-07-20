@@ -8,10 +8,14 @@ use gtk4::{
     HeaderBar, Image, Label, Orientation, Stack, StackTransitionType
 };
 
-use std::cell::RefCell;\nuse std::collections::HashMap;\nuse std::rc::Rc;\nuse gtk4::{CheckButton, DropDown, Entry, Notebook, Orientation, ProgressBar, Scale, TextView};\nuse crate::native::types::{Validator, ValueData};\nuse crate::native::std::{arg, split_args};\nuse crate::validators::str::put_quoted_str;
-
-use crate::native::types::Validator;
+use std::cell::RefCell;
+use std::collections::HashMap;
+use std::rc::Rc;
+use gtk4::{CheckButton, DropDown, Entry, Notebook, Orientation, ProgressBar, Scale, TextView};
+use crate::native::types::{Validator, ValueData};
+use crate::native::std::{arg, split_args};
 use crate::validators::str::put_quoted_str;
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Custom CSS for Alinix Installer Screens
@@ -29,7 +33,7 @@ window.window-light {
 }
 
 window.window-dark {
-    background-color: #2d2d2d;
+    background-color: #2b2b2b;
     color: #ffffff;
 }
 
@@ -80,30 +84,30 @@ button.btn-next-blue:hover {
 }
 
 button.btn-purple {
-    background-color: #9b51e0;
+    background-color: #9351a6;
     color: #ffffff;
     font-weight: 600;
     font-size: 13px;
     border-radius: 18px;
     padding: 8px 32px;
     border: none;
-    box-shadow: 0 2px 6px rgba(155, 81, 224, 0.4);
+    box-shadow: 0 2px 6px rgba(147, 81, 166, 0.4);
 }
 button.btn-purple:hover {
-    background-color: #8842ca;
+    background-color: #804294;
 }
 
 button.btn-mode {
-    background-color: #4c5678;
+    background-color: #4c5b8a;
     color: #ffffff;
     font-weight: 600;
     font-size: 14px;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px 24px;
     border: none;
 }
 button.btn-mode:hover {
-    background-color: #5d6992;
+    background-color: #5b6ca4;
 }
 
 button.btn-back {
@@ -132,7 +136,7 @@ button.btn-back:hover {
 }
 
 .sidebar-item-active {
-    background-color: #9b51e0;
+    background-color: #8f52a1;
     color: #ffffff;
     border-radius: 8px;
     padding: 10px 16px;
@@ -144,7 +148,7 @@ button.btn-back:hover {
 .theme-card {
     background-color: #3a3a3a;
     border-radius: 12px;
-    padding: 6px;
+    padding: 8px;
     border: 2px solid transparent;
 }
 
@@ -159,10 +163,37 @@ button.btn-back:hover {
     margin-top: 8px;
 }
 
-/* Radio item */
-.radio-text {
-    font-size: 16px;
+.card-subtitle {
+    font-size: 12px;
+    color: #aaaaaa;
+    margin-top: 4px;
+}
+
+/* Radio item & Disk Partitioning */
+.radio-title {
+    font-size: 15px;
+    font-weight: 600;
     color: #ffffff;
+}
+
+.radio-subtitle {
+    font-size: 12px;
+    color: #aaaaaa;
+    margin-top: 2px;
+}
+
+.disk-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+dropdown {
+    background-color: #383838;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 4px 12px;
+    border: 1px solid #555555;
 }
 "##;
 
@@ -290,7 +321,7 @@ fn build_welcome_screen(stack: &Stack) -> GtkBox {
     title.set_markup("<span font='36' weight='bold' foreground='#000000'>ALINIX</span>");
 
     let subtitle = Label::new(None);
-    subtitle.set_markup("<span font='22' weight='bold' foreground='#000000'>WELCOME</span>");
+    subtitle.set_markup("<span font='20' weight='bold' foreground='#000000'>WELCOME</span>");
 
     center_box.append(&logo);
     center_box.append(&title);
@@ -328,20 +359,20 @@ fn build_language_screen(stack: &Stack) -> GtkBox {
     page.set_vexpand(true);
 
     // Main Layout (Sidebar + Center area)
-    let main_h = GtkBox::new(Orientation::Horizontal, 24);
+    let main_h = GtkBox::new(Orientation::Horizontal, 32);
     main_h.set_margin_top(30);
     main_h.set_margin_bottom(30);
-    main_h.set_margin_start(30);
-    main_h.set_margin_end(30);
+    main_h.set_margin_start(36);
+    main_h.set_margin_end(36);
     main_h.set_vexpand(true);
 
-    // Sidebar
+    // Sidebar (Language Selector)
     let sidebar = GtkBox::new(Orientation::Vertical, 6);
     sidebar.add_css_class("sidebar-box");
-    sidebar.set_size_request(200, -1);
+    sidebar.set_size_request(210, -1);
     sidebar.set_valign(gtk4::Align::Start);
 
-    let languages = ["ENGLISH (US)", "PORTUGUÊS (BRASIL)", "PORTUGUÊS (PORTUGAL)", "ESPANHOL"];
+    let languages = ["ENGLISH (US)", "PORTUGUÊS (BRASIL)", "PORTUGUÊS (PORTUGAL)", "ESPANHOL", "FRANÇAIS"];
     for (i, lang) in languages.iter().enumerate() {
         let lbl = Label::new(Some(lang));
         if i == 0 {
@@ -355,16 +386,20 @@ fn build_language_screen(stack: &Stack) -> GtkBox {
     main_h.append(&sidebar);
 
     // Mode Option Cards
-    let cards_h = GtkBox::new(Orientation::Horizontal, 40);
+    let cards_h = GtkBox::new(Orientation::Horizontal, 48);
     cards_h.set_halign(gtk4::Align::Center);
     cards_h.set_valign(gtk4::Align::Center);
     cards_h.set_hexpand(true);
 
     // Card 1: Live Mode
-    let card1 = GtkBox::new(Orientation::Vertical, 16);
+    let card1 = GtkBox::new(Orientation::Vertical, 8);
     card1.set_halign(gtk4::Align::Center);
     let disc_img = create_image_from_svg(DISC_ICON_SVG);
-    disc_img.set_margin_bottom(10);
+    disc_img.set_margin_bottom(12);
+
+    let desc1 = Label::new(Some("Experimentar o Alinix sem instalar."));
+    desc1.add_css_class("card-subtitle");
+
     let btn_live = Button::with_label("Live Mode");
     btn_live.add_css_class("btn-mode");
 
@@ -374,13 +409,18 @@ fn build_language_screen(stack: &Stack) -> GtkBox {
     });
 
     card1.append(&disc_img);
+    card1.append(&desc1);
     card1.append(&btn_live);
 
     // Card 2: Install Alinix
-    let card2 = GtkBox::new(Orientation::Vertical, 16);
+    let card2 = GtkBox::new(Orientation::Vertical, 8);
     card2.set_halign(gtk4::Align::Center);
     let install_img = create_image_from_svg(INSTALL_ICON_SVG);
-    install_img.set_margin_bottom(10);
+    install_img.set_margin_bottom(12);
+
+    let desc2 = Label::new(Some("Instalar permanentemente no computador."));
+    desc2.add_css_class("card-subtitle");
+
     let btn_install = Button::with_label("Install Alinix");
     btn_install.add_css_class("btn-mode");
 
@@ -390,6 +430,7 @@ fn build_language_screen(stack: &Stack) -> GtkBox {
     });
 
     card2.append(&install_img);
+    card2.append(&desc2);
     card2.append(&btn_install);
 
     cards_h.append(&card1);
@@ -459,7 +500,7 @@ fn build_customize_screen(stack: &Stack) -> GtkBox {
 
     let colors = [
         "#007aff", "#00a896", "#4caf50", "#f2c94c", "#f2994a",
-        "#eb5757", "#e056fd", "#9b51e0", "#607d8b"
+        "#eb5757", "#e056fd", "#8f52a1", "#607d8b"
     ];
 
     for (i, col) in colors.iter().enumerate() {
@@ -505,42 +546,82 @@ fn build_partition_screen(stack: &Stack) -> GtkBox {
     page.add_css_class("window-dark");
     page.set_vexpand(true);
 
-    // Radio Options Box
-    let center_box = GtkBox::new(Orientation::Vertical, 28);
-    center_box.set_valign(gtk4::Align::Center);
-    center_box.set_halign(gtk4::Align::Start);
-    center_box.set_margin_start(160);
-    center_box.set_vexpand(true);
+    let main_box = GtkBox::new(Orientation::Vertical, 20);
+    main_box.set_valign(gtk4::Align::Center);
+    main_box.set_halign(gtk4::Align::Start);
+    main_box.set_margin_start(120);
+    main_box.set_margin_end(120);
+    main_box.set_vexpand(true);
 
+    // Disk Selector Row
+    let disk_row = GtkBox::new(Orientation::Horizontal, 12);
+    disk_row.set_valign(gtk4::Align::Center);
+    disk_row.set_margin_bottom(12);
+
+    let disk_lbl = Label::new(Some("💾 Disco de Destino:"));
+    disk_lbl.add_css_class("disk-label");
+
+    let dropdown = DropDown::from_strings(&[
+        "NVMe SSD 512 GB (/dev/nvme0n1)",
+        "SATA SSD 1 TB (/dev/sda)",
+    ]);
+
+    disk_row.append(&disk_lbl);
+    disk_row.append(&dropdown);
+    main_box.append(&disk_row);
+
+    // Radio Options Box
     let options = [
-        ("Usar Disco inteiro", false),
-        ("Usar Disco inteiro + /home separada", true),
-        ("Partição manual", false),
+        (
+            "Usar Disco inteiro",
+            "Apaga todo o disco selecionado e instala o Alinix de forma automática.",
+            false
+        ),
+        (
+            "Usar Disco inteiro + /home separada",
+            "Preserva seus arquivos em reinstalações e cria partição de dados dedicada.",
+            true
+        ),
+        (
+            "Partição manual",
+            "Para usuários avançados criarem, redimensionarem ou editarem partições.",
+            false
+        ),
     ];
 
-    for (text, is_selected) in options.iter() {
+    for (title_text, subtitle_text, is_selected) in options.iter() {
         let row = GtkBox::new(Orientation::Horizontal, 16);
         row.set_valign(gtk4::Align::Center);
 
         let svg = if *is_selected {
-            r##"<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ffffff"/></svg>"##
+            r##"<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#8f52a1"/><circle cx="12" cy="12" r="4" fill="#ffffff"/></svg>"##
         } else {
             r##"<svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="#ffffff" stroke-width="2"/></svg>"##
         };
         let radio_img = create_image_from_svg(svg);
-        let lbl = Label::new(Some(text));
-        lbl.add_css_class("radio-text");
+
+        let text_vbox = GtkBox::new(Orientation::Vertical, 2);
+        let title_lbl = Label::new(Some(title_text));
+        title_lbl.add_css_class("radio-title");
+        title_lbl.set_halign(gtk4::Align::Start);
+
+        let sub_lbl = Label::new(Some(subtitle_text));
+        sub_lbl.add_css_class("radio-subtitle");
+        sub_lbl.set_halign(gtk4::Align::Start);
+
+        text_vbox.append(&title_lbl);
+        text_vbox.append(&sub_lbl);
 
         row.append(&radio_img);
-        row.append(&lbl);
-        center_box.append(&row);
+        row.append(&text_vbox);
+        main_box.append(&row);
     }
-    page.append(&center_box);
+    page.append(&main_box);
 
     // Bottom Navigation Bar
     let bottom_bar = GtkBox::new(Orientation::Horizontal, 0);
     bottom_bar.set_margin_bottom(24);
-    bottom_bar.set_margin_start(160);
+    bottom_bar.set_margin_start(120);
     bottom_bar.set_margin_end(28);
 
     let back_btn = Button::with_label("Voltar");
@@ -1263,9 +1344,9 @@ pub fn gtk_get_prop(id: String, prop: String) -> Box<dyn Validator> {
 
     match prop.as_str() {
         "label" | "innerText" | "value" => match &*borrow {
-            GtkWidget::Button(b) => Box::new(put_quoted_str(b.label())),
-            GtkWidget::Label(l) => Box::new(put_quoted_str(l.label())),
-            GtkWidget::Input(e) => Box::new(put_quoted_str(e.text())),
+            GtkWidget::Button(b) => Box::new(put_quoted_str(b.label().map(|s| s.to_string()).unwrap_or_default())),
+            GtkWidget::Label(l) => Box::new(put_quoted_str(l.label().to_string())),
+            GtkWidget::Input(e) => Box::new(put_quoted_str(e.text().to_string())),
             GtkWidget::TextArea(tv) => {
                 let buf = tv.buffer();
                 let start = buf.start_iter();
@@ -1273,9 +1354,9 @@ pub fn gtk_get_prop(id: String, prop: String) -> Box<dyn Validator> {
                 let text = buf.text(&start, &end, true);
                 Box::new(put_quoted_str(text.to_string()))
             }
-            GtkWidget::PasswordField(e) => Box::new(put_quoted_str(e.text())),
-            GtkWidget::Checkbox(c) => Box::new(put_quoted_str(c.label())),
-            GtkWidget::Radio(r) => Box::new(put_quoted_str(r.label())),
+            GtkWidget::PasswordField(e) => Box::new(put_quoted_str(e.text().to_string())),
+            GtkWidget::Checkbox(c) => Box::new(put_quoted_str(c.label().map(|s| s.to_string()).unwrap_or_default())),
+            GtkWidget::Radio(r) => Box::new(put_quoted_str(r.label().map(|s| s.to_string()).unwrap_or_default())),
             _ => Box::new(put_quoted_str("None".to_owned())),
         },
         "checked" => match &*borrow {
@@ -1285,12 +1366,8 @@ pub fn gtk_get_prop(id: String, prop: String) -> Box<dyn Validator> {
         },
         "selected" => match &*borrow {
             GtkWidget::Dropdown(d) => {
-                if let Some(idx) = d.selected() {
-                    let text = d.selected_string().unwrap_or_default();
-                    Box::new(put_quoted_str(format!("{}:{}", text, idx)))
-                } else {
-                    Box::new(put_quoted_str("None".to_owned()))
-                }
+                let idx = d.selected();
+                Box::new(put_quoted_str(format!("{}", idx)))
             }
             _ => Box::new(put_quoted_str("None".to_owned())),
         },
