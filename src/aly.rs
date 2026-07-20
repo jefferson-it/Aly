@@ -54,9 +54,10 @@ mod aly {
 
     #[derive(Clone)]
     pub struct Aly {
-        action: Option<Act>,
+        pub action: Option<Act>,
         datas: Vec<Var>,
     }
+
 
     // ──────────────────────────────────────────────────────────────────────────
     // Thread-local storage — replaces `static mut RUNTIME`
@@ -133,6 +134,17 @@ mod aly {
                 tomb as fn(String) -> Box<dyn Validator>,
                 false,
             ));
+            self.datas.push(Var::new(
+                String::from("gtk_installer_app"),
+                crate::native::gtk::gtk_installer_app as fn(String) -> Box<dyn Validator>,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("gtk_installer"),
+                crate::native::gtk::gtk_installer_app as fn(String) -> Box<dyn Validator>,
+                false,
+            ));
+
 
             match &self.action {
                 Some(act) => match act {

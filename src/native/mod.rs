@@ -4,6 +4,8 @@ pub mod types;
 pub mod conditions;
 pub mod create_object;
 pub mod vector;
+pub mod gtk;
+
 
 mod native {
     use std::io::{stdin, stdout, Write};

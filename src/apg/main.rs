@@ -1,15 +1,15 @@
-mod cli;
-mod config;
-mod manifest;
-mod registry;
-mod resolver;
-mod locker;
-mod downloader;
-mod cache;
+use crate::apg::cli;
+use crate::apg::config;
+use crate::apg::manifest;
+use crate::apg::registry;
+use crate::apg::resolver;
+use crate::apg::locker;
+use crate::apg::downloader;
+use crate::apg::cache;
 
 use std::env;
 
-fn main() {
+pub fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         println!("Uso: apg <comando> [opções]");
@@ -17,7 +17,19 @@ fn main() {
     }
 
     match args[1].as_str() {
-        "init" => cli::init(),
+        "run" => {
+            if args.len() > 2 {
+                let aly = crate::aly::get_runtime();
+                aly.action = Some(crate::aly::Act::Run);
+                aly.run(args[2].clone());
+            } else {
+                println!("Erro: Nome do arquivo script (.aly) necessário");
+            }
+        },
+
+        "init" => cli::init("."),
+
+
         "add" => {
             if args.len() > 2 { cli::add(&args[2]) } else { println!("Erro: Nome do pacote necessário") }
         },

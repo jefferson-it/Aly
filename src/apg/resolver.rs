@@ -1,8 +1,8 @@
 use std::fs;
 use std::path::Path;
 use std::collections::HashMap;
-use crate::manifest::Manifest;
-use crate::downloader::GitRepo;
+use crate::apg::manifest::Manifest;
+use crate::apg::downloader::GitRepo;
 
 #[derive(Debug, Clone)]
 pub struct ResolutionResult {
@@ -14,12 +14,12 @@ pub struct ResolutionResult {
 
 pub struct Resolver {
     cache: HashMap<String, ResolutionResult>,
-    registries: Vec<crate::registry::Registry>,
+    registries: Vec<crate::apg::registry::Registry>,
 }
 
 impl Resolver {
     pub fn new() -> Self {
-        let registries = crate::registry::load_registries_config();
+        let registries = crate::apg::registry::load_registries_config();
         Resolver {
             cache: HashMap::new(),
             registries,
@@ -31,15 +31,15 @@ impl Resolver {
             return Ok(cached.clone());
         }
         
-        let mut last_error = None;
+        let mut last_error: Option<String> = None;
         for registry in &self.registries {
-            if crate::registry::check_package_exists(registry, package_name) {
-                let temp_dir = crate::registry::fetch_package_from_registry(registry, package_name)
+            if crate::apg::registry::check_package_exists(registry, package_name) {
+                let temp_dir = crate::apg::registry::fetch_package_from_registry(registry, package_name)
                     .ok_or_else(|| format!("Não foi possível baixar pacote {} do registro {}", package_name, registry.name))?;
                 
                 let manifest_path = format!("{}/packages/{}.toml", temp_dir, package_name);
                 let manifest_content = std::fs::read_to_string(&manifest_path)?;
-                let manifest: crate::manifest::Manifest = toml::from_str(&manifest_content)?;
+                let manifest: crate::apg::manifest::Manifest = toml::from_str(&manifest_content)?;
                 
                 let _ = std::fs::remove_dir_all(&temp_dir);
                 

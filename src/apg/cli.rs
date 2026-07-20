@@ -1,11 +1,11 @@
 use std::fs;
 use std::path::Path;
 use std::env;
-use crate::manifest::Manifest;
-use crate::locker::{Lockfile, parse_lockfile, write_lockfile};
-use crate::resolver::Resolver;
-use crate::cache::{get_dependency_graph, generate_lockfile};
-use crate::config::Config;
+use crate::apg::manifest::Manifest;
+use crate::apg::locker::{Lockfile, parse_lockfile, write_lockfile, generate_lockfile};
+use crate::apg::resolver::Resolver;
+use crate::apg::cache::{get_dependency_graph};
+use crate::apg::config::Config;
 
 pub fn show_help() {
     println!("APG — Aly Package Gestor");
@@ -113,7 +113,7 @@ pub fn update() {
     
     let config = match Config::load("config.apg.toml") {
         Ok(c) => c,
-        Err(_) => Config::default(),
+        Err(_) => Config::get_default(),
     };
     
     let mut resolver = Resolver::new();
@@ -125,7 +125,7 @@ pub fn update() {
             for (name, version) in lockfile.packages.iter_mut() {
                 match resolver.resolve(name) {
                     Ok(manifest) => {
-                        let new_version = manifest.package.version;
+                        let new_version = manifest.version;
                         if new_version != *version {
                             println!("  {} {} → {}", name, version, new_version);
                             *version = new_version;

@@ -1,8 +1,8 @@
 use std::fs;
 use std::path::Path;
 use std::collections::{HashMap, VecDeque};
-use crate::manifest::{Manifest, DependencySpec};
-use crate::resolver::Resolver;
+use crate::apg::manifest::{Manifest, DependencySpec};
+use crate::apg::resolver::Resolver;
 
 pub fn get_dependency_graph(project_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
     let manifest_path = Path::new(project_dir).join("aly.toml");
@@ -10,7 +10,8 @@ pub fn get_dependency_graph(project_dir: &str) -> Result<(), Box<dyn std::error:
         return Err("aly.toml not found".into());
     }
     
-    let manifest = crate::manifest::Manifest::parse(&manifest_path.to_string_lossy())?;
+    let manifest = Manifest::new();
+    let manifest = manifest.parse(&manifest_path.to_string_lossy())?;
     println!("Projeto: {}", manifest.package.name);
     println!("Versão: {}", manifest.package.version);
     

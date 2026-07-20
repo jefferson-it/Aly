@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use crate::manifest::DependencySpec;
+use crate::apg::manifest::DependencySpec;
 
 #[derive(Debug, Clone)]
 pub struct GitRepo {

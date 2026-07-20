@@ -1,43 +1,58 @@
 #[cfg(test)]
 mod interpreter_unit_tests {
     // Unit tests for core interpreter components
-    // These tests focus on isolated functionality such as expression parsing,
-    // variable binding, and basic operation execution.
+    use Aly::math_eval::eval_math;
 
     #[test]
     fn parse_number_literal() {
-        // Example: parse "42" into an AST node representing a number
-        // assert_eq!(parse("42"), Ok(Number { value: 42 }));
+        let result = eval_math("42").expect("should parse number");
+        assert_eq!(result, "42");
     }
 
     #[test]
     fn parse_binary_operation() {
-        // Example: parse "1 + 2 * 3" into an AST reflecting operator precedence
-        // assert_eq!(parse("1 + 2 * 3"), Ok(BinaryOp { left: 1, op: '+', right: Box::new(BinaryOp { left: 2, op: '*', right: 3 }) }));
+        let result = eval_math("1 + 2 * 3").expect("should parse binary op");
+        assert_eq!(result, "7");
     }
 
     #[test]
     fn evaluate_literal_number() {
-        // Example: evaluating the number literal AST returns the same value
-        // assert_eq!(evaluate(Number { value: 5 }), Ok(5));
+        let result = eval_math("5").expect("should evaluate number");
+        assert_eq!(result, "5");
     }
 
     #[test]
     fn evaluate_addition() {
-        // Example: evaluate "2 + 3" yields 5
-        // assert_eq!(evaluate(BinaryOp { left: 2, op: '+', right: Box::new(Number { value: 3 }) }), Ok(5));
+        let result = eval_math("2 + 3").expect("should add");
+        assert_eq!(result, "5");
     }
 
     #[test]
     fn variable_declaration_syntax() {
-        // Example: ensure "let x = 10;" parses correctly
-        // assert_eq!(parse("let x = 10;"), Ok(Declaration { var: "x", value: Box::new(Number { value: 10 }) }));
+        let tokens = aly::runtime::parser::tokenize_line("let x = 10");
+        assert!(!tokens.is_empty());
+        let literals: Vec<String> = tokens.iter().map(|t| t.literal.clone()).collect();
+        assert!(literals.contains(&"let".to_string()));
+        assert!(literals.contains(&"x".to_string()));
     }
 
     #[test]
     fn ternary_operator_exists() {
-        // The ternary operator has been added to the tokens module.
-        // This test verifies the codebase compiles with the changes.
-        assert!(true);
+        let tk = aly::tokens::get_token("?".to_string());
+        assert_eq!(tk.literal(), "?");
+    }
+
+    #[test]
+    fn compound_assign_tokens_exist() {
+        assert_eq!(aly::tokens::get_token("+=".to_string()).literal(), "+=");
+        assert_eq!(aly::tokens::get_token("-=".to_string()).literal(), "-=");
+    }
+
+    #[test]
+    fn error_system_works() {
+        use Aly::error::{AlyError, AlyErrorKind};
+        let err = AlyError::runtime("test error".to_string());
+        assert_eq!(err.kind, AlyErrorKind::Runtime);
+        assert!(err.message.contains("test error"));
     }
 }

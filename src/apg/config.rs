@@ -35,14 +35,14 @@ impl Config {
             config.cache_dir = "~/.cache/apg".to_string();
         }
         
-        if config.security.check_typosquatting.is_none() {
-            config.security.check_typosquatting = Some(true);
+        if !config.security.check_typosquatting {
+            config.security.check_typosquatting = true;
         }
-        if config.security.allow_git_urls.is_none() {
-            config.security.allow_git_urls = Some(true);
+        if !config.security.allow_git_urls {
+            config.security.allow_git_urls = true;
         }
-        if config.security.allow_local_paths.is_none() {
-            config.security.allow_local_paths = Some(true);
+        if !config.security.allow_local_paths {
+            config.security.allow_local_paths = true;
         }
         
         Ok(config)

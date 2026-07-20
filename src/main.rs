@@ -1,17 +1,11 @@
-mod apg;
-mod error;
-mod math_eval;
-mod aly;
-mod compiler;
-mod runtime;
-mod lexer;
-mod native;
-mod tokens;
-mod validators;
-mod schema;
-
-use crate::apg::main as apg_main;
+/// Aly-lang — Entry point.
+///
+/// Delegates to the APG (Aly Package Manager) CLI which handles
+/// running scripts, REPL, compilation, and package management.
+use Aly::apg::main::main as apg_main;
 
 fn main() {
     apg_main();
 }
+
+
