@@ -1,0 +1,320 @@
+[
+  {
+    "lang": "en-US",
+    "path": "ai_ml.md",
+    "title": "Artificial Intelligence & Machine Learning in Aly",
+    "content": "Artificial Intelligence & Machine Learning in Aly\n\nAly provides native modules (, , ) to interface with AI/ML backends directly from scripts, allowing neural inference, LLM chat operations, and embedding extraction.\n\n---\n\n1. Core Machine Learning ()\n\nThe  module manages inference sessions and models using either **Candle** (pure Rust ML framework) or **ONNX Runtime**.\n\nAPI Reference:\n* : Returns status of available backends.\n* : Initializes a session (e.g. using backend  or ).\n* : Registers a model weights file.\n* : Runs model inference.\n\n\n\n---\n\n2. LLMs and GGUF ()\n\nFor text generation and conversational AI, Aly features bindings to load local GGUF models.\n\nAPI Reference:\n* : Loads a GGUF weights file into memory.\n* : Generates text completion.\n* : Executes conversational instruction turns.\n\n\n\n---\n\n3. Text Embeddings ()\n\nGenerate vector representations of text for semantic search and classification.\n\nAPI Reference:\n* : Configures a vector embedding model.\n* : Computes text embedding vector."
+  },
+  {
+    "lang": "en-US",
+    "path": "android.md",
+    "title": "Android Support in Aly",
+    "content": "Android Support in Aly\n\nAly can build and package applications for Android devices.\n\n---\n\n1. Android Build Tool\n\n\n\nThis generates an Android project structure with:\n- Gradle build files\n- AndroidManifest.xml\n- JNI bridge for Aly runtime\n- APK packaging\n\n---\n\n2. Android Runtime\n\n\n\n---\n\n3. Project Structure"
+  },
+  {
+    "lang": "en-US",
+    "path": "apg.md",
+    "title": "APG — Aly Package Manager",
+    "content": "APG — Aly Package Manager\n\nAPG (Aly Package Manager) is the official package manager for installing, managing, and publishing Aly packages.\n\n---\n\n1. CLI Commands\n\nInitialize a new project\n\n\n\nCreates a new directory with :\n\n\n\nInstall dependencies\n\n\n\nReads  and installs all listed dependencies.\n\nAdd a dependency\n\n\n\nRemove a dependency\n\n\n\nPublish a package\n\n\n\nSearch registry\n\n\n\n---\n\n2. Dependencies\n\nPackages are resolved from the Aly package registry. Dependencies are locked in  for reproducible builds.\n\n\n\n---\n\n3. Local Development\n\n\n\n---\n\n4. Registry\n\nThe default registry is . Custom registries can be configured:"
+  },
+  {
+    "lang": "en-US",
+    "path": "bindings.md",
+    "title": "Language Bindings in Aly",
+    "content": "Language Bindings in Aly\n\nAly provides interoperability with other programming languages through binding modules.\n\n---\n\n1. Java / JNI Bindings\n\n\n\nThe JNI generator ( tool) automatically generates binding code from Aly schemas.\n\n---\n\n2. .NET Bindings\n\n\n\n---\n\n3. Node.js Bindings\n\n\n\n---\n\n4. Rust Bindings\n\nNative Rust functions are registered as Aly native modules through the  type system. See Native Bindings for details."
+  },
+  {
+    "lang": "en-US",
+    "path": "collections.md",
+    "title": "Collections in Aly",
+    "content": "Collections in Aly\n\nBeyond lists/vectors and objects, Aly provides tuples, sets, stacks, queues, linked lists, and enumerations.\n\n---\n\n1. Tuples\n\nAn ordered, immutable collection of values enclosed in parentheses:\n\n\n\n\n\n---\n\n2. Sets\n\nAn unordered collection of unique values:\n\n\n\nDuplicates are automatically removed on creation.\n\n---\n\n3. Stacks\n\nLast-In-First-Out (LIFO) data structure:\n\n\n\n- : Add item to top\n- : Remove and return top item\n- : Number of items\n\n---\n\n4. Queues\n\nFirst-In-First-Out (FIFO) data structure:\n\n\n\n- : Add item to back\n- : Remove and return front item\n- : Number of items\n\n---\n\n5. Linked Lists\n\nSingly-linked list with head insertion:\n\n\n\n- : Insert at head\n- : Number of nodes\n\n---\n\n6. Enumerations\n\nNamed sets of variants with optional associated data:"
+  },
+  {
+    "lang": "en-US",
+    "path": "compiler_backends.md",
+    "title": "Compiler Backends in Aly",
+    "content": "Compiler Backends in Aly\n\nAly's AOT compiler () can transpile code to multiple target languages and platforms.\n\n---\n\n1. Available Backends\n\n| Backend | Command | Output |\n|---------|---------|--------|\n| Native ELF |  | Linux executable |\n| Windows PE |  | Windows executable |\n| Go |  | Go source code |\n| Rust |  | Rust source code |\n| JavaScript |  | JavaScript source code |\n| Python |  | Python source code |\n| JVM Bytecode |  | Java bytecode |\n| Kotlin |  | Kotlin source code |\n| C++ |  | C++ source code |\n| Shell/Bash |  | Shell script |\n\n---\n\n2. LLVM Backend\n\nUses LLVM for native code generation with optimizations:\n\n\n\n---\n\n3. C++ Backend\n\nTranspiles Aly to C++ with a runtime header ():\n\n\n\n---\n\n4. JVM/Bytecode Backend\n\nGenerates JVM bytecode directly ( files):\n\n\n\n---\n\n5. Transpiler Details\n\nEach backend converts Aly's HIR (High-level Intermediate Representation) into the target language's AST, then generates source code. The  module handles C++ ABI compatibility for calling conventions."
+  },
+  {
+    "lang": "en-US",
+    "path": "compiler_optimization.md",
+    "title": "Compiler Optimization in Aly",
+    "content": "Compiler Optimization in Aly\n\nThe Aly compiler includes optimization passes for both the AOT compiler and the JIT VM.\n\n---\n\n1. Optimization Passes\n\nThe compiler runs a series of optimization passes on the MIR (Mid-level Intermediate Representation):\n\n- **Constant Folding**: Evaluates constant expressions at compile time ()\n- **Dead Code Elimination**: Removes unreachable code\n- **Inlining**: Replaces function calls with the function body when beneficial\n- **Strength Reduction**: Replaces expensive operations with cheaper ones\n\n---\n\n2. Incremental Compilation\n\n\n\nCaches previously compiled modules and only recompiles changed files:\n\n\n\n---\n\n3. Parallel Compilation\n\n\n\nCompiles independent modules in parallel using multiple threads, reducing total build time for multi-module projects.\n\n---\n\n4. JIT Optimizations\n\nThe VM's JIT () optimizes hot code paths:\n\n- **Inline Caching**: Caches method lookup results ()\n- **Fast Call Convention**: Optimized argument passing (, )\n- **Optimized VM**: Tuned bytecode execution ()"
+  },
+  {
+    "lang": "en-US",
+    "path": "concurrency.md",
+    "title": "Concurrency in Aly",
+    "content": "Concurrency in Aly\n\nAly provides basic concurrency primitives through the  type for thread-safe shared state.\n\n---\n\n1. Atomic Variables\n\n wraps a value in , enabling safe concurrent access:\n\n\n\n---\n\n2. Thread Spawning\n\nThreads can be spawned via  and :\n\n\n\n spawns multiple threads in parallel and waits for all to finish.\n\n---\n\n3. Parallel Command Execution\n\n\n\nExecutes multiple shell commands concurrently and collects outputs as a vector."
+  },
+  {
+    "lang": "en-US",
+    "path": "constant_and_tomb.md",
+    "title": "Constants and the `tomb` Freezing Mechanism in Aly",
+    "content": "Constants and the  Freezing Mechanism in Aly\n\nAly supports traditional compile-time constants as well as dynamic mutability freezing at runtime.\n\n---\n\n1. Constants ()\n\nConstants are declared at compile-time and cannot be rebound or mutated.\n\n\n\n---\n\n2. Dynamic Freezing ()\n\nThe native function  locks a mutable variable, converting it into a constant at runtime. Any subsequent attempts to mutate or rebind the variable will fail.\n\n\n\nThis feature is useful for ensuring data safety, defining runtime configurations that must not change after setup, and locking states."
+  },
+  {
+    "lang": "en-US",
+    "path": "control_flow/conditional.md",
+    "title": "Conditionals in Aly",
+    "content": "Conditionals in Aly\n\nConditionals allow you to steer the execution flow based on boolean expressions.\n\n---\n\n1.  /  /  Statements\n\nThe  statement evaluates a logical condition. Curly braces  are required to enclose block scopes.\n\n\n\n---\n\n2. Comparison Operators\n\nAly uses prefix-style text names for standard comparison operators:\n* ****: Equal ()\n* ****: Not Equal ()\n* ****: Greater Than ()\n* ****: Less Than ()\n* ****: Greater Than or Equal ()\n* ****: Less Than or Equal ()\n\n---\n\n3. Logical Operators\n\n* ****: Logical AND. Returns  only if both expressions are true.\n* ****: Logical OR. Returns  if at least one expression is true.\n* ** / **: Logical NOT. Inverts the boolean value of the expression."
+  },
+  {
+    "lang": "en-US",
+    "path": "control_flow/loop.md",
+    "title": "Loops in Aly",
+    "content": "Loops in Aly\n\nLoops allow you to repeat block instructions. Aly unifies loops in the  keyword.\n\n---\n\n1. Conditional Loop (While style)\n\nEvaluates the expression before entering the loop. It repeats as long as the condition is .\n\n\n\n---\n\n2. Iteration Loop (For style)\n\nYou can specify loop initializations, conditions, and increments using semi-colons:\n\n\n\n---\n\n3. Loop Control Statements\n\n* ****: Exits the loop immediately.\n* ****: Jumps directly to the next loop iteration, bypassing instructions below."
+  },
+  {
+    "lang": "en-US",
+    "path": "control_flow/match.md",
+    "title": "Pattern Matching (Match) in Aly",
+    "content": "Pattern Matching (Match) in Aly\n\nThe  statement evaluates an expression and matches it against multiple patterns.\n\n---\n\n1. Syntax\n\n\n\n* ****: Acts as the catch-all wildcard pattern (default case).\n* Blocks can be single expressions or compound blocks wrapped in ."
+  },
+  {
+    "lang": "en-US",
+    "path": "cpp_abi.md",
+    "title": "C++ ABI in Aly",
+    "content": "C++ ABI in Aly\n\nThe C++ ABI module enables Aly to call C++ functions directly and handle C++ calling conventions.\n\n---\n\n1. C++ Function Calls\n\n\n\n---\n\n2. C++ Name Mangling\n\nThe  module handles platform-specific name mangling:\n\n| Compiler | Mangling Pattern |\n|----------|-----------------|\n| GCC/Clang (Itanium) |  |\n| MSVC |  |\n\n---\n\n3. Struct Layout\n\nC++ structs are accessed through the ABI layout:\n\n\n\n---\n\n4. Calling Conventions\n\nSupports  (MSVC), , and  conventions:"
+  },
+  {
+    "lang": "en-US",
+    "path": "data_types.md",
+    "title": "Data Types in Aly",
+    "content": "Data Types in Aly\n\nAly is dynamically-typed but internally supports a rich set of robust primitive and composite data types.\n\n---\n\n1. Primitives\n\n* **Integer ()**: 64-bit signed integers (e.g. , ).\n* **Floating-Point ()**: 64-bit IEEE 754 floating-point numbers (e.g. , ).\n* **Boolean ()**: Logical values, either  or .\n* **Character ()**: Single-byte character literals enclosed in single quotes (e.g. , , ).\n* **String ()**: Sequence of characters enclosed in double quotes (e.g. ). Supports string template interpolation using `nullNonelistobject`)\n\nObjects are key-value mappings representing dictionary or associative array structures. Keys are identifiers or strings."
+  },
+  {
+    "lang": "en-US",
+    "path": "functions.md",
+    "title": "Functions in Aly",
+    "content": "Functions in Aly\n\nFunctions are first-class values defined with the  keyword. They can be named, anonymous, stored in variables, passed as arguments, and returned from other functions.\n\n---\n\n1. Named Function Definition\n\n\n\nParameters are positional. Parentheses around parameters are required. Curly braces delimit the function body.\n\n---\n\n2. Return Values\n\nA function returns the value of the last expression evaluated, or explicitly with :\n\n\n\n without an expression returns .\n\n---\n\n3. Anonymous Functions (Lambdas/Closures)\n\nFunctions without a name can be assigned to variables or passed inline:\n\n\n\nAnonymous functions capture variables from their enclosing scope (closures).\n\n\n\n---\n\n4. Default Parameters\n\nParameters can have default values:\n\n\n\n---\n\n5. Variadic Functions\n\nA variadic parameter collects excess arguments into a list using :\n\n\n\nOnly one variadic parameter is allowed, and it must be the last parameter.\n\n---\n\n6. First-Class Functions\n\nFunctions can be stored in data structures and passed around:"
+  },
+  {
+    "lang": "en-US",
+    "path": "graphics/cocoa.md",
+    "title": "Cocoa GUI Backend in Aly",
+    "content": "Cocoa GUI Backend in Aly\n\nThe Cocoa backend maps Aly widgets directly to AppKit classes (, , etc.) on macOS systems.\n\n---\n\n1. Activation\n\nTo force native Apple AppKit rendering:\n\n\n\n---\n\n2. Platform Compliance\n\nBy utilizing standard AppKit runtime selectors, Cocoa windows automatically comply with macOS layout conventions, Apple Menu bars, and system font renderings."
+  },
+  {
+    "lang": "en-US",
+    "path": "graphics/fltk.md",
+    "title": "FLTK GUI Backend in Aly",
+    "content": "FLTK GUI Backend in Aly\n\nFLTK (Fast Light Toolkit) is the default cross-platform GUI backend in Aly due to its speed and low footprint.\n\n---\n\n1. Activation\n\nNo additional configuration is required to use FLTK, but you can explicitly specify it:\n\n\n\n---\n\n2. Features\n\n* **Lightweight**: Compiles statically into the output binary without requiring heavy dynamically linked system libraries.\n* **Speed**: Instantaneous window initialization and minimal rendering lag.\n* **Portability**: Operates consistently across Linux, Windows, and macOS."
+  },
+  {
+    "lang": "en-US",
+    "path": "graphics/geral.md",
+    "title": "Graphical User Interface (GUI) in Aly",
+    "content": "Graphical User Interface (GUI) in Aly\n\nAly features a native abstract GUI toolkit that compiles and executes across multiple platform backends.\n\n---\n\n1. Unified Interface Abstraction\n\nInstead of writing platform-specific UI code, Aly developers construct layouts using standard OOP GUI classes (, , , ). Under the hood, these layouts map to widgets generated by the active platform backend.\n\n\n\n---\n\n2. Supported Backends\n\n* **FLTK**: The default backend. Highly lightweight and portable.\n* **GTK4**: Modern Linux-focused desktop experience.\n* **Cocoa**: Native macOS UI components.\n* **Qt**: Custom backend placeholder.\n* **DOM**: Virtual representation for web compilation."
+  },
+  {
+    "lang": "en-US",
+    "path": "graphics/gtk.md",
+    "title": "GTK4 GUI Backend in Aly",
+    "content": "GTK4 GUI Backend in Aly\n\nThe GTK4 backend connects Aly visual widgets to native GNOME desktop widgets on Linux systems.\n\n---\n\n1. Activation\n\nTo force GTK4 layout rendering:\n\n\n\n---\n\n2. Linux Styling Integration\n\nGTK4 windows automatically respect active system GTK themes, dark modes, and CSS stylesheets loaded via:"
+  },
+  {
+    "lang": "en-US",
+    "path": "index.md",
+    "title": "Aly Programming Language Documentation",
+    "content": "Aly Programming Language Documentation\n\nWelcome to the official documentation for **Aly**, a modern, expressive, and high-performance programming language.\n\nQuick Start\n\n- Syntax Basics\n- Variables\n- Data Types\n- Operators\n- Functions\n\nLanguage Reference\n\nControl Flow\n- Conditionals\n- Loops\n- Match\n\nObject-Oriented Programming\n- Objects\n- Schema\n\nAdvanced Features\n- Traits\n- Modules\n- Reflection\n- Metaprogramming\n- Collections\n- Strings\n\nNative Libraries\n\n- Overview\n- File System\n- JSON\n- Database\n- Network\n- Web\n- System Shell\n- Security\n- IoT\n- Data Science\n- Data Formats\n- Math, Crypto & Regex\n- Game\n\nSpecialized Topics\n\n- AI & Machine Learning\n- Concurrency\n- Native\n- Bindings\n- RPC & Microservices\n- Advanced Schemas\n- C++ ABI\n- Compiler Backends\n- Compiler Optimization\n- Constant and Tomb\n\nGraphics\n\n- Overview\n- GTK\n- Cocoa\n- FLTK\n\nTools\n\n- Overview\n\nOthers\n\n- Render\n- REPL\n- Jot\n- Android\n\n---\n\n*Select a topic from the sidebar on the left to get started.*"
+  },
+  {
+    "lang": "en-US",
+    "path": "jot.md",
+    "title": "JOT Data Format in Aly",
+    "content": "JOT Data Format in Aly\n\nJOT is a JSON-like data format and query language built into Aly for structured data manipulation.\n\n---\n\n1. JOT Values\n\nJOT supports the following value types:\n\n- **Null**: Absence of value\n- **Boolean**:  or \n- **Integer**: 64-bit signed integers\n- **Float**: 64-bit floating-point numbers\n- **String**: Text strings\n- **Array**: Ordered list of JOT values\n- **Object**: Key-value map of JOT values\n\n---\n\n2. JOT Syntax\n\n\n\n---\n\n3. Querying with \n\nThe  method traverses nested objects using a sequence of keys:\n\n\n\nReturns  if any key in the chain does not exist.\n\n---\n\n4. Converting to String\n\n\n\nOutputs the JOT value as a formatted string, indented for readability.\n\n---\n\n5. JOT Runtime\n\nThe JOT runtime () provides parsing, formatting, and conversion utilities. It serves as the internal representation for structured data throughout the Aly runtime."
+  },
+  {
+    "lang": "en-US",
+    "path": "metaprogramming.md",
+    "title": "Metaprogramming in Aly",
+    "content": "Metaprogramming in Aly\n\nAly supports compile-time code generation and transformation through macros and lazy evaluation.\n\n---\n\n1. Macro Definitions\n\n\n\nMacros receive token trees and produce AST nodes that are spliced into the calling code.\n\n---\n\n2. Lazy Evaluation\n\n\n\nLazy variables are initialized only on their first access, useful for deferred computation and circular references.\n\n---\n\n3. Compile-Time Constant Evaluation\n\nThe  module evaluates expressions at compile time when all inputs are known constants:\n\n\n\n---\n\n4. AST Hooks\n\nThe compiler's  module provides hooks for transforming the AST during compilation, enabling custom syntax extensions and DSL embedding."
+  },
+  {
+    "lang": "en-US",
+    "path": "modules.md",
+    "title": "Modules in Aly",
+    "content": "Modules in Aly\n\nModules allow organizing code into separate files and controlling symbol visibility with  and .\n\n---\n\n1. Importing Modules\n\n\n\nImported modules register their public symbols into the global scope.\n\n---\n\n2. Module Structure\n\nAly uses a file-based module system. Each  file is a module. Symbols declared with  become public:\n\n\n\n---\n\n3. Importing User Modules\n\n\n\nPaths can be relative or absolute:\n\n\n\n---\n\n4. Module System Internals\n\nThe runtime module system ( struct) tracks:\n\n- ****: Module identifier\n- ****: Symbols exported to consumers\n- ****: Internal symbols (inaccessible outside the module)\n\nSymbols that are not explicitly ed remain private to the defining module."
+  },
+  {
+    "lang": "en-US",
+    "path": "native.md",
+    "title": "Native Bindings & Extensibility in Aly",
+    "content": "Native Bindings & Extensibility in Aly\n\nAly supports runtime extensibility and native Rust module bindings through native registration traits and dynamic libraries.\n\n---\n\n1. Rust Integration\n\nTo bind Rust methods as native functions inside Aly, you map Rust types using the  representation in Rust modules (like ):\n\n* ****: Corresponds to .\n* ****: Corresponds to .\n* ****: Corresponds to .\n* ****: Corresponds to .\n* ****: Corresponds to .\n\n---\n\n2. Dynamic Library Plugins ()\n\nExternal  /  /  library plugins can be loaded dynamically into the interpreter using:\n\n\n\nThis registers external symbols, methods, and structures into the active Aly execution runtime namespace.\n\n---\n\n3. Importing a Plugin\n\nThe basic import syntax is:\n\n\n\nThe path is relative to the current execution directory. The  clause defines the namespace used to call the plugin's functions. If omitted, the filename (without extension) is used as the namespace.\n\n---\n\n4. Calling Functions\n\nFunctions exposed by the plugin are accessed via :\n\n\n\nArguments are passed separated by commas or spaces.\n\n---\n\n5. Creating a Plugin\n\n5.1 C ABI (Application Binary Interface)\n\nAny plugin must export three mandatory functions described in the header :\n\n\n\n5.2 Structures\n\n\n\n5.3 Mandatory Functions\n\nReturns a pointer to a static  structure. Called once when the plugin is loaded. It must never return NULL.\n\n\n\nReceives the function name and an arguments string. It must return a string allocated with  (or equivalent) which will be freed by the runtime via . Returns NULL to indicate an error.\n\n\n\nFrees the string returned by . If ptr is NULL, the call is ignored.\n\n\n\n5.4 Optional Functions\n\nReturns a comma-separated string containing the names of the exposed functions. If exported, each function is registered individually as , allowing direct calls like . If not exported, the runtime registers only the namespace without individual function bindings.\n\n\n\n---\n\n6. Full Example in C\n\n\n\nCompile with:\n\n\n\n---\n\n7. Example in Rust\n\nCreate a project with  in :\n\n\n\nImplement the ABI using  and :\n\n\n\nCompile with:\n\n\n\n---\n\n8. Example in Go\n\n\n\nCompile with:\n\n\n\n---\n\n9. Example in C++\n\n\n\nCompile with:\n\n\n\n---\n\n10. Example in Zig\n\n\n\nCompile with:\n\n\n\n---\n\n11. How Aly Loads Plugins\n\nInternally, Aly uses  (Rust) to load the shared library at runtime via / (Linux), / (Windows), or / (macOS).\n\nThe execution flow is as follows:\n\n1. The interpreter processes .\n2. Calls  to check metadata and compatibility.\n3. Calls  (if exported) to discover registered functions.\n4. Registers each function under  in the active scope.\n5. When  is invoked, Aly parses the arguments into a comma-separated string and calls .\n6. The string output is returned and converted back into the appropriate Aly types.\n\n---\n\n12. Security\n\nPlugins are compiled native code executed inside the same address space as the Aly process. They possess full system access permissions (filesystem, networking, subprocesses, etc.). Never import plugins from untrusted sources."
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/data_formats.md",
+    "title": "Data Formats & Compression in Aly",
+    "content": "Data Formats & Compression in Aly\n\nAly has native encoders, decoders, compressors, and parser modules for dealing with multiple common data formats.\n\n---\n\n1. Codecs (Base64 & Hex)\n\nEncode and decode bytes/strings to Hex and Base64 format:\n\n\n---\n\n2. CSV Operations\n\nRead and write Tabular Comma-Separated Values (CSV):\n\n\n---\n\n3. GZIP Compression\n\nCompress and decompress data payloads:\n\n\n---\n\n4. Tar Archiving\n\nCreate and extract tar archives:\n\n\n---\n\n5. PDF Generation\n\nGenerate PDF documents programmatically:"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/data_science.md",
+    "title": "Data Science Module in Aly",
+    "content": "Data Science Module in Aly\n\nAly provides basic data science utilities for numerical computing and data analysis.\n\n---\n\n1. Statistics\n\n\n\n---\n\n2. Linear Algebra\n\n\n\n---\n\n3. Data Frames"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/database.md",
+    "title": "Database Module in Aly",
+    "content": "Database Module in Aly\n\nAly provides built-in database drivers for SQLite, PostgreSQL, MySQL, and Redis through the  module.\n\n---\n\n1. SQLite\n\n\n\n---\n\n2. PostgreSQL\n\n\n\n---\n\n3. MySQL\n\n\n\n---\n\n4. Redis\n\n\n\n---\n\n5. Connection Pooling\n\nThe database module supports connection pooling through the  system, allowing reuse of database connections across requests."
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/datetime.md",
+    "title": "DateTime Utilities in Aly",
+    "content": "DateTime Utilities in Aly\n\nAly provides built-in utilities for parsing, formatting, and manipulating date and time values.\n\n---\n\n1. API Reference\n\n| Function | Parameters | Returns | Description |\n| -------- | ---------- | ------- | ----------- |\n|  | *none* |  | Returns current local date-time as an ISO-8601 string (). |\n|  | *none* |  | Returns current UTC date-time as an ISO-8601 string (). |\n|  |  |  | Parses an ISO-8601 date-time string. Returns  on failure. |\n|  | ,  |  | Parses a  using a custom  (e.g., ). Returns ISO-8601 string. |\n|  |  |  | Converts a Unix timestamp (in seconds) to an ISO-8601 date-time string. |\n|  |  |  | Produces a  value (represented as a quoted integer of seconds). |\n\n---\n\n2. Examples\n\n\n\n---\n\n3. Implementation Notes\n\n- Date-time functions return values wrapped as strings for safe serialization and transfer.\n- Timezone parsing and formatting are handled under the hood using Rust's  crate, matching the system's local timezone.\n- Errors are returned as descriptive strings instead of causing runtime panics."
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/filesystem.md",
+    "title": "Filesystem Operations in Aly",
+    "content": "Filesystem Operations in Aly\n\nThe  module provides filesystem read, write, and manipulation functions.\n\n---\n\n1. Reading Files\n\n\n\nReturns file contents as a string. Returns empty string on error.\n\n---\n\n2. Writing Files\n\n\n\nWrites a string to a file, overwriting existing content.\n\n---\n\n3. Appending to Files\n\n\n\nAdds content to the end of an existing file.\n\n---\n\n4. File Existence Check\n\n\n\n---\n\n5. Copying, Moving, and Deleting\n\n\n\n---\n\n6. Directory Operations\n\n\n\n---\n\n7. File Metadata"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/game.md",
+    "title": "Game Development in Aly",
+    "content": "Game Development in Aly\n\nAly provides a game development module with basic 2D game primitives.\n\n---\n\n1. Game Window\n\n\n\n---\n\n2. Sprites and Rendering\n\n\n\n---\n\n3. Input Handling\n\n\n\n---\n\n4. Audio"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/iot.md",
+    "title": "IoT and Embedded Support in Aly",
+    "content": "IoT and Embedded Support in Aly\n\nAly supports IoT and embedded platforms through feature-gated modules for ESP32, Arduino, Raspberry Pi, and low-level protocols (GPIO, I2C, SPI, UART).\n\n> **Note**: These modules require enabling the corresponding Cargo features at build time.\n\n---\n\n1. ESP32\n\n\n\n---\n\n2. Arduino\n\n\n\n---\n\n3. Raspberry Pi\n\n\n\n---\n\n4. GPIO (General Purpose Input/Output)\n\n\n\n---\n\n5. I2C Protocol\n\n\n\n---\n\n6. SPI Protocol\n\n\n\n---\n\n7. UART / Serial"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/json.md",
+    "title": "JSON Module in Aly",
+    "content": "JSON Module in Aly\n\nThe  module provides parsing and serialization of JSON data.\n\n---\n\n1. Parsing JSON\n\n\n\nParsed JSON maps to native Aly types:\n- JSON object -> Aly object\n- JSON array -> Aly vector\n- JSON string -> Aly string\n- JSON number -> Aly int or float\n- JSON boolean -> Aly bool\n- JSON null -> Aly \n\n---\n\n2. Serializing to JSON\n\n\n\nThe  function converts Aly values back to JSON text format."
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/math_crypto_regex.md",
+    "title": "Math, Cryptography, and Regex in Aly",
+    "content": "Math, Cryptography, and Regex in Aly\n\nAly exposes native mathematical utilities, cryptographic primitives (hashes, encryption), and regular expression match engines.\n\n---\n\n1. Advanced Math Functions ()\n\nExposes standard trigonometry, logarithms, and powers:\n\n\n---\n\n2. Cryptographic Hashes & AES ()\n\nSecurely hash text outputs (MD5, SHA1, SHA256, SHA512) or encrypt/decrypt with AES-256-GCM:\n\n\n---\n\n3. Regular Expressions ()\n\nMatch, capture, and replace text using standard regex patterns:"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/net.md",
+    "title": "Network Programming in Aly",
+    "content": "Network Programming in Aly\n\nAly provides robust native modules for network operations, from low-level raw TCP/UDP sockets to high-level HTTP client requests and API servers.\n\n---\n\n1. HTTP Client & Server ()\n\nThe  module allows you to spin up API servers and perform HTTP client requests.\n\nHTTP Client (curl-backed)\nPerform HTTP GET and POST requests:\n\n\nHTTP Server\nCreate a microservice server:\n\n\n---\n\n2. Low-Level Sockets ()\n\nFor custom protocol implementations, Aly provides low-level TCP and UDP connection wrappers.\n\nTCP Server\n\n\nTCP Client\n\n\n---\n\n3. WebSocket\n\nReal-time bidirectional communication:\n\n\n---\n\n4. MQTT\n\nLightweight publish/subscribe messaging protocol:\n\n\n> **Note**: MQTT requires the  Cargo feature.\n\n---\n\n5. TLS / SSL\n\nSecure socket connections:"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/os_shell.md",
+    "title": "OS and Shell Utilities in Aly",
+    "content": "OS and Shell Utilities in Aly\n\nThe  module provides system information queries. The  module provides command execution and process management.\n\n---\n\n1. OS Information ()\n\n\n\nMemory Information\n\n\n\nCPU Information\n\n\n\nRaw System Call\n\n\n\n---\n\n2. Shell Command Execution ()\n\nBasic Execution\n\n\n\nBackground Processes\n\n\n\nShell Pipes\n\n\n\nEnvironment Variables\n\n\n\nWorking Directory\n\n\n\nProcess Management\n\n\n\nCustom Shell\n\n\n\nPseudo-TTY"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/security.md",
+    "title": "Security Module in Aly",
+    "content": "Security Module in Aly\n\nThe  module provides JWT, OAuth2, OpenID Connect, TLS, hashing, signatures, ACME (Let's Encrypt), and input sanitization.\n\n---\n\n1. JWT (JSON Web Tokens)\n\n\n\n---\n\n2. OAuth2\n\n\n\n---\n\n3. OpenID Connect (OIDC)\n\n\n\n---\n\n4. TLS / SSL\n\n\n\n---\n\n5. Cryptographic Hashing\n\n\n\n---\n\n6. Digital Signatures\n\n\n\n---\n\n7. ACME (Let's Encrypt)\n\n\n\n---\n\n8. Input Sanitization"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/system.md",
+    "title": "System, Environment, and OS Utilities in Aly",
+    "content": "System, Environment, and OS Utilities in Aly\n\nAly provides libraries to access core environment variables, check configurations, read configuration profiles, and manage system terminals.\n\n---\n\n1. Environment Profiles ()\n\nLoad  variables directly into active environment bindings:\n\n\n---\n\n2. UUID Generation ()\n\nGenerate unique identifier strings natively:\n\n\n---\n\n3. Terminal Control ()\n\nControl outputs, colors, and read standard terminal inputs:"
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries/web.md",
+    "title": "Web Platform Module in Aly",
+    "content": "Web Platform Module in Aly\n\nAly provides web runtime capabilities including DOM manipulation, CSS styling, Web Components, and WebAssembly backend.\n\n---\n\n1. Web / DOM\n\n\n\n---\n\n2. CSS Styling\n\n\n\n---\n\n3. Web Components\n\n\n\n---\n\n4. DOM Backend\n\n\n\nThe DOM backend enables server-side rendering and virtual DOM diffing.\n\n---\n\n5. WebAssembly Backend\n\n\n\nThe WASM backend allows running WebAssembly modules directly from Aly."
+  },
+  {
+    "lang": "en-US",
+    "path": "native_libraries.md",
+    "title": "Standard Libraries in Aly",
+    "content": "Standard Libraries in Aly\n\nAly includes built-in standard libraries that can be imported to handle basic operational tasks such as timestamps, sleeps, JSON/CSV formatting, and file structures.\n\n---\n\n1. Time & Sleep Operations (, )\n\n* ****: Focuses on scheduling and delays.\n  * : Halts program execution for the specified milliseconds.\n* ****: Interfaces with system metrics.\n  * : Returns Unix time in seconds.\n\n\n\n---\n\n2. File Paths ()\n\nThe  library provides cross-platform file path resolution utility functions.\n\n* : Returns  if file exists.\n* : Concatenates path directory paths safely."
+  },
+  {
+    "lang": "en-US",
+    "path": "operators.md",
+    "title": "Operators in Aly",
+    "content": "Operators in Aly\n\nAly supports arithmetic, comparison, logical, and assignment operators. Comparison operators use text-style names.\n\n---\n\n1. Arithmetic Operators\n\n| Operator | Description | Example |\n|----------|-------------|---------|\n|  | Addition |  →  |\n|  | Subtraction |  →  |\n|  | Multiplication |  →  |\n|  | Division |  →  |\n|  | Modulo (remainder) |  →  |\n|  | Power |  →  |\n|  | Increment (postfix) |  →  |\n|  | Decrement (postfix) |  →  |\n\n\n\n---\n\n2. Comparison (Relational) Operators\n\nAly uses **text-based** comparison operators:\n\n| Operator | Meaning | Example |\n|----------|---------|---------|\n|  | Equal to |  →  |\n|  | Not equal to |  →  |\n|  | Greater than |  →  |\n|  | Less than |  →  |\n|  | Greater than or equal |  →  |\n|  | Less than or equal |  →  |\n\n\n\n---\n\n3. Logical Operators\n\n| Operator | Description | Example |\n|----------|-------------|---------|\n|  | Logical AND |  →  |\n|  | Logical OR |  →  |\n|  | Logical NOT |  →  |\n|  | Logical NOT (alias) |  →  |\n\n\n\n---\n\n4. Assignment Operators\n\n| Operator | Description | Example |\n|----------|-------------|---------|\n|  | Assignment |  |\n|  | Add and assign |  |\n|  | Subtract and assign |  |\n|  | Multiply and assign |  |\n|  | Divide and assign |  |\n\n\n\n---\n\n5. String Operators\n\n| Operator | Description | Example |\n|----------|-------------|---------|\n|  | Concatenation |  |\n|  | Repetition |  →  |\n\n---\n\n6. Operator Precedence (highest to lowest)\n\n1.  (power)\n2.     (unary)\n3.   \n4.  \n5.       (comparisons)\n6. \n7. \n8.      (assignment)"
+  },
+  {
+    "lang": "en-US",
+    "path": "poo/Schema.md",
+    "title": "Schemas (Class-like OOP) in Aly",
+    "content": "Schemas (Class-like OOP) in Aly\n\nSchemas provide a class-like blueprint system to instantiate structured objects with default field values and member methods.\n\n---\n\n1. Schema Definition\n\nA schema is declared using the  keyword.\n\n\n\n* ** prefix**: Used inside schema methods to reference fields belonging to the current instance (equivalent to  or ).\n\n---\n\n2. Instantiating Schemas ()\n\nInstances are created using the  keyword.\n\nDefault Constructor\nIf no arguments are passed, fields are initialized to their default values:\n\n\nConstructor Arguments\nPassing arguments to  overrides default field values in order of their declaration:"
+  },
+  {
+    "lang": "en-US",
+    "path": "poo/objects.md",
+    "title": "Objects in Aly",
+    "content": "Objects in Aly\n\nObjects in Aly are dynamic map key-value structures. They can hold variables, nested objects, and functions (acting as methods).\n\n---\n\n1. Object Instantiation\n\nAn object literal is declared using curly braces .\n\n\n\n---\n\n2. Dynamic Modifications\n\nProperties and methods can be added or overridden dynamically:"
+  },
+  {
+    "lang": "en-US",
+    "path": "reflection.md",
+    "title": "Reflection in Aly",
+    "content": "Reflection in Aly\n\nAly provides basic reflection capabilities to inspect runtime state.\n\n---\n\n1. Listing Variables\n\n\n\n---\n\n2. Listing Schemas\n\n\n\n---\n\n3. Runtime Type Inspection\n\nThe  function returns the type name of a value:"
+  },
+  {
+    "lang": "en-US",
+    "path": "render.md",
+    "title": "Graphics Rendering in Aly",
+    "content": "Graphics Rendering in Aly\n\nAly provides hardware-accelerated graphics rendering through OpenGL, Vulkan, and DirectX backends.\n\n---\n\n1. OpenGL Backend\n\n\n\n---\n\n2. Vulkan Backend\n\n\n\n---\n\n3. DirectX Backend\n\n\n\n> **Note**: DirectX is only available on Windows targets."
+  },
+  {
+    "lang": "en-US",
+    "path": "repl.md",
+    "title": "REPL and Scheduler in Aly",
+    "content": "REPL and Scheduler in Aly\n\nAly provides an interactive REPL (Read-Eval-Print Loop) prompt and a cooperative task scheduler.\n\n---\n\n1. Interactive REPL\n\nLaunch the REPL:\n\n\n\nOr from the runtime:\n\n\nThe prompt evaluates Aly expressions interactively:\n\n\n\n---\n\n2. Scheduler\n\nThe cooperative scheduler manages concurrent tasks:\n\n\n\nTasks voluntarily yield control, allowing the scheduler to interleave execution cooperatively.\n\n---\n\n3. Prompt Module\n\nThe  module provides the REPL backend:\n\n\n\nSupports:\n- Command history (up/down arrows)\n- Tab completion\n- Multi-line input\n- Error highlighting"
+  },
+  {
+    "lang": "en-US",
+    "path": "rpc_microservices.md",
+    "title": "RPC, Microservices & APIs in Aly",
+    "content": "RPC, Microservices & APIs in Aly\n\nAly provides modules for building RPC servers, microservices, GraphQL APIs, and gRPC services.\n\n---\n\n1. HTTP RPC\n\n\n\nCall from a client:\n\n\n---\n\n2. Microservices\n\n\n\n---\n\n3. Serverless Functions\n\n\n\n---\n\n4. GraphQL\n\n\n\n---\n\n5. gRPC\n\n\n\n---\n\n6. Proxy"
+  },
+  {
+    "lang": "en-US",
+    "path": "schemas_advanced.md",
+    "title": "Advanced Schemas in Aly",
+    "content": "Advanced Schemas in Aly\n\nBeyond basic schema definitions, Aly supports inheritance, static methods, generics, and custom constructors.\n\n---\n\n1. Schema Inheritance\n\nA schema can extend another schema using the  clause, inheriting all fields and methods:\n\n\n\nChild schemas inherit fields and methods from the parent. Methods can be overridden.\n\n---\n\n2. Static Methods\n\nStatic methods belong to the schema itself, not to instances:\n\n\n\nStatic methods cannot access  instance fields.\n\n---\n\n3. Generics (Template Parameters)\n\nSchemas can declare generic type parameters:\n\n\n\n---\n\n4. Custom Constructor Body\n\nA schema can define a custom constructor that runs after field initialization:\n\n\n\nThe constructor body is optional and runs after default field values are set.\n\n---\n\n5. Field Access in Methods\n\nUse  to reference instance fields inside methods:\n\n\n\nThe  prefix is required — it is equivalent to  or  in other languages."
+  },
+  {
+    "lang": "en-US",
+    "path": "strings.md",
+    "title": "Strings in Aly",
+    "content": "Strings in Aly\n\nStrings are sequences of characters enclosed in double quotes. They support template interpolation, concatenation, and a rich set of built-in operations.\n\n---\n\n1. String Literals\n\n\n\nEscape sequences:  (newline),  (tab),  (backslash),  (double quote),  (single quote).\n\n---\n\n2. String Interpolation\n\nAly supports two interpolation syntaxes inside double-quoted strings:\n\n— Direct variable reference\n\n\n\n— Expression evaluation\n\n\n\nThe  syntax works for simple variable names. The  syntax evaluates arbitrary expressions.\n\n---\n\n3. String Concatenation and Repetition\n\n\n\n---\n\n4. Built-in String Operations\n\nStrings have methods accessible through the  module:\n\n\n\nString indexing\n\n\n\n---\n\n5. Multiline Strings\n\nLine continuation with backslash  allows splitting long strings across lines:"
+  },
+  {
+    "lang": "en-US",
+    "path": "syntax_details.md",
+    "title": "Semicolons, Line Continuation, and Comments in Aly",
+    "content": "Semicolons, Line Continuation, and Comments in Aly\n\nThis page documents specific lexical rules regarding statement termination, multi-line statements, and comment delimiters in Aly.\n\n---\n\n1. Comments\n\nAly supports single-line and multi-line (block) comments.\n\n* **Single-line Comments**: Start with  and extend to the end of the line.\n* **Multi-line / Block Comments**: Enclosed within  tags.\n\n\n\n---\n\n2. Semicolon Semantics ()\n\nSemicolons  are **not** general-purpose statement terminators in Aly. Statements are implicitly terminated by line breaks (newlines) or block delimiters .\n\nSemicolons in Loop Headers (Only Valid Use-Case)\nSemicolons are exclusively permitted inside loop headers to separate initialization, conditional check, and iteration update expressions.\n\n\n\nInvalid Semicolons\nUsing semicolons anywhere else in Aly script will result in a syntax parser error:\n\n\n---\n\n3. Line Continuation ()\n\nIf you need to break a long statement across multiple lines, append a backslash  at the end of the line. This instructs the parser to treat the following line as a continuation of the current statement.\n\n\n\nLine continuation ceases as soon as a block  or keyword-based block (like /) begins."
+  },
+  {
+    "lang": "en-US",
+    "path": "system_utilities.md",
+    "title": "System Utilities in Aly",
+    "content": "System Utilities in Aly\n\nAly provides system-level utilities for desktop notifications, system tray, and clipboard access.\n\n---\n\n1. Desktop Notifications\n\n\n\n---\n\n2. System Tray\n\n\n\n---\n\n3. Clipboard"
+  },
+  {
+    "lang": "en-US",
+    "path": "tools/index.md",
+    "title": "Tools in Aly",
+    "content": "Tools in Aly\n\nAly ships with a suite of development tools for formatting, linting, language server protocol, debugging, testing, and hot reloading.\n\n---\n\n1. Code Formatter ()\n\n\n\nThe formatter standardizes indentation, spacing, and brace placement.\n\n---\n\n2. Linter ()\n\n\n\nChecks for common issues:\n- Unused variables\n- Unreachable code\n- Type mismatches\n- Missing return values\n\n---\n\n3. Language Server Protocol ()\n\n\n\nProvides IDE features through LSP:\n- Auto-completion\n- Go-to-definition\n- Hover type information\n- Diagnostic reporting\n- Code actions\n\n---\n\n4. Debugger ()\n\n\n\nInteractive debugging features:\n- Step through execution\n- Breakpoints\n- Variable inspection\n- Call stack traces\n\n---\n\n5. Test Runner ()\n\n\n\nDiscovers and runs test functions:\n\n\n---\n\n6. Hot Reload ()\n\n\n\nAutomatically detects file changes and reloads the script without restarting, preserving application state where possible.\n\n---\n\n7. Documentation Generator ()\n\n\n\nGenerates Markdown documentation from source code comments and annotations.\n\n---\n\n8. JNI Generator ()\n\n\n\nGenerates JNI bindings for calling Aly from Java code."
+  },
+  {
+    "lang": "en-US",
+    "path": "traits.md",
+    "title": "Traits in Aly",
+    "content": "Traits in Aly\n\nTraits define interfaces — a set of method signatures that a schema can implement. They enable polymorphism and code contracts.\n\n---\n\n1. Defining a Trait\n\nA trait declares method names and their parameter lists:\n\n\n\n---\n\n2. Implementing a Trait\n\nA schema implements a trait by defining all required methods:\n\n\n\nThe runtime trait system () checks that all trait methods exist on the schema (including inherited ones).\n\n---\n\n3. Trait Verification\n\nAt runtime,  checks whether a schema satisfies a trait by verifying that every method declared in the trait exists on the schema or its parent chain."
+  },
+  {
+    "lang": "en-US",
+    "path": "variables.md",
+    "title": "Variables and Mutability in Aly",
+    "content": "Variables and Mutability in Aly\n\nAly provides support for both mutable variables and immutable constants. It uses block-based lexical scoping and dynamic type inference.\n\n---\n\n1. Variable Declarations ()\n\nThe  keyword is used to declare mutable variables. A mutable variable can be rebound to a different value at any point after initialization.\n\n\n\n---\n\n2. Constant Declarations ()\n\nThe  keyword is used to declare immutable constants. Once initialized, the value of a constant cannot be changed. Attempting to assign a new value to a constant will result in a compiler/interpreter error.\n\n\n\n---\n\n3. Lexical Scoping\n\nVariables and constants in Aly are block-scoped. A block is defined by curly braces .\n\n* **Global Scope**: Variables declared outside of any block are accessible anywhere in the file.\n* **Local Scope**: Variables declared inside a block are only visible within that block and any nested blocks. Once execution exits the block, the local variable is discarded.\n\n\n\n---\n\n4. Dynamic Type Inference\n\nAly does not require explicit type signatures (like ). The compiler/interpreter automatically determines the type based on the value assigned at runtime or compile-time."
+  }
+]
