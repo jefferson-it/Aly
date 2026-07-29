@@ -1,12 +1,12 @@
-# Conditionals in Aly
+# Condicionais no Aly
 
-Conditionals allow you to steer the execution flow based on boolean expressions.
+Condicionais permitem direcionar o fluxo de execução com base em expressões booleanas.
 
 ---
 
-## 1. `if` / `elif` / `else` Statements
+## 1. Declarações `if` / `elif` / `else`
 
-The `if` statement evaluates a logical condition. Curly braces `{}` are required to enclose block scopes.
+A declaração `if` avalia uma condição lógica. Chaves `{}` são obrigatórias para delimitar escopos de bloco.
 
 ```aly
 let age = 18
@@ -22,20 +22,20 @@ if age gt 60 {
 
 ---
 
-## 2. Operadores de comparação
+## 2. Operadores de Comparação
 
-Aly uses prefix-style text names for standard comparison operators:
-* **`eq`**: Equal (`==`)
-* **`ne`**: Not Equal (`!=`)
-* **`gt`**: Greater Than (`>`)
-* **`lt`**: Less Than (`<`)
-* **`gte`**: Greater Than or Equal (`>=`)
-* **`lte`**: Less Than or Equal (`<=`)
+O Aly usa nomes textuais no estilo prefixo para operadores de comparação padrão:
+* **`eq`**: Igual (`==`)
+* **`ne`**: Diferente (`!=`)
+* **`gt`**: Maior que (`>`)
+* **`lt`**: Menor que (`<`)
+* **`gte`**: Maior ou Igual (`>=`)
+* **`lte`**: Menor ou Igual (`<=`)
 
 ---
 
-## 3. Operadores lógicos
+## 3. Operadores Lógicos
 
-* **`and`**: Logical AND. Returns `true` only if both expressions are true.
-* **`or`**: Logical OR. Returns `true` if at least one expression is true.
-* **`not` / `!`**: Logical NOT. Inverts the boolean value of the expression.
+* **`and`**: AND lógico. Retorna `true` apenas se ambas as expressões forem verdadeiras.
+* **`or`**: OR lógico. Retorna `true` se pelo menos uma expressão for verdadeira.
+* **`not` / `!`**: NOT lógico. Inverte o valor booleano da expressão.

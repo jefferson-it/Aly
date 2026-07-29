@@ -1,25 +1,25 @@
-# Strings in Aly
+# Strings em Aly
 
-Strings are sequences of characters enclosed in double quotes. They support template interpolation, concatenation, and a rich set of built-in operations.
+Strings são sequências de caracteres delimitadas por aspas duplas. Elas suportam interpolação de template, concatenação e um conjunto rico de operações integradas.
 
 ---
 
-## 1. String Literals
+## 1. Literais de String
 
 ```aly
 let greeting = "Hello, World!"
 let empty = ""
 ```
 
-Escape sequences: `\n` (newline), `\t` (tab), `\\` (backslash), `\"` (double quote), `\'` (single quote).
+Sequências de escape: `\n` (nova linha), `\t` (tabulação), `\\` (barra invertida), `\"` (aspa dupla), `\'` (aspa simples).
 
 ---
 
-## 2. String Interpolation
+## 2. Interpolação de String
 
-Aly supports two interpolation syntaxes inside double-quoted strings:
+Aly suporta duas sintaxes de interpolação dentro de strings delimitadas por aspas duplas:
 
-### `$variable` — Direct variable reference
+### `$variable` — Referência direta à variável
 
 ```aly
 let name = "Aly"
@@ -27,7 +27,7 @@ let msg = "Welcome to $name!"
 print(msg)   # Outputs: Welcome to Aly!
 ```
 
-### `&expression` — Expression evaluation
+### `&expression` — Avaliação de expressão
 
 ```aly
 let a = 10
@@ -36,11 +36,11 @@ let msg = "Sum is &(a + b)"
 print(msg)   # Outputs: Sum is 15
 ```
 
-The `$` syntax works for simple variable names. The `&` syntax evaluates arbitrary expressions.
+A sintaxe `$` funciona para nomes de variáveis simples. A sintaxe `&` avalia expressões arbitrárias.
 
 ---
 
-## 3. String Concatenation and Repetition
+## 3. Concatenação e Repetição de String
 
 ```aly
 let hello = "Hello" + " " + "World"   # "Hello World"
@@ -49,9 +49,9 @@ let repeated = "Ha" * 3               # "HaHaHa"
 
 ---
 
-## 4. Built-in String Operations
+## 4. Operações Integradas de String
 
-Strings have methods accessible through the `str` module:
+Strings possuem métodos acessíveis através do módulo `str`:
 
 ```aly
 import str
@@ -66,7 +66,7 @@ print(str.starts_with(text, "  He"))  # true
 print(str.ends_with(text, "  "))  # true
 ```
 
-### String indexing
+### Indexação de String
 
 ```aly
 let text = "Aly"
@@ -76,9 +76,9 @@ print(text[1])   # Outputs: "l"
 
 ---
 
-## 5. Multiline Strings
+## 5. Strings Multilinha
 
-Line continuation with backslash `\` allows splitting long strings across lines:
+A continuação de linha com a barra invertida `\` permite dividir strings longas em várias linhas:
 
 ```aly
 let msg = "This is a very long string " \

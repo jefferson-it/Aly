@@ -1,8 +1,8 @@
-# IoT and Embedded Support in Aly
+# Suporte a IoT e Embarcados em Aly
 
-Aly supports IoT and embedded platforms through feature-gated modules for ESP32, Arduino, Raspberry Pi, and low-level protocols (GPIO, I2C, SPI, UART).
+Aly suporta plataformas IoT e embarcadas através de módulos controlados por recursos (feature gates) para ESP32, Arduino, Raspberry Pi e protocolos de baixo nível (GPIO, I2C, SPI, UART).
 
-> **Note**: These modules require enabling the corresponding Cargo features at build time.
+> **Nota**: Estes módulos exigem a ativação das funcionalidades Cargo correspondentes no momento da compilação.
 
 ---
 
@@ -42,7 +42,7 @@ rpi.output(17, true)
 
 ---
 
-## 4. GPIO (General Purpose Input/Output)
+## 4. GPIO (Entrada/Saída de Propósito Geral)
 
 ```aly
 import gpio
@@ -54,12 +54,12 @@ let value = gpio.read(18)
 
 ---
 
-## 5. I2C Protocol
+## 5. Protocolo I2C
 
 ```aly
 import i2c
 
-let bus = i2c.open(1)       # Open I2C bus 1
+let bus = i2c.open(1)       # Abrir barramento I2C 1
 i2c.write(bus, 0x48, [0x00, 0xFF])
 let data = i2c.read(bus, 0x48, 2)
 i2c.close(bus)
@@ -67,12 +67,12 @@ i2c.close(bus)
 
 ---
 
-## 6. SPI Protocol
+## 6. Protocolo SPI
 
 ```aly
 import spi
 
-spi.begin(0, 0)              # SPI bus 0, chip select 0
+spi.begin(0, 0)              # Barramento SPI 0, chip select 0
 spi.set_speed(1000000)        # 1 MHz
 let result = spi.transfer([0x01, 0x02, 0x03])
 spi.end()

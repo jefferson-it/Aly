@@ -1,6 +1,6 @@
-# Correspondência de Padrões (Match) em Aly
+# Correspondência de Padrões (Match) no Aly
 
-A instrução `match` avalia uma expressão e confronta-a com múltiplos padrões.
+A declaração `match` avalia uma expressão e compara-a com múltiplos padrões.
 
 ---
 
@@ -18,5 +18,5 @@ match value {
 }
 ```
 
-* **`_`**: Funciona como o padrão curinga predefinido (caso por omissão).
+* **`_`**: Atua como o padrão de correspondência universal (caso padrão).
 * Os blocos podem ser expressões únicas ou blocos compostos envolvidos em `{}`.

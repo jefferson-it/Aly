@@ -1,12 +1,12 @@
 # Formatos de Datos y Compresión en Aly
 
-Aly tiene codificadores, decodificadores, compresores y módulos de análisis nativos para trabajar con múltiples formatos de datos comunes.
+Aly tiene codificadores, decodificadores, compresores y módulos analizadores nativos para trabajar con múltiples formatos de datos comunes.
 
 ---
 
-## 1. Codecs (Base64 y Hex)
+## 1. Códecs (Base64 y Hex)
 
-Codificar y decodificar bytes/cadenas a formato Hex y Base64:
+Codifique y decodifique bytes/cadenas de texto a formato Hex y Base64:
 ```aly
 import codec
 
@@ -22,7 +22,7 @@ print("Hex: $hex")
 
 ## 2. Operaciones CSV
 
-Leer y escribir Valores Separados por Comas (CSV) tabulares:
+Lea y escriba Valores Separados por Comas (CSV) tabulares:
 ```aly
 import csv
 
@@ -39,7 +39,7 @@ loop let i = 0; i lt parsed.len; i = i + 1 {
 
 ## 3. Compresión GZIP
 
-Comprimir y descomprimir cargas de datos:
+Comprima y descomprima cargas útiles de datos:
 ```aly
 import gzip
 
@@ -52,9 +52,9 @@ print("Restored: $decompressed")
 
 ---
 
-## 4. Archivos Tar
+## 4. Archivo Tar
 
-Crear y extraer archivos tar:
+Cree y extraiga archivos tar:
 ```aly
 import tar
 
@@ -66,7 +66,7 @@ tar.decompress("archive.tar", "output_dir/")
 
 ## 5. Generación de PDF
 
-Generar documentos PDF programáticamente:
+Genere documentos PDF de forma programática:
 ```aly
 import pdf
 

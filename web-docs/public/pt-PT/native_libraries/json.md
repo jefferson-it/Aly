@@ -1,30 +1,30 @@
-# Módulo JSON em Aly
+# Módulo JSON no Aly
 
-O módulo `json` fornece análise e serialização de dados JSON.
+O módulo `json` fornece a análise e serialização de dados JSON.
 
 ---
 
-## 1. Análise de JSON
+## 1. Analisar JSON
 
 ```aly
 import json
 
 let data = json.parse('{"name": "Aly", "version": 1.0}')
-print(data.name)      # Resultado: Aly
-print(data.version)   # Resultado: 1.0
+print(data.name)      # Outputs: Aly
+print(data.version)   # Outputs: 1.0
 ```
 
-JSON analisado mapeia para tipos nativos Aly:
-- Objecto JSON -> Objecto Aly
-- Array JSON -> Vetor Aly
-- Cadeia de caracteres JSON -> Cadeia de caracteres Aly
-- Número JSON -> Inteiro ou ponto flutuante Aly
-- Booleano JSON -> Booleano Aly
-- Nulo JSON -> `None` Aly
+O JSON analisado é mapeado para os tipos nativos do Aly:
+- JSON object -> objeto Aly
+- JSON array -> vetor Aly
+- JSON string -> string Aly
+- JSON number -> int ou float Aly
+- JSON boolean -> bool Aly
+- JSON null -> `None` do Aly
 
 ---
 
-## 2. Serialização para JSON
+## 2. Serializar para JSON
 
 ```aly
 import json
@@ -32,7 +32,7 @@ import json
 let obj = {name: "Aly", version: 1.0}
 let text = json.stringify(obj)
 print(text)
-# Resultado: {"name": "Aly", "version": 1.0}
+# Outputs: {"name": "Aly", "version": 1.0}
 ```
 
-A função `stringify` converte valores Aly de volta para o formato textual JSON.
+A função `stringify` converte os valores do Aly de volta para o formato de texto JSON.

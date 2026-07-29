@@ -1,17 +1,17 @@
-# Optimização do Compilador em Aly
+# Otimização do Compilador no Aly
 
-O compilador Aly inclui passes de optimização tanto para o compilador AOT como para a VM JIT.
+O compilador do Aly inclui passagens de otimização tanto para o compilador AOT como para a JIT VM.
 
 ---
 
-## 1. Passes de Optimização
+## 1. Passagens de Otimização
 
-O compilador executa uma série de passes de optimização no MIR (Mid-level Intermediate Representation):
+O compilador executa uma série de passagens de otimização na MIR (Mid-level Intermediate Representation):
 
 - **Constant Folding**: Avalia expressões constantes em tempo de compilação (`const_eval`)
 - **Dead Code Elimination**: Remove código inalcançável
 - **Inlining**: Substitui chamadas de função pelo corpo da função quando benéfico
-- **Strength Reduction**: Substitui operações dispendiosas por operações mais baratas
+- **Strength Reduction**: Substitui operações dispendiosas por outras mais baratas
 
 ---
 
@@ -21,11 +21,11 @@ O compilador executa uma série de passes de optimização no MIR (Mid-level Int
 alyc -o output input.aly --incremental
 ```
 
-Guarda em cache módulos previamente compilados e apenas recompila ficheiros alterados:
+Armazena em cache módulos previamente compilados e apenas recompila os ficheiros alterados:
 
 ```aly
-# Cache guardado no directório .aly_cache/
-# Detecta automaticamente alterações através de carimbos de data e hashes de ficheiros
+# Cache armazenada no diretório .aly_cache/
+# Deteta automaticamente alterações através das datas de modificação e hashes dos ficheiros
 ```
 
 ---
@@ -36,14 +36,14 @@ Guarda em cache módulos previamente compilados e apenas recompila ficheiros alt
 alyc -o output input.aly --parallel
 ```
 
-Compila módulos independentes em paralelo usando múltiplos threads, reduzindo o tempo total de compilação para projetos com múltiplos módulos.
+Compila módulos independentes em paralelo utilizando múltiplas threads, reduzindo o tempo total de compilação para projetos com vários módulos.
 
 ---
 
-## 4. Optimizações JIT
+## 4. Otimizações JIT
 
-A VM JIT (`jit.rs`) optimiza caminhos de código quentes:
+O JIT da VM (`jit.rs`) otimiza caminhos de código frequentes:
 
-- **Inline Caching**: Guarda resultados de pesquisa de métodos (`inline_cache.rs`)
-- **Fast Call Convention**: Passagem de argumentos optimizada (`fastcall.rs`, `call_conventions.rs`)
-- **VM Optimizado**: Execução de bytecode afinada (`optimized.rs`)
+- **Inline Caching**: Armazena em cache os resultados da procura de métodos (`inline_cache.rs`)
+- **Fast Call Convention**: Passagem de argumentos otimizada (`fastcall.rs`, `call_conventions.rs`)
+- **Optimized VM**: Execução de bytecode otimizada (`optimized.rs`)

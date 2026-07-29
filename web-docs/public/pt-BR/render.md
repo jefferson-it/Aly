@@ -1,10 +1,10 @@
-# Gráficos Rendering in Aly
+# Renderização de Gráficos no Aly
 
-Aly provides hardware-accelerated graphics rendering through OpenGL, Vulkan, and DirectX backends.
+O Aly fornece renderização de gráficos acelerada por hardware através dos backends OpenGL, Vulkan e DirectX.
 
 ---
 
-## 1. OpenGL Backend
+## 1. Backend OpenGL
 
 ```aly
 import render.opengl
@@ -20,7 +20,7 @@ render.opengl.swap_buffers(ctx)
 
 ---
 
-## 2. Vulkan Backend
+## 2. Backend Vulkan
 
 ```aly
 import render.vulkan
@@ -34,7 +34,7 @@ render.vulkan.destroy(device)
 
 ---
 
-## 3. DirectX Backend
+## 3. Backend DirectX
 
 ```aly
 import render.directx
@@ -45,4 +45,4 @@ render.directx.clear(device, 0.2, 0.3, 0.4, 1.0)
 render.directx.present(swapchain)
 ```
 
-> **Note**: DirectX is only available on Windows targets.
+> **Nota**: DirectX está disponível apenas em alvos Windows.

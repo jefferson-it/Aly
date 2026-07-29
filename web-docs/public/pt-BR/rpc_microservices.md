@@ -1,6 +1,6 @@
-# RPC, Microservices & APIs in Aly
+# RPC, Microsserviços e APIs no Aly
 
-Aly provides modules for building RPC servers, microservices, GraphQL APIs, and gRPC services.
+O Aly fornece módulos para a construção de servidores RPC, microsserviços, APIs GraphQL e serviços gRPC.
 
 ---
 
@@ -15,7 +15,7 @@ rpc.register(server, "greet", fun(name) { return "Hello, " + name })
 rpc.start(server)
 ```
 
-Call from a client:
+Chamada de um cliente:
 ```aly
 import rpc
 
@@ -26,7 +26,7 @@ print(sum)  # Outputs: 7
 
 ---
 
-## 2. Microservices
+## 2. Microsserviços
 
 ```aly
 import microservices
@@ -39,7 +39,7 @@ microservices.start(service)
 
 ---
 
-## 3. Serverless Funções
+## 3. Funções Serverless
 
 ```aly
 import serverless

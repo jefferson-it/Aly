@@ -1,18 +1,18 @@
-# APG — Aly Package Manager
+# APG — Gerenciador de Pacotes do Aly
 
-APG (Aly Package Manager) is the official package manager for installing, managing, and publishing Aly packages.
+O APG (Aly Package Manager) é o gerenciador de pacotes oficial para instalar, gerenciar e publicar pacotes do Aly.
 
 ---
 
-## 1. CLI Commands
+## 1. Comandos CLI
 
-### Initialize a new project
+### Inicializar um novo projeto
 
 ```bash
 apg init myproject
 ```
 
-Creates a new directory with `manifest.toml`:
+Cria um novo diretório com `manifest.toml`:
 
 ```toml
 [package]
@@ -21,34 +21,34 @@ version = "0.1.0"
 description = "My Aly project"
 ```
 
-### Install dependencies
+### Instalar dependências
 
 ```bash
 apg install
 ```
 
-Reads `manifest.toml` and installs all listed dependencies.
+Lê o `manifest.toml` e instala todas as dependências listadas.
 
-### Add a dependency
+### Adicionar uma dependência
 
 ```bash
 apg add http-client
-apg add http-client@1.2.0  # Specific version
+apg add http-client@1.2.0  # Versão específica
 ```
 
-### Remove a dependency
+### Remover uma dependência
 
 ```bash
 apg remove http-client
 ```
 
-### Publish a package
+### Publicar um pacote
 
 ```bash
 apg publish
 ```
 
-### Search registry
+### Buscar no registro
 
 ```bash
 apg search json
@@ -57,28 +57,28 @@ apg search --tag web
 
 ---
 
-## 2. Dependencies
+## 2. Dependências
 
-Packages are resolved from the Aly package registry. Dependencies are locked in `apg.lock` for reproducible builds.
+Os pacotes são resolvidos a partir do registro de pacotes do Aly. As dependências são bloqueadas no `apg.lock` para builds reproduzíveis.
 
 ```bash
-apg install  # Install from lock file
-apg update   # Update all dependencies to latest compatible versions
+apg install  # Instalar do arquivo de lock
+apg update   # Atualizar todas as dependências para as versões compatíveis mais recentes
 ```
 
 ---
 
-## 3. Local Development
+## 3. Desenvolvimento Local
 
 ```bash
-apg add --path ../my-lib  # Add local package
+apg add --path ../my-lib  # Adicionar pacote local
 ```
 
 ---
 
-## 4. Registry
+## 4. Registro
 
-The default registry is `https://registry.apm.io`. Custom registries can be configured:
+O registro padrão é `https://registry.apm.io`. Registros personalizados podem ser configurados:
 
 ```bash
 apg config set registry https://my-registry.com

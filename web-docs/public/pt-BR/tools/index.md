@@ -1,17 +1,17 @@
-# Ferramentas in Aly
+# Ferramentas no Aly
 
-Aly ships with a suite of development tools for formatting, linting, language server protocol, debugging, testing, and hot reloading.
+O Aly acompanha um conjunto de ferramentas de desenvolvimento para formatação, linting, protocolo de servidor de linguagem, depuração, teste e recarga rápida.
 
 ---
 
-## 1. Code Formatter (`fmt`)
+## 1. Formatador de Código (`fmt`)
 
 ```bash
-aly fmt input.aly          # Format a single file
-aly fmt input.aly -o output.aly  # Format and write to file
+aly fmt input.aly          # Formatar um único arquivo
+aly fmt input.aly -o output.aly  # Formatar e salvar em arquivo
 ```
 
-The formatter standardizes indentation, spacing, and brace placement.
+O formatador padroniza indentação, espaçamento e posicionamento de chaves.
 
 ---
 
@@ -21,50 +21,50 @@ The formatter standardizes indentation, spacing, and brace placement.
 aly lint input.aly
 ```
 
-Checks for common issues:
-- Unused variables
-- Unreachable code
-- Type mismatches
-- Missing return values
+Verifica problemas comuns:
+- Variáveis não utilizadas
+- Código inalcançável
+- Incompatibilidades de tipo
+- Valores de retorno ausentes
 
 ---
 
-## 3. Linguagem Server Protocol (`lsp`)
+## 3. Protocolo de Servidor de Linguagem (`lsp`)
 
 ```bash
 aly lsp
 ```
 
-Provides IDE features through LSP:
-- Auto-completion
-- Go-to-definition
-- Hover type information
-- Diagnostic reporting
-- Code actions
+Fornece recursos de IDE através do LSP:
+- Autocompletar
+- Ir para definição
+- Informação de tipo ao passar o mouse
+- Relatório de diagnósticos
+- Ações de código
 
 ---
 
-## 4. Debugger (`debugger`)
+## 4. Depurador (`debugger`)
 
 ```bash
 aly debug input.aly
 ```
 
-Interactive debugging features:
-- Step through execution
-- Breakpoints
-- Variable inspection
-- Call stack traces
+Recursos de depuração interativa:
+- Execução passo a passo
+- Pontos de interrupção
+- Inspeção de variáveis
+- Rastreamento de pilha de chamadas
 
 ---
 
-## 5. Test Runner (`test_runner`)
+## 5. Executor de Testes (`test_runner`)
 
 ```bash
 aly test
 ```
 
-Discovers and runs test functions:
+Descobre e executa funções de teste:
 ```aly
 fun test_addition() {
     assert(2 + 2 eq 4)
@@ -77,30 +77,30 @@ fun test_subtraction() {
 
 ---
 
-## 6. Hot Reload (`hotreload`)
+## 6. Recarga Rápida (`hotreload`)
 
 ```bash
 aly run --watch input.aly
 ```
 
-Automatically detects file changes and reloads the script without restarting, preserving application state where possible.
+Detecta automaticamente alterações em arquivos e recarrega o script sem reiniciar, preservando o estado da aplicação quando possível.
 
 ---
 
-## 7. Documentation Generator (`doc`)
+## 7. Gerador de Documentação (`doc`)
 
 ```bash
 aly doc input.aly -o docs/
 ```
 
-Generates Markdown documentation from source code comments and annotations.
+Gera documentação em Markdown a partir de comentários e anotações no código-fonte.
 
 ---
 
-## 8. JNI Generator (`jni_gen`)
+## 8. Gerador JNI (`jni_gen`)
 
 ```bash
 aly jni-gen input.aly
 ```
 
-Generates JNI bindings for calling Aly from Java code.
+Gera bindings JNI para chamar Aly a partir de código Java.

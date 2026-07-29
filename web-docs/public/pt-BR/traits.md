@@ -1,12 +1,12 @@
-# Traits in Aly
+# Traits no Aly
 
-Traits define interfaces — a set of method signatures that a schema can implement. They enable polymorphism and code contracts.
+As traits definem interfaces — um conjunto de assinaturas de métodos que um schema pode implementar. Elas habilitam polimorfismo e contratos de código.
 
 ---
 
-## 1. Defining a Trait
+## 1. Definindo uma Trait
 
-A trait declares method names and their parameter lists:
+Uma trait declara nomes de métodos e suas listas de parâmetros:
 
 ```aly
 trait Drawable {
@@ -17,9 +17,9 @@ trait Drawable {
 
 ---
 
-## 2. Implementing a Trait
+## 2. Implementando uma Trait
 
-A schema implements a trait by defining all required methods:
+Um schema implementa uma trait definindo todos os métodos exigidos:
 
 ```aly
 schema Circle {
@@ -35,10 +35,10 @@ schema Circle {
 }
 ```
 
-The runtime trait system (`TraitDef`) checks that all trait methods exist on the schema (including inherited ones).
+O sistema de traits em tempo de execução (`TraitDef`) verifica se todos os métodos da trait existem no schema (incluindo os herdados).
 
 ---
 
-## 3. Trait Verification
+## 3. Verificação de Trait
 
-At runtime, `is_implemented_by` checks whether a schema satisfies a trait by verifying that every method declared in the trait exists on the schema or its parent chain.
+Em tempo de execução, `is_implemented_by` verifica se um schema atende a uma trait ao confirmar que cada método declarado na trait existe no schema ou em sua cadeia de pais (parent chain).

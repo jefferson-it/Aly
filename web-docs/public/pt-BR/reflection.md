@@ -1,10 +1,10 @@
-# Reflexão in Aly
+# Reflection no Aly
 
-Aly provides basic reflection capabilities to inspect runtime state.
+O Aly fornece capacidades básicas de reflection para inspecionar o estado em tempo de execução.
 
 ---
 
-## 1. Listing Variables
+## 1. Listando Variáveis
 
 ```aly
 import reflection
@@ -18,7 +18,7 @@ print(vars)  # Outputs: ["x", "y"]
 
 ---
 
-## 2. Listing Schemas
+## 2. Listando Schemas
 
 ```aly
 import reflection
@@ -32,9 +32,9 @@ print(schemas)  # Outputs: ["Person", "Car"]
 
 ---
 
-## 3. Runtime Type Inspection
+## 3. Inspeção de Tipo em Tempo de Execução
 
-The `type()` function returns the type name of a value:
+A função `type()` retorna o nome do tipo de um valor:
 
 ```aly
 let x = 42

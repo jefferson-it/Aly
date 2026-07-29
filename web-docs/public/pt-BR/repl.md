@@ -1,23 +1,23 @@
-# REPL and Scheduler in Aly
+# REPL e Scheduler no Aly
 
-Aly provides an interactive REPL (Read-Eval-Print Loop) prompt and a cooperative task scheduler.
+O Aly fornece um prompt interativo REPL (Read-Eval-Print Loop) e um agendador de tarefas cooperativo.
 
 ---
 
-## 1. Interactive REPL
+## 1. REPL Interativo
 
-Launch the REPL:
+Inicie o REPL:
 
 ```bash
 aly repl
 ```
 
-Or from the runtime:
+Ou a partir do runtime:
 ```bash
 cargo run --bin aly -- repl
 ```
 
-The prompt evaluates Aly expressions interactively:
+O prompt avalia expressões Aly interativamente:
 
 ```
 aly> let x = 10
@@ -30,9 +30,9 @@ aly> square(5)
 
 ---
 
-## 2. Scheduler
+## 2. Agendador
 
-The cooperative scheduler manages concurrent tasks:
+O scheduler cooperativo gerencia tarefas concorrentes:
 
 ```aly
 import scheduler
@@ -54,13 +54,13 @@ scheduler.task(fun() {
 scheduler.run()
 ```
 
-Tasks voluntarily yield control, allowing the scheduler to interleave execution cooperatively.
+As tarefas cedem controle voluntariamente (yield), permitindo que o scheduler intercale a execução cooperativamente.
 
 ---
 
-## 3. Prompt Module
+## 3. Módulo Prompt
 
-The `prompt` module provides the REPL backend:
+O módulo `prompt` fornece o backend do REPL:
 
 ```aly
 import prompt
@@ -70,8 +70,8 @@ let result = prompt.eval(input)
 print(result)
 ```
 
-Supports:
-- Command history (up/down arrows)
-- Tab completion
-- Multi-line input
-- Error highlighting
+Suporta:
+- Histórico de comandos (setas para cima/baixo)
+- Autocompletar com Tab
+- Entrada de múltiplas linhas
+- Destaque de erros (Error highlighting)

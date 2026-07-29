@@ -1,6 +1,6 @@
-# Database Module in Aly
+# Módulo de Banco de Dados em Aly
 
-Aly provides built-in database drivers for SQLite, PostgreSQL, MySQL, and Redis through the `db` module.
+Aly fornece drivers de banco de dados embutidos para SQLite, PostgreSQL, MySQL e Redis através do módulo `db`.
 
 ---
 
@@ -61,6 +61,6 @@ db.redis.close(redis)
 
 ---
 
-## 5. Connection Pooling
+## 5. Pool de Conexões
 
-The database module supports connection pooling through the `registry` system, allowing reuse of database connections across requests.
+O módulo de banco de dados suporta pool de conexões através do sistema `registry`, permitindo reutilização de conexões de banco de dados entre requisições.

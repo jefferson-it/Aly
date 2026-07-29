@@ -48,6 +48,7 @@ const fileMap = {
   'native_libraries/math_crypto_regex.md': 'modules',
   'native_libraries/filesystem.md': 'modules',
   'native_libraries/system.md': 'modules',
+  'native_libraries/datetime.md': 'modules',
   'native_libraries/os_shell.md': 'modules',
   'native_libraries/iot.md': 'modules',
   'native_libraries/database.md': 'modules',
@@ -77,9 +78,69 @@ function getContentDir() {
   return BASE + currentLang;
 }
 
+const fileTitles = {
+  'index.md': { ptBR: 'Início', ptPT: 'Início', enUS: 'Home', esES: 'Inicio' },
+  'syntax_details.md': { ptBR: 'Detalhes de Sintaxe', ptPT: 'Detalhes de Sintaxe', enUS: 'Syntax Details', esES: 'Detalles de Sintaxis' },
+  'variables.md': { ptBR: 'Variáveis', ptPT: 'Variáveis', enUS: 'Variables', esES: 'Variables' },
+  'data_types.md': { ptBR: 'Tipos de Dados', ptPT: 'Tipos de Dados', enUS: 'Data Types', esES: 'Tipos de Datos' },
+  'operators.md': { ptBR: 'Operadores', ptPT: 'Operadores', enUS: 'Operators', esES: 'Operadores' },
+  'functions.md': { ptBR: 'Funções', ptPT: 'Funções', enUS: 'Functions', esES: 'Funciones' },
+  'control_flow/conditional.md': { ptBR: 'Condicional', ptPT: 'Condicional', enUS: 'Conditional', esES: 'Condicional' },
+  'control_flow/loop.md': { ptBR: 'Laço', ptPT: 'Ciclo', enUS: 'Loop', esES: 'Bucle' },
+  'control_flow/match.md': { ptBR: 'Match', ptPT: 'Match', enUS: 'Match', esES: 'Match' },
+  'poo/objects.md': { ptBR: 'Objetos', ptPT: 'Objetos', enUS: 'Objects', esES: 'Objetos' },
+  'poo/Schema.md': { ptBR: 'Schema', ptPT: 'Schema', enUS: 'Schema', esES: 'Schema' },
+  'collections.md': { ptBR: 'Coleções', ptPT: 'Coleções', enUS: 'Collections', esES: 'Colecciones' },
+  'strings.md': { ptBR: 'Strings', ptPT: 'Strings', enUS: 'Strings', esES: 'Strings' },
+  'traits.md': { ptBR: 'Traits', ptPT: 'Traits', enUS: 'Traits', esES: 'Traits' },
+  'modules.md': { ptBR: 'Módulos', ptPT: 'Módulos', enUS: 'Modules', esES: 'Módulos' },
+  'reflection.md': { ptBR: 'Reflexão', ptPT: 'Reflexão', enUS: 'Reflection', esES: 'Reflexión' },
+  'metaprogramming.md': { ptBR: 'Metaprogramação', ptPT: 'Metaprogramação', enUS: 'Metaprogramming', esES: 'Metaprogramación' },
+  'compiler_backends.md': { ptBR: 'Backends do Compilador', ptPT: 'Backends do Compilador', enUS: 'Compiler Backends', esES: 'Backends del Compilador' },
+  'compiler_optimization.md': { ptBR: 'Otimização do Compilador', ptPT: 'Otimização do Compilador', enUS: 'Compiler Optimization', esES: 'Optimización del Compilador' },
+  'constant_and_tomb.md': { ptBR: 'Constante e Tomb', ptPT: 'Constante e Tomb', enUS: 'Constant and Tomb', esES: 'Constante y Tomb' },
+  'cpp_abi.md': { ptBR: 'ABI C++', ptPT: 'ABI C++', enUS: 'C++ ABI', esES: 'ABI C++' },
+  'ai_ml.md': { ptBR: 'IA e Machine Learning', ptPT: 'IA e Aprendizagem Automática', enUS: 'AI & Machine Learning', esES: 'IA y Machine Learning' },
+  'native_libraries.md': { ptBR: 'Bibliotecas Nativas', ptPT: 'Bibliotecas Nativas', enUS: 'Native Libraries', esES: 'Librerías Nativas' },
+  'native_libraries/security.md': { ptBR: 'Segurança', ptPT: 'Segurança', enUS: 'Security', esES: 'Seguridad' },
+  'native_libraries/json.md': { ptBR: 'JSON', ptPT: 'JSON', enUS: 'JSON', esES: 'JSON' },
+  'native_libraries/math_crypto_regex.md': { ptBR: 'Matemática, Cripto e Regex', ptPT: 'Matemática, Cripto e Regex', enUS: 'Math, Crypto & Regex', esES: 'Matemáticas, Cripto y Regex' },
+  'native_libraries/filesystem.md': { ptBR: 'Sistema de Arquivos', ptPT: 'Sistema de Ficheiros', enUS: 'File System', esES: 'Sistema de Archivos' },
+  'native_libraries/system.md': { ptBR: 'Sistema', ptPT: 'Sistema', enUS: 'System', esES: 'Sistema' },
+  'native_libraries/datetime.md': { ptBR: 'Data e Hora', ptPT: 'Data e Hora', enUS: 'Date & Time', esES: 'Fecha y Hora' },
+  'native_libraries/os_shell.md': { ptBR: 'Shell do SO', ptPT: 'Shell do SO', enUS: 'OS Shell', esES: 'Shell del SO' },
+  'native_libraries/iot.md': { ptBR: 'IoT', ptPT: 'IoT', enUS: 'IoT', esES: 'IoT' },
+  'native_libraries/database.md': { ptBR: 'Banco de Dados', ptPT: 'Base de Dados', enUS: 'Database', esES: 'Base de Datos' },
+  'native_libraries/net.md': { ptBR: 'Rede', ptPT: 'Rede', enUS: 'Network', esES: 'Red' },
+  'native_libraries/web.md': { ptBR: 'Web', ptPT: 'Web', enUS: 'Web', esES: 'Web' },
+  'native_libraries/data_science.md': { ptBR: 'Ciência de Dados', ptPT: 'Ciência de Dados', enUS: 'Data Science', esES: 'Ciencia de Datos' },
+  'native_libraries/data_formats.md': { ptBR: 'Formatos de Dados', ptPT: 'Formatos de Dados', enUS: 'Data Formats', esES: 'Formatos de Datos' },
+  'native_libraries/game.md': { ptBR: 'Jogos', ptPT: 'Jogos', enUS: 'Game', esES: 'Juegos' },
+  'native_libraries/assertions.md': { ptBR: 'Asserções', ptPT: 'Asserções', enUS: 'Assertions', esES: 'Asertos' },
+  'native.md': { ptBR: 'Programação Nativa', ptPT: 'Programação Nativa', enUS: 'Native Programming', esES: 'Programación Nativa' },
+  'bindings.md': { ptBR: 'Bindings', ptPT: 'Bindings', enUS: 'Bindings', esES: 'Bindings' },
+  'rpc_microservices.md': { ptBR: 'RPC e Microsserviços', ptPT: 'RPC e Microsserviços', enUS: 'RPC & Microservices', esES: 'RPC y Microservicios' },
+  'schemas_advanced.md': { ptBR: 'Esquemas Avançados', ptPT: 'Schemas Avançados', enUS: 'Advanced Schemas', esES: 'Esquemas Avanzados' },
+  'graphics/geral.md': { ptBR: 'Visão Geral', ptPT: 'Visão Geral', enUS: 'Overview', esES: 'Visión General' },
+  'graphics/cocoa.md': { ptBR: 'Cocoa', ptPT: 'Cocoa', enUS: 'Cocoa', esES: 'Cocoa' },
+  'graphics/gtk.md': { ptBR: 'GTK', ptPT: 'GTK', enUS: 'GTK', esES: 'GTK' },
+  'graphics/fltk.md': { ptBR: 'FLTK', ptPT: 'FLTK', enUS: 'FLTK', esES: 'FLTK' },
+  'tools/index.md': { ptBR: 'Visão Geral', ptPT: 'Visão Geral', enUS: 'Overview', esES: 'Visión General' },
+  'render.md': { ptBR: 'Render', ptPT: 'Render', enUS: 'Render', esES: 'Render' },
+  'repl.md': { ptBR: 'REPL', ptPT: 'REPL', enUS: 'REPL', esES: 'REPL' },
+  'jot.md': { ptBR: 'Jot', ptPT: 'Jot', enUS: 'Jot', esES: 'Jot' },
+  'concurrency.md': { ptBR: 'Concorrência', ptPT: 'Concorrência', enUS: 'Concurrency', esES: 'Concurrencia' },
+  'android.md': { ptBR: 'Android', ptPT: 'Android', enUS: 'Android', esES: 'Android' },
+};
+
 function pathToTitle(path) {
-  const parts = path.replace(/\.md$/, '').split('/');
-  return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' › ');
+  const title = fileTitles[path];
+  if (!title) {
+    const parts = path.replace(/\.md$/, '').split('/');
+    return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' › ');
+  }
+  const langKey = currentLang === 'pt-BR' ? 'ptBR' : currentLang === 'pt-PT' ? 'ptPT' : currentLang === 'es-ES' ? 'esES' : 'enUS';
+  return title[langKey] || title.enUS;
 }
 
 function getGroupLabel(group) {
@@ -360,6 +421,58 @@ export async function initApp() {
   document.getElementById('menu-btn').addEventListener('click', toggleSidebar);
   document.getElementById('sidebar-toggle').addEventListener('click', toggleSidebar);
   document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+
+  document.getElementById('markdown-content').addEventListener('click', async (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    // Skip absolute URLs, protocol-relative, and purely hash-local links
+    if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('#')) {
+      return;
+    }
+
+    const hashIndex = href.indexOf('#');
+    const filePath = hashIndex === -1 ? href : href.substring(0, hashIndex);
+    const hashAnchor = hashIndex === -1 ? '' : href.substring(hashIndex);
+
+    if (!filePath) return;
+
+    // Check if it is a relative markdown doc or mapped page
+    if (filePath.endsWith('.md') || Object.keys(fileMap).some(p => filePath.includes(p))) {
+      e.preventDefault();
+
+      let targetPath = filePath;
+      if (currentFile.includes('/')) {
+        const currentDir = currentFile.substring(0, currentFile.lastIndexOf('/'));
+        targetPath = currentDir + '/' + filePath;
+      }
+
+      const parts = targetPath.split('/');
+      const resolvedParts = [];
+      for (const part of parts) {
+        if (part === '.' || part === '') continue;
+        if (part === '..') {
+          resolvedParts.pop();
+        } else {
+          resolvedParts.push(part);
+        }
+      }
+      targetPath = resolvedParts.join('/');
+
+      await loadDoc(targetPath);
+
+      if (hashAnchor) {
+        const decodedAnchor = decodeURIComponent(hashAnchor.slice(1));
+        const targetEl = document.getElementById(decodedAnchor) || document.querySelector(`[id="${decodedAnchor}"]`);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  });
 
   window.addEventListener('hashchange', () => {
     const { lang, path } = getCurrentFilePath();

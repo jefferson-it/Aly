@@ -1,28 +1,28 @@
 # Formatos de Dados e Compressão em Aly
 
-Aly possui codificadores, decodificadores, compressores e módulos de análise nativos para lidar com múltiplos formatos de dados comuns.
+O Aly possui codificadores, descodificadores, compressores e módulos analisadores (parsers) nativos para lidar com vários formatos de dados comuns.
 
 ---
 
 ## 1. Codecs (Base64 e Hex)
 
-Codificar e decodificar bytes/cadeias para os formatos Hex e Base64:
+Codifique e descodifique bytes/strings para os formatos Hex e Base64:
 ```aly
 import codec
 
 let original = "Hello Aly"
 let b64 = codec.base64_encode(original)
-print("Base64: ")
+print("Base64: $b64")
 
 let hex = codec.hex_encode(original)
-print("Hex: ")
+print("Hex: $hex")
 ```
 
 ---
 
 ## 2. Operações CSV
 
-Ler e escrever Valores Separados por Vírgulas (CSV) tabulares:
+Leia e escreva valores separados por vírgula tabulares (CSV):
 ```aly
 import csv
 
@@ -39,7 +39,7 @@ loop let i = 0; i lt parsed.len; i = i + 1 {
 
 ## 3. Compressão GZIP
 
-Comprimir e descomprimir dados:
+Comprima e descomprima cargas úteis de dados:
 ```aly
 import gzip
 
@@ -47,14 +47,14 @@ let text = "Large text content to compress..."
 let compressed = gzip.compress(text)
 let decompressed = gzip.decompress(compressed)
 
-print("Restaurado: ")
+print("Restored: $decompressed")
 ```
 
 ---
 
 ## 4. Arquivamento Tar
 
-Criar e extrair arquivos tar:
+Crie e extraia arquivos tar:
 ```aly
 import tar
 
@@ -66,7 +66,7 @@ tar.decompress("archive.tar", "output_dir/")
 
 ## 5. Geração de PDF
 
-Gerar documentos PDF programaticamente:
+Gere documentos PDF de forma programática:
 ```aly
 import pdf
 

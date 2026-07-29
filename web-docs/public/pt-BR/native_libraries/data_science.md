@@ -1,10 +1,10 @@
-# Data Science Module in Aly
+# Módulo de Ciência de Dados em Aly
 
-Aly provides basic data science utilities for numerical computing and data analysis.
+Aly fornece utilitários básicos de ciência de dados para computação numérica e análise de dados.
 
 ---
 
-## 1. Statistics
+## 1. Estatística
 
 ```aly
 import data_science
@@ -17,7 +17,7 @@ print(data_science.std_dev(data))  # ~1.414
 
 ---
 
-## 2. Linear Algebra
+## 2. Álgebra Linear
 
 ```aly
 let matrix = data_science.matrix([[1, 2], [3, 4]])
@@ -35,7 +35,7 @@ let df = data_science.data_frame({
     "age": [25, 30, 35]
 })
 
-print(df.head(2))       # First 2 rows
+print(df.head(2))       # Primeiras 2 linhas
 let filtered = df.filter("age gt 25")
-print(df.describe())    # Summary statistics
+print(df.describe())    # Estatísticas resumidas
 ```

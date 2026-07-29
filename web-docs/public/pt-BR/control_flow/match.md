@@ -1,10 +1,10 @@
-# Pattern Matching (Match) in Aly
+# Pattern Matching (Match) no Aly
 
-The `match` statement evaluates an expression and matches it against multiple patterns.
+A declaração `match` avalia uma expressão e a compara com múltiplos padrões.
 
 ---
 
-## 1. Syntax
+## 1. Sintaxe
 
 ```aly
 let value = 2
@@ -18,5 +18,5 @@ match value {
 }
 ```
 
-* **`_`**: Acts as the catch-all wildcard pattern (default case).
-* Blocks can be single expressions or compound blocks wrapped in `{}`.
+* **`_`**: Atua como o padrão curinga que captura todos os casos (caso padrão).
+* Blocos podem ser expressões únicas ou blocos compostos envoltos em `{}`.

@@ -1,38 +1,38 @@
-# Bibliotecas Standard em Aly
+# Bibliotecas Padrão no Aly
 
-Aly inclui bibliotecas standard integradas que podem ser importadas para lidar com tarefas operacionais básicas, como carimbos de data/hora, suspensões, formatação JSON/CSV e estruturas de ficheiros.
+O Aly inclui bibliotecas padrão integradas que podem ser importadas para lidar com tarefas operacionais básicas, tais como carimbos de data/hora, pausas, formatação JSON/CSV e estruturas de ficheiros.
 
 ---
 
-## 1. Operações de Tempo e Suspensão (`timer`, `sys`)
+## 1. Operações de Tempo e Pausa (`timer`, `sys`)
 
-* **`import timer`**: Foca-se em agendamento e atrasos.
-  * `timer.sleep(ms)`: Interrompe a execução do programa pelos milissegundos especificados.
-* **`import sys`**: Interfaccia com métricas do sistema.
-  * `sys.time()`: Devolve o tempo Unix em segundos.
+* **`import timer`**: Foca-se no agendamento e atrasos.
+  * `timer.sleep(ms)`: Interrompe a execução do programa durante os milissegundos especificados.
+* **`import sys`**: Comunica com as métricas do sistema.
+  * `sys.time()`: Retorna o tempo Unix em segundos.
 
 ```aly
 import timer
 import sys
 
-print("Início: " + sys.time())
+print("Start: " + sys.time())
 timer.sleep(1000)
-print("Fim: " + sys.time())
+print("End: " + sys.time())
 ```
 
 ---
 
 ## 2. Caminhos de Ficheiros (`path`)
 
-A biblioteca `path` fornece funções utilitárias de resolução de caminhos de ficheiro multiplataforma.
+A biblioteca `path` fornece funções utilitárias multiplataforma para a resolução de caminhos de ficheiros.
 
-* `path.exists(filepath)`: Devolve `true` se o ficheiro existir.
-* `path.join(part1, part2)`: Concatena caminhos de directório de forma segura.
+* `path.exists(filepath)`: Retorna `true` se o ficheiro existir.
+* `path.join(part1, part2)`: Concatena caminhos de diretório de forma segura.
 
 ```aly
 import path
 
 if path.exists("config.json") {
-    print("Ficheiro de configuração encontrado.")
+    print("Found configuration file.")
 }
 ```

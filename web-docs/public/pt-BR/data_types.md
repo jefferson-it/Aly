@@ -1,24 +1,24 @@
-# Tipos de dados em Aly
+# Tipos de Dados no Aly
 
-Aly is dynamically-typed but internally supports a rich set of robust primitive and composite data types.
-
----
-
-## 1. Primitives
-
-* **Integer (`int`)**: 64-bit signed integers (e.g. `42`, `-10`).
-* **Floating-Point (`float`)**: 64-bit IEEE 754 floating-point numbers (e.g. `3.14159`, `-0.001`).
-* **Boolean (`bool`)**: Logical values, either `true` or `false`.
-* **Character (`char`)**: Single-byte character literals enclosed in single quotes (e.g. `'A'`, `'\n'`, `'\t'`).
-* **String (`string`)**: Sequence of characters enclosed in double quotes (e.g. `"Hello, World"`). Supports string template interpolation using `$variable` syntax.
-* **None (`null`)**: A special type representing the absence of value, accessed via the `None` .
-* **Void**: Signifies a function or expression that returns no value.
+O Aly é dinamicamente tipado, mas suporta internamente um rico conjunto de tipos de dados primitivos e compostos robustos.
 
 ---
 
-## 2. List / Vector (`list`)
+## 1. Primitivos
 
-Vectors are ordered, dynamic arrays that can contain elements of any type (including nested vectors or objects).
+* **Integer (`int`)**: Inteiros com sinal de 64 bits (ex. `42`, `-10`).
+* **Floating-Point (`float`)**: Números de ponto flutuante IEEE 754 de 64 bits (ex. `3.14159`, `-0.001`).
+* **Boolean (`bool`)**: Valores lógicos, `true` ou `false`.
+* **Character (`char`)**: Literais de caractere de um byte entre aspas simples (ex. `'A'`, `'\n'`, `'\t'`).
+* **String (`string`)**: Sequência de caracteres entre aspas duplas (ex. `"Hello, World"`). Suporta interpolação de string usando a sintaxe ``.
+* **None (`null`)**: Um tipo especial que representa a ausência de valor, acessado através da palavra-chave `None`.
+* **Void**: Significa uma função ou expressão que não retorna nenhum valor.
+
+---
+
+## 2. Lista / Vetor (`list`)
+
+Vetores são arrays dinâmicos ordenados que podem conter elementos de qualquer tipo (incluindo vetores ou objetos aninhados).
 
 ```aly
 let numbers = [1, 2, 3, 4]
@@ -30,9 +30,9 @@ print(numbers[0]) # Outputs: 1
 
 ---
 
-## 3. Objects / Maps (`object`)
+## 3. Objetos / Mapas (`object`)
 
-Objects are key-value mappings representing dictionary or associative array structures. Keys are identifiers or strings.
+Objetos são mapeamentos de chave-valor que representam dicionários ou arrays associativos. As chaves são identificadores ou strings.
 
 ```aly
 let user = {

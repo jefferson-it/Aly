@@ -1,10 +1,10 @@
-# Funções in Aly
+# Funções no Aly
 
-Funções are first-class values defined with the `fun` . They can be named, anonymous, stored in variables, passed as arguments, and returned from other functions.
+As funções são valores de primeira classe definidos com a palavra-chave `fun`. Elas podem ser nomeadas, anônimas, armazenadas em variáveis, passadas como argumentos e retornadas de outras funções.
 
 ---
 
-## 1. Named Function Definition
+## 1. Definição de Função Nomeada
 
 ```aly
 fun add(a, b) {
@@ -14,13 +14,13 @@ fun add(a, b) {
 print(add(3, 4))  # Outputs: 7
 ```
 
-Parameters are positional. Parentheses around parameters are required. Curly braces delimit the function body.
+Os parâmetros são posicionais. Parênteses ao redor dos parâmetros são obrigatórios. Chaves delimitam o corpo da função.
 
 ---
 
-## 2. Return Values
+## 2. Valores de Retorno
 
-A function returns the value of the last expression evaluated, or explicitly with `return`:
+Uma função retorna o valor da última expressão avaliada ou explicitamente com `return`:
 
 ```aly
 fun square(n) {
@@ -35,13 +35,13 @@ print(square(4))   # Outputs: 16
 print(double(5))   # Outputs: 10
 ```
 
-`return` without an expression returns `None`.
+`return` sem uma expressão retorna `None`.
 
 ---
 
-## 3. Anonymous Funções (Lambdas/Closures)
+## 3. Funções Anônimas (Lambdas/Closures)
 
-Funções without a name can be assigned to variables or passed inline:
+Funções sem nome podem ser atribuídas a variáveis ou passadas inline:
 
 ```aly
 let multiply = fun(a, b) {
@@ -51,7 +51,7 @@ let multiply = fun(a, b) {
 print(multiply(3, 4))  # Outputs: 12
 ```
 
-Anonymous functions capture variables from their enclosing scope (closures).
+Funções anônimas capturam variáveis do seu escopo envolvente (closures).
 
 ```aly
 let factor = 2
@@ -64,9 +64,9 @@ print(doubler(5))  # Outputs: 10
 
 ---
 
-## 4. Default Parameters
+## 4. Parâmetros Padrão
 
-Parameters can have default values:
+Os parâmetros podem ter valores padrão:
 
 ```aly
 fun greet(name, greeting = "Hello") {
@@ -79,9 +79,9 @@ greet("Bob", "Hi")          # Outputs: Hi, Bob
 
 ---
 
-## 5. Variadic Funções
+## 5. Funções Variádicas
 
-A variadic parameter collects excess arguments into a list using `...`:
+Um parâmetro variádico coleta os argumentos excedentes em uma lista usando `...`:
 
 ```aly
 fun sum_all(...nums) {
@@ -95,13 +95,13 @@ fun sum_all(...nums) {
 print(sum_all(1, 2, 3, 4))  # Outputs: 10
 ```
 
-Only one variadic parameter is allowed, and it must be the last parameter.
+É permitido apenas um parâmetro variádico, e ele deve ser o último parâmetro.
 
 ---
 
-## 6. First-Class Funções
+## 6. Funções de Primeira Classe
 
-Funções can be stored in data structures and passed around:
+As funções podem ser armazenadas em estruturas de dados e passadas:
 
 ```aly
 let operations = {

@@ -1,38 +1,38 @@
-# Android Support in Aly
+# Suporte Android no Aly
 
-Aly can build and package applications for Android devices.
+O Aly pode compilar e empacotar aplicações para dispositivos Android.
 
 ---
 
-## 1. Android Build Tool
+## 1. Ferramenta de Build Android
 
 ```bash
 aly android-build --package com.example.myapp --name "My App" input.aly
 ```
 
-This generates an Android project structure with:
-- Gradle build files
+Isso gera uma estrutura de projeto Android com:
+- Arquivos de build do Gradle
 - AndroidManifest.xml
-- JNI bridge for Aly runtime
-- APK packaging
+- Ponte JNI para o runtime do Aly
+- Empacotamento APK
 
 ---
 
-## 2. Android Runtime
+## 2. Runtime do Android
 
 ```aly
 import android
 
 android.toast("Hello from Aly!")
 let battery = android.get_battery_level()
-print("Battery: $battery%")
+print("Battery: %")
 
 android.vibrate(500)  # Vibrate for 500ms
 ```
 
 ---
 
-## 3. Project Structure
+## 3. Estrutura do Projeto
 
 ```
 myapp/

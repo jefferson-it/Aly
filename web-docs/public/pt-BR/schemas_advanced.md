@@ -1,12 +1,12 @@
-# Avançado Schemas in Aly
+# Schemas Avançados no Aly
 
-Beyond basic schema definitions, Aly supports inheritance, static methods, generics, and custom constructors.
+Além das definições básicas de schema, o Aly suporta herança, métodos estáticos, genéricos e construtores personalizados.
 
 ---
 
-## 1. Schema Inheritance
+## 1. Herança de Schema
 
-A schema can extend another schema using the `extends` clause, inheriting all fields and methods:
+Um schema pode estender outro schema usando a cláusula `extends`, herdando todos os campos e métodos:
 
 ```aly
 schema Animal {
@@ -27,13 +27,13 @@ let pet = new Dog()
 pet.speak()  # Outputs: Rex barks
 ```
 
-Child schemas inherit fields and methods from the parent. Methods can be overridden.
+Schemas filhos herdam campos e métodos do pai. Os métodos podem ser sobrescritos.
 
 ---
 
-## 2. Static Methods
+## 2. Métodos Estáticos
 
-Static methods belong to the schema itself, not to instances:
+Métodos estáticos pertencem ao próprio schema, não às instâncias:
 
 ```aly
 schema MathUtils {
@@ -46,18 +46,18 @@ schema MathUtils {
     }
 }
 
-# Called on the schema, not an instance
+# Chamado no schema, não em uma instância
 print(MathUtils.square(5))  # Outputs: 25
 print(MathUtils.cube(3))    # Outputs: 27
 ```
 
-Static methods cannot access `@` instance fields.
+Métodos estáticos não podem acessar campos de instância com `@`.
 
 ---
 
-## 3. Generics (Template Parameters)
+## 3. Genéricos (Parâmetros de Template)
 
-Schemas can declare generic type parameters:
+Os schemas podem declarar parâmetros de tipo genéricos:
 
 ```aly
 schema Box(T) {
@@ -78,9 +78,9 @@ let strBox = new Box("Hello")
 
 ---
 
-## 4. Custom Constructor Body
+## 4. Corpo de Construtor Personalizado
 
-A schema can define a custom constructor that runs after field initialization:
+Um schema pode definir um construtor personalizado que é executado após a inicialização do campo:
 
 ```aly
 schema User {
@@ -95,13 +95,13 @@ schema User {
 let u = new User("Alice")
 ```
 
-The constructor body is optional and runs after default field values are set.
+O corpo do construtor é opcional e é executado depois que os valores padrão dos campos são definidos.
 
 ---
 
-## 5. Field Access in Methods
+## 5. Acesso a Campos em Métodos
 
-Use `@fieldname` to reference instance fields inside methods:
+Use `@fieldname` para referenciar campos de instância dentro de métodos:
 
 ```aly
 schema Counter {
@@ -112,4 +112,4 @@ schema Counter {
 }
 ```
 
-The `@` prefix is required — it is equivalent to `this.` or `self.` in other languages.
+O prefixo `@` é obrigatório — ele é equivalente a `this.` ou `self.` em outras linguagens.

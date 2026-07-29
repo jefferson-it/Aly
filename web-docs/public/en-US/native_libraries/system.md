@@ -13,7 +13,7 @@ import dotenv
 dotenv.load() # Reads .env file in project root
 
 let api_key = dotenv.get("API_KEY")
-print("API Key: ")
+print("API Key: $api_key")
 ```
 
 ---
@@ -25,7 +25,7 @@ Generate unique identifier strings natively:
 import uuid
 
 let id = uuid.v4()
-print("Generated Unique ID: ")
+print("Generated Unique ID: $id")
 ```
 
 ---
@@ -45,5 +45,5 @@ console.print_color("Red error message", "red")
 
 # Read user input directly
 let name = console.input("Enter name: ")
-print("Hello, ")
+print("Hello, $name")
 ```

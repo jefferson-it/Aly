@@ -1,12 +1,12 @@
-# Variables and Mutability in Aly
+# Variáveis e Mutabilidade no Aly
 
-Aly provides support for both mutable variables and immutable constants. It uses block-based lexical scoping and dynamic type inference.
+O Aly oferece suporte tanto para variáveis mutáveis quanto para constantes imutáveis. Ele usa escopo léxico baseado em blocos e inferência dinâmica de tipos.
 
 ---
 
-## 1. Variable Declarations (`let`)
+## 1. Declarações de Variável (`let`)
 
-The `let` keyword is used to declare mutable variables. A mutable variable can be rebound to a different value at any point after initialization.
+A palavra-chave `let` é usada para declarar variáveis mutáveis. Uma variável mutável pode ser reatribuída a um valor diferente em qualquer ponto após a inicialização.
 
 ```aly
 let score = 100
@@ -16,9 +16,9 @@ print(score) # Outputs: 150
 
 ---
 
-## 2. Constant Declarations (`const`)
+## 2. Declarações de Constante (`const`)
 
-The `const` keyword is used to declare immutable constants. Once initialized, the value of a constant cannot be changed. Attempting to assign a new value to a constant will result in a compiler/interpreter error.
+A palavra-chave `const` é usada para declarar constantes imutáveis. Uma vez inicializado, o valor de uma constante não pode ser alterado. Tentar atribuir um novo valor a uma constante resultará em um erro do compilador/interpretador.
 
 ```aly
 const PI = 3.14159
@@ -27,12 +27,12 @@ const PI = 3.14159
 
 ---
 
-## 3. Lexical Scoping
+## 3. Escopo Léxico
 
-Variables and constants in Aly are block-scoped. A block is defined by curly braces `{}`.
+As variáveis e constantes no Aly têm escopo de bloco. Um bloco é definido por chaves `{}`.
 
-* **Global Scope**: Variables declared outside of any block are accessible anywhere in the file.
-* **Local Scope**: Variables declared inside a block are only visible within that block and any nested blocks. Once execution exits the block, the local variable is discarded.
+* **Escopo Global**: Variáveis declaradas fora de qualquer bloco são acessíveis em qualquer lugar no arquivo.
+* **Escopo Local**: Variáveis declaradas dentro de um bloco são visíveis apenas dentro daquele bloco e em quaisquer blocos aninhados. Assim que a execução sai do bloco, a variável local é descartada.
 
 ```aly
 let x = 10
@@ -47,6 +47,6 @@ if true {
 
 ---
 
-## 4. Dynamic Type Inference
+## 4. Inferência Dinâmica de Tipos
 
-Aly does not require explicit type signatures (like `int x = 10`). The compiler/interpreter automatically determines the type based on the value assigned at runtime or compile-time.
+O Aly não exige assinaturas de tipo explícitas (como `int x = 10`). O compilador/interpretador determina automaticamente o tipo com base no valor atribuído em tempo de execução ou tempo de compilação.

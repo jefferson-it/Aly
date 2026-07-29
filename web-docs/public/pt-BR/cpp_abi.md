@@ -1,34 +1,34 @@
-# C++ ABI in Aly
+# ABI C++ no Aly
 
-The C++ ABI module enables Aly to call C++ functions directly and handle C++ calling conventions.
+O módulo de ABI C++ permite que o Aly chame funções C++ diretamente e lide com convenções de chamada C++.
 
 ---
 
-## 1. C++ Function Calls
+## 1. Chamadas de Função C++
 
 ```aly
 import cpp_abi
 
 let result = cpp_abi.call("_Z3addii", [3, 4])
-# Calls the mangled C++ function `add(int, int)`
+# Chama a função C++ compilada (mangled) `add(int, int)`
 ```
 
 ---
 
-## 2. C++ Name Mangling
+## 2. Name Mangling C++
 
-The `cpp_abi` module handles platform-specific name mangling:
+O módulo `cpp_abi` lida com name mangling específico da plataforma:
 
-| Compiler | Mangling Pattern |
+| Compilador | Padrão de Mangling |
 |----------|-----------------|
 | GCC/Clang (Itanium) | `_Z3addii` |
 | MSVC | `?add@@YAHHH@Z` |
 
 ---
 
-## 3. Struct Layout
+## 3. Layout de Structs
 
-C++ structs are accessed through the ABI layout:
+As structs C++ são acessadas através do layout da ABI:
 
 ```aly
 let obj = cpp_abi.create_struct("Point", [
@@ -42,9 +42,9 @@ let x = cpp_abi.get_field(obj, "x")
 
 ---
 
-## 4. Calling Conventions
+## 4. Convenções de Chamada
 
-Supports `thiscall` (MSVC), `fastcall`, and `cdecl` conventions:
+Suporta convenções `thiscall` (MSVC), `fastcall` e `cdecl`:
 
 ```aly
 cpp_abi.call_with_convention("method", [this_ptr, arg1], "thiscall")

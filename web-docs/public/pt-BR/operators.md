@@ -1,21 +1,21 @@
-# Operadores em Aly
+# Operadores no Aly
 
-Aly supports arithmetic, comparison, logical, and assignment operators. Comparison operators use text-style names.
+O Aly suporta operadores aritméticos, de comparação, lógicos e de atribuição. Os operadores de comparação usam nomes no estilo de texto.
 
 ---
 
-## 1. Operadores aritméticos
+## 1. Operadores Aritméticos
 
-| Operator | Description | Example |
+| Operador | Descrição | Exemplo |
 |----------|-------------|---------|
-| `+` | Addition | `3 + 5` → `8` |
-| `-` | Subtraction | `10 - 4` → `6` |
-| `*` | Multiplication | `3 * 4` → `12` |
-| `/` | Division | `10 / 3` → `3.333` |
-| `%` | Modulo (remainder) | `10 % 3` → `1` |
-| `**` | Power | `2 ** 3` → `8` |
-| `++` | Increment (postfix) | `i++` → `i = i + 1` |
-| `--` | Decrement (postfix) | `i--` → `i = i - 1` |
+| `+` | Adição | `3 + 5` → `8` |
+| `-` | Subtração | `10 - 4` → `6` |
+| `*` | Multiplicação | `3 * 4` → `12` |
+| `/` | Divisão | `10 / 3` → `3.333` |
+| `%` | Módulo (resto) | `10 % 3` → `1` |
+| `**` | Potência | `2 ** 3` → `8` |
+| `++` | Incremento (postfix) | `i++` → `i = i + 1` |
+| `--` | Decremento (postfix) | `i--` → `i = i - 1` |
 
 ```aly
 let x = 10
@@ -25,18 +25,18 @@ x++             # 16 (desugared to x = x + 1)
 
 ---
 
-## 2. Comparison (Relational) Operators
+## 2. Operadores de Comparação (Relacionais)
 
-Aly uses **text-based** comparison operators:
+O Aly usa operadores de comparação **baseados em texto**:
 
-| Operator | Meaning | Example |
+| Operador | Significado | Exemplo |
 |----------|---------|---------|
-| `eq` | Equal to | `5 eq 5` → `true` |
-| `ne` | Not equal to | `5 ne 3` → `true` |
-| `gt` | Greater than | `5 gt 3` → `true` |
-| `lt` | Less than | `5 lt 3` → `false` |
-| `gte` | Greater than or equal | `5 gte 5` → `true` |
-| `lte` | Less than or equal | `5 lte 3` → `false` |
+| `eq` | Igual a | `5 eq 5` → `true` |
+| `ne` | Diferente de | `5 ne 3` → `true` |
+| `gt` | Maior que | `5 gt 3` → `true` |
+| `lt` | Menor que | `5 lt 3` → `false` |
+| `gte` | Maior ou igual | `5 gte 5` → `true` |
+| `lte` | Menor ou igual | `5 lte 3` → `false` |
 
 ```aly
 if age gte 18 {
@@ -46,14 +46,14 @@ if age gte 18 {
 
 ---
 
-## 3. Operadores lógicos
+## 3. Operadores Lógicos
 
-| Operator | Description | Example |
+| Operador | Descrição | Exemplo |
 |----------|-------------|---------|
-| `and` | Logical AND | `true and false` → `false` |
-| `or` | Logical OR | `true or false` → `true` |
-| `not` | Logical NOT | `not true` → `false` |
-| `!` | Logical NOT (alias) | `!true` → `false` |
+| `and` | AND Lógico | `true and false` → `false` |
+| `or` | OR Lógico | `true or false` → `true` |
+| `not` | NOT Lógico | `not true` → `false` |
+| `!` | NOT Lógico (alias) | `!true` → `false` |
 
 ```aly
 if age gte 18 and has_id eq true {
@@ -63,15 +63,15 @@ if age gte 18 and has_id eq true {
 
 ---
 
-## 4. Assignment Operators
+## 4. Operadores de Atribuição
 
-| Operator | Description | Example |
+| Operador | Descrição | Exemplo |
 |----------|-------------|---------|
-| `=` | Assignment | `x = 5` |
-| `+=` | Add and assign | `x += 3` |
-| `-=` | Subtract and assign | `x -= 2` |
-| `*=` | Multiply and assign | `x *= 4` |
-| `/=` | Divide and assign | `x /= 2` |
+| `=` | Atribuição | `x = 5` |
+| `+=` | Adiciona e atribui | `x += 3` |
+| `-=` | Subtrai e atribui | `x -= 2` |
+| `*=` | Multiplica e atribui | `x *= 4` |
+| `/=` | Divide e atribui | `x /= 2` |
 
 ```aly
 let score = 100
@@ -81,22 +81,22 @@ score -= 20    # score = 130
 
 ---
 
-## 5. String Operators
+## 5. Operadores de String
 
-| Operator | Description | Example |
+| Operador | Descrição | Exemplo |
 |----------|-------------|---------|
-| `+` | Concatenation | `"Hello " + "World"` |
-| `*` | Repetition | `"Ha" * 3` → `"HaHaHa"` |
+| `+` | Concatenação | `"Hello " + "World"` |
+| `*` | Repetição | `"Ha" * 3` → `"HaHaHa"` |
 
 ---
 
-## 6. Operator Precedence (highest to lowest)
+## 6. Precedência de Operadores (maior para menor)
 
-1. `**` (power)
-2. `++` `--` `not` `!` (unary)
+1. `**` (potência)
+2. `++` `--` `not` `!` (unário)
 3. `*` `/` `%`
 4. `+` `-`
-5. `gt` `lt` `gte` `lte` `eq` `ne` (comparisons)
+5. `gt` `lt` `gte` `lte` `eq` `ne` (comparações)
 6. `and`
 7. `or`
-8. `=` `+=` `-=` `*=` `/=` (assignment)
+8. `=` `+=` `-=` `*=` `/=` (atribuição)

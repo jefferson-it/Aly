@@ -1,12 +1,12 @@
-# Coleções in Aly
+# Coleções no Aly
 
-Beyond lists/vectors and objects, Aly provides tuples, sets, stacks, queues, linked lists, and enumerations.
+Além de listas/vetores e objetos, o Aly fornece tuples, sets, stacks, queues, linked lists e enumerations.
 
 ---
 
 ## 1. Tuples
 
-An ordered, immutable collection of values enclosed in parentheses:
+Uma coleção ordenada e imutável de valores entre parênteses:
 
 ```aly
 let point = (10, 20)
@@ -23,20 +23,20 @@ print(mixed.len)  # Outputs: 3
 
 ## 2. Sets
 
-An unordered collection of unique values:
+Uma coleção não ordenada de valores únicos:
 
 ```aly
 let unique = {1, 2, 3, 3, 2}
 print(unique)  # Outputs: Set containing {1, 2, 3}
 ```
 
-Duplicates are automatically removed on creation.
+Duplicatas são removidas automaticamente na criação.
 
 ---
 
 ## 3. Stacks
 
-Last-In-First-Out (LIFO) data structure:
+Estrutura de dados Last-In-First-Out (LIFO):
 
 ```aly
 let stack = Stack.new()
@@ -46,15 +46,15 @@ let top = stack.pop()  # Returns 20
 let len = stack.len()  # Returns 1
 ```
 
-- `push(value)`: Add item to top
-- `pop()`: Remove and return top item
-- `len()`: Number of items
+- `push(value)`: Adiciona item no topo
+- `pop()`: Remove e retorna o item do topo
+- `len()`: Número de itens
 
 ---
 
 ## 4. Queues
 
-First-In-First-Out (FIFO) data structure:
+Estrutura de dados First-In-First-Out (FIFO):
 
 ```aly
 let queue = Queue.new()
@@ -63,15 +63,15 @@ queue.enqueue("second")
 let item = queue.dequeue()  # Returns "first"
 ```
 
-- `enqueue(value)`: Add item to back
-- `dequeue()`: Remove and return front item
-- `len()`: Number of items
+- `enqueue(value)`: Adiciona item no fim
+- `dequeue()`: Remove e retorna o item da frente
+- `len()`: Número de itens
 
 ---
 
 ## 5. Linked Lists
 
-Singly-linked list with head insertion:
+Lista simplesmente encadeada com inserção na cabeça (head):
 
 ```aly
 let list = LinkedList.new()
@@ -81,14 +81,14 @@ list.push(30)
 print(list.len)  # Outputs: 3
 ```
 
-- `push(value)`: Insert at head
-- `len()`: Number of nodes
+- `push(value)`: Insere na cabeça
+- `len()`: Número de nós
 
 ---
 
 ## 6. Enumerations
 
-Named sets of variants with optional associated data:
+Conjuntos nomeados de variantes com dados associados opcionais:
 
 ```aly
 let status = Enum("Status", {

@@ -19,11 +19,11 @@ Escape sequences: `\n` (newline), `\t` (tab), `\\` (backslash), `\"` (double quo
 
 Aly supports two interpolation syntaxes inside double-quoted strings:
 
-### `` — Direct variable reference
+### `$variable` — Direct variable reference
 
 ```aly
 let name = "Aly"
-let msg = "Welcome to !"
+let msg = "Welcome to $name!"
 print(msg)   # Outputs: Welcome to Aly!
 ```
 

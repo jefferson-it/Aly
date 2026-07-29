@@ -1,12 +1,12 @@
-# Schemas (Class-like OOP) in Aly
+# Schemas (POO baseada em classes) no Aly
 
-Schemas provide a class-like blueprint system to instantiate structured objects with default field values and member methods.
+Schemas fornecem um sistema de blueprint semelhante a classes para instanciar objetos estruturados com valores de campo padrão e métodos membros.
 
 ---
 
-## 1. Schema Definition
+## 1. Definição de Schema
 
-A schema is declared using the `schema` .
+Um schema é declarado usando a palavra-chave `schema`.
 
 ```aly
 schema Person {
@@ -18,24 +18,24 @@ schema Person {
 }
 ```
 
-* **`@` prefix**: Used inside schema methods to reference fields belonging to the current instance (equivalent to `this` or `self`).
+* **Prefixo `@`**: Usado dentro de métodos do schema para referenciar campos pertencentes à instância atual (equivalente a `this` ou `self`).
 
 ---
 
-## 2. Instantiating Schemas (`new`)
+## 2. Instanciando Schemas (`new`)
 
-Instances are created using the `new` .
+Instâncias são criadas usando a palavra-chave `new`.
 
-### Default Constructor
-If no arguments are passed, fields are initialized to their default values:
+### Construtor Padrão
+Se nenhum argumento for passado, os campos são inicializados com seus valores padrão:
 ```aly
 let p = new Person()
-p.greet() # Outputs: Hello, my name is John and I am 25
+p.greet() # Exibe: Hello, my name is John and I am 25
 ```
 
-### Constructor Arguments
-Passing arguments to `new Schema(...)` overrides default field values in order of their declaration:
+### Argumentos do Construtor
+Passar argumentos para `new Schema(...)` sobrescreve os valores padrão dos campos na ordem em que foram declarados:
 ```aly
 let custom = new Person("Jefferson", 30)
-custom.greet() # Outputs: Hello, my name is Jefferson and I am 30
+custom.greet() # Exibe: Hello, my name is Jefferson and I am 30
 ```

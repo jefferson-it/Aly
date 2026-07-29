@@ -1,12 +1,12 @@
-# Loops in Aly
+# Laços de Repetição no Aly
 
-Laços de repetição (Loops) let you repeat block instructions. Aly unifies loops in the `loop` .
+Laços de repetição permitem repetir instruções de um bloco. O Aly unifica os laços na palavra-chave `loop`.
 
 ---
 
-## 1. Conditional Loop (While style)
+## 1. Laço Condicional (Estilo While)
 
-Evaluates the expression before entering the loop. It repeats as long as the condition is `true`.
+Avalia a expressão antes de entrar no laço. Repete enquanto a condição for `true`.
 
 ```aly
 let i = 1
@@ -18,9 +18,9 @@ loop i lte 5 {
 
 ---
 
-## 2. Iteration Loop (For style)
+## 2. Laço de Iteração (Estilo For)
 
-You can specify loop initializations, conditions, and increments using semi-colons:
+Você pode especificar inicializações, condições e incrementos do laço usando ponto e vírgula:
 
 ```aly
 loop let i = 0; i lt 5; i = i + 1 {
@@ -30,7 +30,7 @@ loop let i = 0; i lt 5; i = i + 1 {
 
 ---
 
-## 3. Loop Control Statements
+## 3. Declarações de Controle de Laço
 
-* **`break` / `pare`**: Exits the loop immediately.
-* **`continue`**: Jumps directly to the next loop iteration, bypassing instructions below.
+* **`break` / `pare`**: Sai do laço imediatamente.
+* **`continue`**: Pula diretamente para a próxima iteração do laço, ignorando as instruções abaixo.

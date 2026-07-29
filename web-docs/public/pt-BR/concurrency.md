@@ -1,12 +1,12 @@
-# Concurrency in Aly
+# Concorrência no Aly
 
-Aly provides basic concurrency primitives through the `AtomicVar` type for thread-safe shared state.
+O Aly fornece primitivas básicas de concorrência através do tipo `AtomicVar` para estado compartilhado thread-safe.
 
 ---
 
-## 1. Atomic Variables
+## 1. Variáveis Atômicas
 
-`AtomicVar` wraps a value in `Arc<RwLock<ValueData>>`, enabling safe concurrent access:
+`AtomicVar` envolve um valor em `Arc<RwLock<ValueData>>`, permitindo acesso simultâneo seguro:
 
 ```aly
 import concurrency
@@ -16,9 +16,9 @@ let counter = concurrency.AtomicVar.new(0)
 
 ---
 
-## 2. Thread Spawning
+## 2. Spawning de Threads
 
-Threads can be spawned via `shell.thread_spawn` and `shell.thread_pool`:
+Threads podem ser criadas via `shell.thread_spawn` e `shell.thread_pool`:
 
 ```aly
 import shell
@@ -32,11 +32,11 @@ shell.thread_spawn("worker")
 shell.thread_pool(["worker", "worker"])
 ```
 
-`shell.thread_pool` spawns multiple threads in parallel and waits for all to finish.
+`shell.thread_pool` gera múltiplas threads em paralelo e aguarda a conclusão de todas.
 
 ---
 
-## 3. Parallel Command Execution
+## 3. Execução Paralela de Comandos
 
 ```aly
 import shell
@@ -44,4 +44,4 @@ import shell
 let results = shell.multi_exec(["echo hello", "echo world"])
 ```
 
-Executes multiple shell commands concurrently and collects outputs as a vector.
+Executa múltiplos comandos de shell concorrentemente e coleta as saídas como um vetor.

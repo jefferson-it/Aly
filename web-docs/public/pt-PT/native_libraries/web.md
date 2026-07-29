@@ -1,6 +1,6 @@
-# Módulo de Plataforma Web em Aly
+# Módulo de Plataforma Web no Aly
 
-Aly fornece capacidades de tempo de execução web, incluindo manipulação DOM, estilização CSS, Componentes Web e backend WebAssembly.
+O Aly fornece capacidades de execução web, incluindo a manipulação do DOM, estilo CSS, Web Components e backend WebAssembly.
 
 ---
 
@@ -18,7 +18,7 @@ web.dom.appendChild(document.body, div)
 
 ---
 
-## 2. Estilização CSS
+## 2. Estilo CSS
 
 ```aly
 import css
@@ -35,16 +35,16 @@ let btnStyle = css.create(".btn", {
 
 ---
 
-## 3. Componentes Web
+## 3. Web Components
 
 ```aly
 import web_components
 
 web_components.define("my-component", {
-    template: "<div>Olá do componente</div>",
+    template: "<div>Hello from component</div>",
     style: ":host { display: block; }",
     fun connected() {
-        print("Componente montado")
+        print("Component mounted")
     }
 })
 ```
@@ -61,7 +61,7 @@ backend.render("<app></app>")
 backend.mount("#root")
 ```
 
-O backend DOM permite renderização no servidor e diferenciação de DOM virtual.
+O backend DOM permite a renderização do lado do servidor e o diffing do DOM virtual.
 
 ---
 
@@ -72,7 +72,7 @@ import wasm_backend
 
 let wasm = wasm_backend.compile("module.wasm")
 let result = wasm_backend.invoke(wasm, "add", [1, 2])
-print(result)  # Resultado: 3
+print(result)  # Outputs: 3
 ```
 
-O backend WASM permite executar módulos WebAssembly directamente a partir de Aly.
+O backend WASM permite executar módulos WebAssembly diretamente a partir do Aly.

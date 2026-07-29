@@ -1,6 +1,6 @@
-# Security Module in Aly
+# Módulo de Segurança no Aly
 
-The `security` module provides JWT, OAuth2, OpenID Connect, TLS, hashing, signatures, ACME (Let's Encrypt), and input sanitization.
+O módulo `security` fornece JWT, OAuth2, OpenID Connect, TLS, hash, assinaturas, ACME (Let's Encrypt) e sanitização de entrada.
 
 ---
 
@@ -56,7 +56,7 @@ security.tls.close(conn)
 
 ---
 
-## 5. Cryptographic Hashing
+## 5. Hash Criptográfico
 
 ```aly
 import security
@@ -69,7 +69,7 @@ let h4 = security.hash.sha512("hello")
 
 ---
 
-## 6. Digital Signatures
+## 6. Assinaturas Digitais
 
 ```aly
 import security
@@ -93,7 +93,7 @@ let cert = security.acme.request("example.com", "admin@example.com")
 
 ---
 
-## 8. Input Sanitization
+## 8. Sanitização de Entrada
 
 ```aly
 import security

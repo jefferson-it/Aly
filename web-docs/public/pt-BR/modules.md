@@ -1,10 +1,10 @@
-# Módulos in Aly
+# Módulos no Aly
 
-Módulos allow organizing code into separate files and controlling symbol visibility with `import` and `export`.
+Os módulos permitem organizar o código em arquivos separados e controlar a visibilidade de símbolos com `import` e `export`.
 
 ---
 
-## 1. Importing Módulos
+## 1. Importando Módulos
 
 ```aly
 import math
@@ -12,13 +12,13 @@ import fs
 import http
 ```
 
-Imported modules register their public symbols into the global scope.
+Módulos importados registram seus símbolos públicos no escopo global.
 
 ---
 
-## 2. Module Structure
+## 2. Estrutura do Módulo
 
-Aly uses a file-based module system. Each `.aly` file is a module. Symbols declared with `export` become public:
+O Aly usa um sistema de módulos baseado em arquivos. Cada arquivo `.aly` é um módulo. Símbolos declarados com `export` tornam-se públicos:
 
 ```aly
 # math_utils.aly
@@ -34,7 +34,7 @@ let internal_counter = 0
 
 ---
 
-## 3. Importing User Módulos
+## 3. Importando Módulos do Usuário
 
 ```aly
 import "math_utils"
@@ -43,7 +43,7 @@ print(square(5))    # Outputs: 25
 print(PI)           # Outputs: 3.14159
 ```
 
-Paths can be relative or absolute:
+Caminhos podem ser relativos ou absolutos:
 
 ```aly
 import "lib/utils/helpers"
@@ -52,12 +52,12 @@ import "../shared/common"
 
 ---
 
-## 4. Module System Internals
+## 4. Internos do Sistema de Módulos
 
-The runtime module system (`Module` struct) tracks:
+O sistema de módulos de tempo de execução (runtime) (struct `Module`) rastreia:
 
-- **`name`**: Module identifier
-- **`public_vars`**: Symbols exported to consumers
-- **`private_vars`**: Internal symbols (inaccessible outside the module)
+- **`name`**: Identificador do módulo
+- **`public_vars`**: Símbolos exportados para consumidores
+- **`private_vars`**: Símbolos internos (inacessíveis fora do módulo)
 
-Symbols that are not explicitly `export`ed remain private to the defining module.
+Símbolos que não são explicitamente exportados com `export` permanecem privados ao módulo definidor.

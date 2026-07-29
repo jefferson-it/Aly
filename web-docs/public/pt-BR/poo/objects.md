@@ -1,12 +1,12 @@
-# Objects in Aly
+# Objetos no Aly
 
-Objects in Aly are dynamic map key-value structures. They can hold variables, nested objects, and functions (acting as methods).
+Objetos no Aly são estruturas dinâmicas de chave-valor (mapas). Eles podem conter variáveis, objetos aninhados e funções (atuando como métodos).
 
 ---
 
-## 1. Object Instantiation
+## 1. Instanciação de Objetos
 
-An object literal is declared using curly braces `{}`.
+Um objeto literal é declarado usando chaves `{}`.
 
 ```aly
 let user = {
@@ -17,14 +17,14 @@ let user = {
     }
 }
 
-user.greet(user) # Outputs: Hello, my name is Jefferson
+user.greet(user) # Exibe: Hello, my name is Jefferson
 ```
 
 ---
 
-## 2. Dynamic Modifications
+## 2. Modificações Dinâmicas
 
-Properties and methods can be added or overridden dynamically:
+Propriedades e métodos podem ser adicionados ou sobrescritos dinamicamente:
 
 ```aly
 let player = {}
@@ -34,5 +34,5 @@ player.increment = fun(self, points) {
 }
 
 player.increment(player, 10)
-print(player.score) # Outputs: 10
+print(player.score) # Exibe: 10
 ```

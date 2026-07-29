@@ -1,10 +1,10 @@
-# Linguagem Bindings in Aly
+# Bindings de Linguagens no Aly
 
-Aly provides interoperability with other programming languages through binding modules.
+O Aly fornece interoperabilidade com outras linguagens de programação através de módulos de bindings.
 
 ---
 
-## 1. Java / JNI Bindings
+## 1. Bindings Java / JNI
 
 ```aly
 import bindings.java
@@ -14,11 +14,11 @@ let obj = bindings.java.call_static("java.lang.Math", "max", [10, 20])
 print(obj)  # Outputs: 20
 ```
 
-The JNI generator (`jni_gen` tool) automatically generates binding code from Aly schemas.
+O gerador JNI (ferramenta `jni_gen`) gera automaticamente código de binding a partir de schemas do Aly.
 
 ---
 
-## 2. .NET Bindings
+## 2. Bindings .NET
 
 ```aly
 import bindings.dotnet
@@ -29,7 +29,7 @@ print(result)
 
 ---
 
-## 3. Node.js Bindings
+## 3. Bindings Node.js
 
 ```aly
 import bindings.nodejs
@@ -41,6 +41,6 @@ print(result)  # Outputs: 6
 
 ---
 
-## 4. Rust Bindings
+## 4. Bindings Rust
 
-Nativo Rust functions are registered as Aly native modules through the `ValueData` type system. See [Nativo Bindings](native.md) for details.
+Funções nativas em Rust são registradas como módulos nativos do Aly através do sistema de tipos `ValueData`. Veja [Bindings Nativos](native.md) para detalhes.

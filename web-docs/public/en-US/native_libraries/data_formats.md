@@ -12,10 +12,10 @@ import codec
 
 let original = "Hello Aly"
 let b64 = codec.base64_encode(original)
-print("Base64: ")
+print("Base64: $b64")
 
 let hex = codec.hex_encode(original)
-print("Hex: ")
+print("Hex: $hex")
 ```
 
 ---
@@ -47,7 +47,7 @@ let text = "Large text content to compress..."
 let compressed = gzip.compress(text)
 let decompressed = gzip.decompress(compressed)
 
-print("Restored: ")
+print("Restored: $decompressed")
 ```
 
 ---

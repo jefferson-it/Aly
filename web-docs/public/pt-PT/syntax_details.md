@@ -1,15 +1,15 @@
-# Pontos e Vírgulas, Continuação de Linha e Comentários em Aly
+# Ponto e Vírgula, Continuação de Linha e Comentários no Aly
 
-Esta página documenta regras lexicais específicas sobre terminadores de instruções, instruções de múltiplas linhas e delimitadores de comentários em Aly.
+Esta página documenta regras lexicais específicas referentes à terminação de declarações, declarações de múltiplas linhas e delimitadores de comentários no Aly.
 
 ---
 
 ## 1. Comentários
 
-Aly suporta comentários de linha única e de múltiplas linhas (bloco).
+O Aly suporta comentários de uma única linha e de múltiplas linhas (bloco).
 
-* **Comentários de Linha Única**: Começam com `#` e estendem-se até ao fim da linha.
-* **Comentários de Múltiplas Linhas / Bloco**: Envolvidos entre tags `## ... ##`.
+* **Comentários de uma única linha**: Começam com `#` e estendem-se até ao final da linha.
+* **Comentários de múltiplas linhas / Bloco**: Delimitados pelas etiquetas `## ... ##`.
 
 ```aly
 # This is a single-line comment
@@ -25,37 +25,35 @@ let x = 10
 
 ## 2. Semântica do Ponto e Vírgula (`;`)
 
-Os pontos e vírgulas `;` **não** são terminadores gerais de instruções em Aly. As instruções são implicitamente terminadas por quebras de linha (novas linhas) ou delimitadores de bloco `{}`.
+Os pontos e vírgulas `;` **não** são terminadores de declaração de uso geral no Aly. As declarações são terminadas implicitamente por quebras de linha (novas linhas) ou delimitadores de bloco `{}`.
 
-### Pontos e Vírgulas em Cabeçalhos de Loop (Único Caso Válido)
-
-Os pontos e vírgulas são exclusivamente permitidos dentro de cabeçalhos de loop para separar inicialização, verificação de condição e expressões de actualização de iteração.
+### Ponto e Vírgula em Cabeçalhos de Laços (Único Caso de Uso Válido)
+Os pontos e vírgulas são permitidos exclusivamente dentro dos cabeçalhos dos laços para separar a inicialização, a verificação condicional e as expressões de atualização de iteração.
 
 ```aly
-# Válido: Pontos e vírgulas a separar expressões dentro de um cabeçalho de loop
+# Valid: Semicolons separating expressions inside a loop header
 loop let i = 0; i lt 5; i = i + 1 {
     print(i)
 }
 ```
 
 ### Pontos e Vírgulas Inválidos
-
-Utilizar pontos e vírgulas em qualquer outro lugar num script Aly resultará num erro do analisador sintáctico:
+A utilização de pontos e vírgulas em qualquer outro lugar no script Aly resultará num erro de sintaxe do analisador:
 ```aly
-let x = 10; # Erro: Ponto e vírgula utilizado fora de um cabeçalho de loop
-print(x);   # Erro: Ponto e vírgula utilizado fora de um cabeçalho de loop
+let x = 10; # Error: Semicolon used outside of a loop header
+print(x);   # Error: Semicolon used outside of a loop header
 ```
 
 ---
 
 ## 3. Continuação de Linha (`\`)
 
-Se precisar de dividir uma instrução longa em múltiplas linhas, adicione uma barra invertida `\` no fim da linha. Isto instrui o analisador a tratar a linha seguinte como continuação da instrução actual.
+Se precisar de quebrar uma declaração longa em múltiplas linhas, adicione uma barra invertida `\` no final da linha. Isto instrui o analisador a tratar a linha seguinte como uma continuação da declaração atual.
 
 ```aly
 let msg = "Hello " + "World" \
           " from Aly!"
-print(msg) # Resultado: Hello World from Aly!
+print(msg) # Outputs: Hello World from Aly!
 ```
 
-A continuação de linha cessa assim que um bloco `{}` ou bloco baseado em palavras-chave (como `do`/`od`) começa.
+A continuação de linha cessa assim que se inicia um bloco `{}` ou um bloco baseado em palavras-chave (como `do`/`od`).

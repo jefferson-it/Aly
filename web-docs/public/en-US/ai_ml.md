@@ -24,7 +24,7 @@ ml.load_model("my_model", "models/weights.bin", "candle")
 
 # Run inference
 let result = ml.infer("sess_0", "my_model", "sample text data")
-print("Inference output: ")
+print("Inference output: $result")
 ```
 
 ---
@@ -45,7 +45,7 @@ llm.load_gguf("llama3", "models/llama3-8b.gguf", 2048)
 # Generate response
 let prompt = "Explain recursion in one sentence."
 let answer = llm.generate("llama3", prompt, 128)
-print("Answer: ")
+print("Answer: $answer")
 ```
 
 ---
@@ -61,5 +61,5 @@ Generate vector representations of text for semantic search and classification.
 ```aly
 embed.create("bert", "candle", 384)
 let vector = embed.encode("bert", "Hello Aly", true)
-print("Vector representation: ")
+print("Vector representation: $vector")
 ```

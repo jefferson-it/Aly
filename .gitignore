@@ -12,7 +12,8 @@
 .cargo/git/
 
 **/node_modules
-./web-docs/dist
+web-docs/dist/
+web-docs/public/*/index.json
 # ── Benchmarks ───────────────────────────────
 /benchmarks/
 

@@ -1,59 +1,59 @@
-# Filesystem Operations in Aly
+# Operações de Sistema de Arquivos em Aly
 
-The `fs` module provides filesystem read, write, and manipulation functions.
+O módulo `fs` fornece funções de leitura, escrita e manipulação do sistema de arquivos.
 
 ---
 
-## 1. Reading Files
+## 1. Leitura de Arquivos
 
 ```aly
 import fs
 
-let content = fs.read("path/to/file.txt")
+let content = fs.read("caminho/para/arquivo.txt")
 print(content)
 ```
 
-Returns file contents as a string. Returns empty string on error.
+Retorna o conteúdo do arquivo como uma string. Retorna string vazia em caso de erro.
 
 ---
 
-## 2. Writing Files
+## 2. Escrita de Arquivos
 
 ```aly
 import fs
 
-fs.write("output.txt", "Hello Aly")
+fs.write("output.txt", "Olá Aly")
 ```
 
-Writes a string to a file, overwriting existing content.
+Escreve uma string em um arquivo, sobrescrevendo o conteúdo existente.
 
 ---
 
-## 3. Appending to Files
+## 3. Adição a Arquivos
 
 ```aly
 import fs
 
-fs.append("log.txt", "New log entry\n")
+fs.append("log.txt", "Nova entrada de log\n")
 ```
 
-Adds content to the end of an existing file.
+Adiciona conteúdo ao final de um arquivo existente.
 
 ---
 
-## 4. File Existence Check
+## 4. Verificação de Existência de Arquivo
 
 ```aly
 import path
 
 if path.exists("config.json") {
-    print("File found")
+    print("Arquivo encontrado")
 }
 ```
 
 ---
 
-## 5. Copying, Moving, and Deleting
+## 5. Copiar, Mover e Excluir
 
 ```aly
 import fs
@@ -65,26 +65,26 @@ fs.remove("old_file.txt")
 
 ---
 
-## 6. Directory Operations
+## 6. Operações de Diretório
 
 ```aly
 import fs
 
-fs.create_dir("new_folder")
-fs.remove_dir("empty_folder")
+fs.create_dir("nova_pasta")
+fs.remove_dir("pasta_vazia")
 
 let items = fs.list_dir(".")
-# Returns vector of filenames in directory
+# Retorna vetor de nomes de arquivos no diretório
 ```
 
 ---
 
-## 7. File Metadata
+## 7. Metadados de Arquivo
 
 ```aly
 import fs
 
 let info = fs.metadata("file.txt")
-print(info.size)     # File size in bytes
-print(info.modified) # Last modified timestamp
+print(info.size)     # Tamanho do arquivo em bytes
+print(info.modified) # Timestamp da última modificação
 ```

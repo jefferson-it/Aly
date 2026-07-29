@@ -1,6 +1,6 @@
 # Módulo de Plataforma Web en Aly
 
-Aly proporciona capacidades de runtime web que incluyen manipulación de DOM, estilos CSS, Web Components y backend WebAssembly.
+Aly proporciona capacidades de runtime web incluyendo manipulación del DOM, estilo CSS, Web Components y backend WebAssembly.
 
 ---
 
@@ -18,7 +18,7 @@ web.dom.appendChild(document.body, div)
 
 ---
 
-## 2. Estilos CSS
+## 2. Estilo CSS
 
 ```aly
 import css
@@ -61,7 +61,7 @@ backend.render("<app></app>")
 backend.mount("#root")
 ```
 
-El backend DOM permite el renderizado en el servidor y la comparación diferencial del DOM virtual.
+El backend DOM permite el renderizado del lado del servidor y la diferenciación del DOM virtual.
 
 ---
 

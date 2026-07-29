@@ -1,29 +1,29 @@
-# Backends do Compilador em Aly
+# Backends do Compilador no Aly
 
-O compilador AOT de Aly (`alyc`) pode transpilar código para múltiplas linguagens e plataformas de destino.
+O compilador AOT do Aly (`alyc`) pode transpilar código para múltiplas linguagens e plataformas de destino.
 
 ---
 
 ## 1. Backends Disponíveis
 
 | Backend | Comando | Saída |
-|---------|---------|--------|
+|---------|---------|-------|
 | Native ELF | `alyc -o output input.aly` | Executável Linux |
 | Windows PE | `alyc -o output.exe input.aly` | Executável Windows |
-| GO | `alyc -o output.go input.aly` | Código fonte Go |
-| Rust | `alyc -o output.rs input.aly` | Código fonte Rust |
-| JavaScript | `alyc -o output.js input.aly` | Código fonte JavaScript |
-| Python | `alyc -o output.py input.aly` | Código fonte Python |
-| Bytecode JVM | `alyc -o output.class input.aly` | Bytecode Java |
-| Kotlin | `alyc -o output.kt input.aly` | Código fonte Kotlin |
-| C++ | `alyc -o output.cpp input.aly` | Código fonte C++ |
-| Shell/Bash | `alyc -o output.sh input.aly` | Script de consola |
+| Go | `alyc -o output.go input.aly` | Código-fonte Go |
+| Rust | `alyc -o output.rs input.aly` | Código-fonte Rust |
+| JavaScript | `alyc -o output.js input.aly` | Código-fonte JavaScript |
+| Python | `alyc -o output.py input.aly` | Código-fonte Python |
+| JVM Bytecode | `alyc -o output.class input.aly` | Bytecode Java |
+| Kotlin | `alyc -o output.kt input.aly` | Código-fonte Kotlin |
+| C++ | `alyc -o output.cpp input.aly` | Código-fonte C++ |
+| Shell/Bash | `alyc -o output.sh input.aly` | Script Shell |
 
 ---
 
 ## 2. Backend LLVM
 
-Usa LLVM para geração de código nativo com optimizações:
+Utiliza LLVM para geração de código nativo com otimizações:
 
 ```bash
 alyc -o output input.aly --backend llvm
@@ -44,7 +44,7 @@ g++ -o output output.cpp runtime_aly.h
 
 ## 4. Backend JVM/Bytecode
 
-Gera bytecode JVM directamente (ficheiros `.class`):
+Gera bytecode JVM diretamente (ficheiros `.class`):
 
 ```bash
 alyc -o MyApp.class input.aly
@@ -55,4 +55,4 @@ java MyApp
 
 ## 5. Detalhes do Transpilador
 
-Cada backend converte o HIR (High-level Intermediate Representation) de Aly no AST da linguagem de destino e depois gera código fonte. O módulo `cpp_abi` gere a compatibilidade ABI C++ para convenções de chamada.
+Cada backend converte a HIR (High-level Intermediate Representation) do Aly para a AST da linguagem de destino, gerando em seguida o código-fonte. O módulo `cpp_abi` lida com a compatibilidade ABI do C++ para convenções de chamada.

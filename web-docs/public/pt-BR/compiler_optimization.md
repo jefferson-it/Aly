@@ -1,49 +1,49 @@
-# Otimização do compilador in Aly
+# Otimização do Compilador no Aly
 
-The Aly compiler includes optimization passes for both the AOT compiler and the JIT VM.
-
----
-
-## 1. Optimization Passes
-
-The compiler runs a series of optimization passes on the MIR (Mid-level Intermediate Representation):
-
-- **Constant Folding**: Evaluates constant expressions at compile time (`const_eval`)
-- **Dead Code Elimination**: Removes unreachable code
-- **Inlining**: Replaces function calls with the function body when beneficial
-- **Strength Reduction**: Replaces expensive operations with cheaper ones
+O compilador do Aly inclui passes de otimização tanto para o compilador AOT quanto para a VM JIT.
 
 ---
 
-## 2. Incremental Compilation
+## 1. Passes de Otimização
+
+O compilador executa uma série de passes de otimização na MIR (Mid-level Intermediate Representation):
+
+- **Constant Folding**: Avalia expressões constantes em tempo de compilação (`const_eval`)
+- **Dead Code Elimination**: Remove código inacessível
+- **Inlining**: Substitui chamadas de função pelo corpo da função quando vantajoso
+- **Strength Reduction**: Substitui operações custosas por opções mais baratas
+
+---
+
+## 2. Compilação Incremental
 
 ```bash
 alyc -o output input.aly --incremental
 ```
 
-Caches previously compiled modules and only recompiles changed files:
+Armazena em cache módulos previamente compilados e recompila apenas os arquivos alterados:
 
 ```aly
-# Cache stored in .aly_cache/ directory
-# Automatically detects changes via file timestamps and hashes
+# Cache armazenado no diretório .aly_cache/
+# Detecta automaticamente alterações por meio de timestamps e hashes de arquivo
 ```
 
 ---
 
-## 3. Parallel Compilation
+## 3. Compilação Paralela
 
 ```bash
 alyc -o output input.aly --parallel
 ```
 
-Compiles independent modules in parallel using multiple threads, reducing total build time for multi-module projects.
+Compila módulos independentes em paralelo usando múltiplas threads, reduzindo o tempo total de build para projetos multi-módulo.
 
 ---
 
-## 4. JIT Optimizations
+## 4. Otimizações JIT
 
-The VM's JIT (`jit.rs`) optimizes hot code paths:
+O JIT da VM (`jit.rs`) otimiza caminhos de código frequentes (hot code paths):
 
-- **Inline Caching**: Caches method lookup results (`inline_cache.rs`)
-- **Fast Call Convention**: Optimized argument passing (`fastcall.rs`, `call_conventions.rs`)
-- **Optimized VM**: Tuned bytecode execution (`optimized.rs`)
+- **Inline Caching**: Armazena em cache os resultados de pesquisa de método (`inline_cache.rs`)
+- **Fast Call Convention**: Passagem de argumentos otimizada (`fastcall.rs`, `call_conventions.rs`)
+- **Optimized VM**: Execução de bytecode ajustada (`optimized.rs`)

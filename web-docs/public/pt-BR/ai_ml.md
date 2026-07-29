@@ -1,18 +1,18 @@
-# Artificial Intelligence & Machine Learning in Aly
+# Inteligência Artificial e Machine Learning em Aly
 
-Aly provides native modules (`ml.*`, `llm.*`, `embed.*`) to interface with AI/ML backends directly from scripts, allowing neural inference, LLM chat operations, and embedding extraction.
+Aly fornece módulos nativos (`ml.*`, `llm.*`, `embed.*`) para interagir com backends de IA/ML diretamente dos scripts, permitindo inferência neural, operações de chat com LLM e extração de embeddings.
 
 ---
 
-## 1. Core Machine Learning (`ml`)
+## 1. Machine Learning Principal (`ml`)
 
-The `ml` module manages inference sessions and models using either **Candle** (pure Rust ML framework) or **ONNX Runtime**.
+O módulo `ml` gerencia sessões de inferência e modelos usando **Candle** (framework de ML puro em Rust) ou **ONNX Runtime**.
 
-### API Reference:
-* `ml.backend_info()`: Returns status of available backends.
-* `ml.create(session_name, backend)`: Initializes a session (e.g. using backend `"candle"` or `"onnx"`).
-* `ml.load_model(model_name, path, backend)`: Registers a model weights file.
-* `ml.infer(session_name, model_name, input_data)`: Runs model inference.
+### Referência da API:
+* `ml.backend_info()`: Retorna o status dos backends disponíveis.
+* `ml.create(session_name, backend)`: Inicializa uma sessão (por exemplo, usando backend `"candle"` ou `"onnx"`).
+* `ml.load_model(model_name, path, backend)`: Registra um arquivo de pesos de modelo.
+* `ml.infer(session_name, model_name, input_data)`: Executa a inferência do modelo.
 
 ```aly
 # Check supported backends
@@ -24,19 +24,19 @@ ml.load_model("my_model", "models/weights.bin", "candle")
 
 # Run inference
 let result = ml.infer("sess_0", "my_model", "sample text data")
-print("Inference output: $result")
+print("Saída da inferência: $result")
 ```
 
 ---
 
-## 2. LLMs and GGUF (`llm`)
+## 2. LLMs e GGUF (`llm`)
 
-For text generation and conversational AI, Aly features bindings to load local GGUF models.
+Para geração de texto e IA conversacional, Aly apresenta bindings para carregar modelos GGUF locais.
 
-### API Reference:
-* `llm.load_gguf(model_name, filepath, context_size)`: Loads a GGUF weights file into memory.
-* `llm.generate(model_name, prompt, max_tokens)`: Generates text completion.
-* `llm.chat(model_name, system_prompt, user_prompt)`: Executes conversational instruction turns.
+### Referência da API:
+* `llm.load_gguf(model_name, filepath, context_size)`: Carrega um arquivo de pesos GGUF na memória.
+* `llm.generate(model_name, prompt, max_tokens)`: Gera a conclusão de texto.
+* `llm.chat(model_name, system_prompt, user_prompt)`: Executa turnos de instrução conversacional.
 
 ```aly
 # Load model
@@ -45,21 +45,21 @@ llm.load_gguf("llama3", "models/llama3-8b.gguf", 2048)
 # Generate response
 let prompt = "Explain recursion in one sentence."
 let answer = llm.generate("llama3", prompt, 128)
-print("Answer: $answer")
+print("Resposta: $answer")
 ```
 
 ---
 
 ## 3. Text Embeddings (`embed`)
 
-Generate vector representations of text for semantic search and classification.
+Gera representações em vetor de texto para busca semântica e classificação.
 
-### API Reference:
-* `embed.create(model_name, backend, dimension)`: Configures a vector embedding model.
-* `embed.encode(model_name, text, normalize_bool)`: Computes text embedding vector.
+### Referência da API:
+* `embed.create(model_name, backend, dimension)`: Configura um modelo de embedding em vetor.
+* `embed.encode(model_name, text, normalize_bool)`: Calcula o vetor de embedding de texto.
 
 ```aly
 embed.create("bert", "candle", 384)
 let vector = embed.encode("bert", "Hello Aly", true)
-print("Vector representation: $vector")
+print("Representação em vetor: $vector")
 ```

@@ -1,6 +1,6 @@
-# Backend de GUI GTK4 en Aly
+# Backend GUI GTK4 en Aly
 
-El backend GTK4 conecta los widgets visuales de Aly con los widgets nativos del escritorio GNOME en sistemas Linux.
+El backend GTK4 conecta los widgets visuales de Aly con los widgets nativos de escritorio GNOME en sistemas Linux.
 
 ---
 
@@ -16,7 +16,7 @@ gui.useBackend("gtk")
 
 ## 2. Integración de Estilos de Linux
 
-Las ventanas GTK4 respetan automáticamente los temas GTK del sistema activo, los modos oscuros y las hojas de estilo CSS cargadas mediante:
+Las ventanas de GTK4 respetan automáticamente los temas activos del sistema GTK, los modos oscuros y las hojas de estilo CSS cargadas mediante:
 
 ```aly
 win.importStyle("theme.css")

@@ -1,6 +1,6 @@
 # Loops in Aly
 
-Laços de repetição (Loops) let you repeat block instructions. Aly unifies loops in the `loop` keyword.
+Loops allow you to repeat block instructions. Aly unifies loops in the `loop` keyword.
 
 ---
 
@@ -32,5 +32,5 @@ loop let i = 0; i lt 5; i = i + 1 {
 
 ## 3. Loop Control Statements
 
-* **`break` / `pare`**: Exits the loop immediately.
+* **`break`**: Exits the loop immediately.
 * **`continue`**: Jumps directly to the next loop iteration, bypassing instructions below.

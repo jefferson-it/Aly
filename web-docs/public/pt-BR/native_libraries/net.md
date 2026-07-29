@@ -1,15 +1,15 @@
-# Network Programming in Aly
+# Programação de Rede no Aly
 
-Aly provides robust native modules for network operations, from low-level raw TCP/UDP sockets to high-level HTTP client requests and API servers.
+O Aly fornece módulos nativos robustos para operações de rede, desde sockets TCP/UDP brutos de baixo nível até solicitações de cliente HTTP de alto nível e servidores de API.
 
 ---
 
-## 1. HTTP Client & Server (`http`)
+## 1. Cliente e Servidor HTTP (`http`)
 
-The `http` module allows you to spin up API servers and perform HTTP client requests.
+O módulo `http` permite que você inicie servidores de API e execute solicitações de cliente HTTP.
 
-### HTTP Client (curl-backed)
-Perform HTTP GET and POST requests:
+### Cliente HTTP (apoiado por curl)
+Execute solicitações HTTP GET e POST:
 ```aly
 import http
 
@@ -18,8 +18,8 @@ print("Response Status: " + response.status)
 print("Response Body: " + response.body)
 ```
 
-### HTTP Server
-Create a microservice server:
+### Servidor HTTP
+Crie um servidor de microsserviços:
 ```aly
 import http
 
@@ -39,11 +39,11 @@ http.start(server)
 
 ---
 
-## 2. Low-Level Sockets (`net`)
+## 2. Sockets de Baixo Nível (`net`)
 
-For custom protocol implementations, Aly provides low-level TCP and UDP connection wrappers.
+Para implementações de protocolo personalizado, o Aly fornece invólucros de conexão TCP e UDP de baixo nível.
 
-### TCP Server
+### Servidor TCP
 ```aly
 import net
 
@@ -56,13 +56,13 @@ loop {
 }
 ```
 
-### TCP Client
+### Cliente TCP
 ```aly
 import net
 
 let conn = net.tcp_connect("127.0.0.1:9000")
 let data = net.tcp_recv(conn, 1024)
-print("Received: $data")
+print("Received: ")
 net.tcp_close(conn)
 ```
 
@@ -70,7 +70,7 @@ net.tcp_close(conn)
 
 ## 3. WebSocket
 
-Real-time bidirectional communication:
+Comunicação bidirecional em tempo real:
 ```aly
 import websocket
 
@@ -85,7 +85,7 @@ websocket.close(ws)
 
 ## 4. MQTT
 
-Lightweight publish/subscribe messaging protocol:
+Protocolo de mensagens de publicação/assinatura leve:
 ```aly
 import mqtt
 
@@ -101,13 +101,13 @@ loop {
 }
 ```
 
-> **Note**: MQTT requires the `mqtt` Cargo feature.
+> **Nota**: O MQTT requer o recurso do Cargo `mqtt`.
 
 ---
 
 ## 5. TLS / SSL
 
-Secure socket connections:
+Conexões de socket seguras:
 ```aly
 import tls
 

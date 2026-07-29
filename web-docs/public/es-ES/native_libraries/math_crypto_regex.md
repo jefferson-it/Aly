@@ -1,6 +1,6 @@
 # Matemáticas, Criptografía y Regex en Aly
 
-Aly expone utilidades matemáticas nativas, primitivas criptográficas (hashes, cifrado) y motores de coincidencia de expresiones regulares.
+Aly expone utilidades matemáticas nativas, primitivas criptográficas (hashes, encriptación) y motores de coincidencia de expresiones regulares.
 
 ---
 
@@ -10,9 +10,9 @@ Expone trigonometría estándar, logaritmos y potencias:
 ```aly
 import math
 
-let value = math.sin(3.14159 / 2) # Cálculos de seno
-let root = math.sqrt(16)          # Raíz cuadrada (4)
-let log_val = math.log10(100)     # Logaritmo base 10 (2)
+let value = math.sin(3.14159 / 2) # Sine calculations
+let root = math.sqrt(16)          # Square root (4)
+let log_val = math.log10(100)     # Logarithm base 10 (2)
 
 print("Root: $root, Log: $log_val")
 ```
@@ -21,14 +21,14 @@ print("Root: $root, Log: $log_val")
 
 ## 2. Hashes Criptográficos y AES (`crypto`)
 
-Genera hashes de texto de forma segura (MD5, SHA1, SHA256, SHA512) o cifra/descifra con AES-256-GCM:
+Realice un hash seguro de salidas de texto (MD5, SHA1, SHA256, SHA512) o encripte/desencripte con AES-256-GCM:
 ```aly
 import crypto
 
 let sha = crypto.sha256("Password123")
 print("SHA256 Hash: $sha")
 
-# Cifrado AES
+# AES Encryption
 let key = "32byte_super_secure_key_needed..."
 let secret = "Sensitive information"
 let ciphertext = crypto.aes_encrypt(secret, key)
@@ -41,11 +41,11 @@ print("Decrypted: $decrypted")
 
 ## 3. Expresiones Regulares (`regex`)
 
-Coincidencia, captura y reemplazo de texto usando patrones regex estándar:
+Busque coincidencias, capture y reemplace texto usando patrones regex estándar:
 ```aly
 import regex
 
-let pattern = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" # Patrón de validación de email
+let pattern = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$" # Email validator pattern
 let is_valid = regex.match("user@example.com", pattern)
 print("Valid email: $is_valid")
 

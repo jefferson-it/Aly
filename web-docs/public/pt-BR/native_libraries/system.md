@@ -1,38 +1,38 @@
-# System, Environment, and OS Utilities in Aly
+# Sistema, Ambiente e Utilitários de SO em Aly
 
-Aly provides libraries to access core environment variables, check configurations, read configuration profiles, and manage system terminals.
+Aly fornece bibliotecas para acessar variáveis de ambiente principais, verificar configurações, ler perfis de configuração e gerenciar terminais do sistema.
 
 ---
 
-## 1. Environment Profiles (`dotenv`)
+## 1. Perfis de Ambiente (`dotenv`)
 
-Load `.env` variables directly into active environment bindings:
+Carrega variáveis `.env` diretamente nas vinculações de ambiente ativo:
 ```aly
 import dotenv
 
 dotenv.load() # Reads .env file in project root
 
 let api_key = dotenv.get("API_KEY")
-print("API Key: $api_key")
+print("Chave da API: $api_key")
 ```
 
 ---
 
-## 2. UUID Generation (`uuid`)
+## 2. Geração de UUID (`uuid`)
 
-Generate unique identifier strings natively:
+Gera strings de identificador único nativamente:
 ```aly
 import uuid
 
 let id = uuid.v4()
-print("Generated Unique ID: $id")
+print("ID Único Gerado: $id")
 ```
 
 ---
 
-## 3. Terminal Control (`console`)
+## 3. Controle de Terminal (`console`)
 
-Control outputs, colors, and read standard terminal inputs:
+Controla saídas, cores e lê entradas padrão de terminal:
 ```aly
 import console
 
@@ -45,5 +45,5 @@ console.print_color("Red error message", "red")
 
 # Read user input directly
 let name = console.input("Enter name: ")
-print("Hello, $name")
+print("Olá, $name")
 ```

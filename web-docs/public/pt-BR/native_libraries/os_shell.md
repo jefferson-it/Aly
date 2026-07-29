@@ -1,10 +1,10 @@
-# OS and Shell Utilities in Aly
+# Utilitários de SO e Shell no Aly
 
-The `os` module provides system information queries. The `shell` module provides command execution and process management.
+O módulo `os` fornece consultas de informações do sistema. O módulo `shell` fornece execução de comandos e gerenciamento de processos.
 
 ---
 
-## 1. OS Information (`os`)
+## 1. Informações do SO (`os`)
 
 ```aly
 import os
@@ -23,7 +23,7 @@ print(os.eol())          # Line ending character(s)
 print(os.uptime())       # System uptime in seconds
 ```
 
-### Memory Information
+### Informações de Memória
 
 ```aly
 print(os.totalmem())   # Total system memory in bytes
@@ -32,7 +32,7 @@ print(os.usedmem())    # Used memory in bytes
 print(os.loadavg())    # [1min, 5min, 15min] load averages
 ```
 
-### CPU Information
+### Informações da CPU
 
 ```aly
 let cpus = os.cpus()     # Vector of CPU objects
@@ -40,7 +40,7 @@ let user = os.userinfo() # Object with uid, gid, username, shell, homedir
 let net = os.network_interfaces()  # Vector of network interface objects
 ```
 
-### Raw System Call
+### Chamada de Sistema Bruta
 
 ```aly
 let result = os.syscall(syscall_number, arg1, arg2, arg3)
@@ -49,9 +49,9 @@ let result = os.syscall(syscall_number, arg1, arg2, arg3)
 
 ---
 
-## 2. Shell Command Execution (`shell`)
+## 2. Execução de Comando do Shell (`shell`)
 
-### Basic Execution
+### Execução Básica
 
 ```aly
 import shell
@@ -68,7 +68,7 @@ print(result.stdout)   # stdout text
 print(result.stderr)   # stderr text
 ```
 
-### Background Processes
+### Processos em Segundo Plano
 
 ```aly
 let pid = shell.spawn("long-running-task.sh")
@@ -80,7 +80,7 @@ shell.kill(pid)                     # Kill process
 shell.pid_exists(pid)               # Check if still tracked
 ```
 
-### Shell Pipes
+### Pipes de Shell
 
 ```aly
 let result = shell.pipe(["cat file.txt", "grep hello", "wc -l"])
@@ -89,7 +89,7 @@ let result = shell.pipe(["cat file.txt", "grep hello", "wc -l"])
 let lines = shell.pipe_lines(["ps aux", "grep aly"])
 ```
 
-### Environment Variables
+### Variáveis de Ambiente
 
 ```aly
 let val = shell.env_get("PATH")
@@ -98,14 +98,14 @@ shell.env_remove("MY_VAR")
 let all = shell.env_list()  # Object with all env vars
 ```
 
-### Working Directory
+### Diretório de Trabalho
 
 ```aly
 shell.cd("/home/user/projects")
 let dir = shell.pwd()
 ```
 
-### Process Management
+### Gerenciamento de Processos
 
 ```aly
 let found = shell.which("python")     # Path to executable
@@ -116,7 +116,7 @@ let procs = shell.process_list("aly") # Filter by name
 shell.exit(0)                         # Exit process
 ```
 
-### Custom Shell
+### Shell Personalizado
 
 ```aly
 let out = shell.run_in_shell("echo hi", "/bin/bash")

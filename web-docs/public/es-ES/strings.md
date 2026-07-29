@@ -1,10 +1,10 @@
 # Cadenas de Texto en Aly
 
-Las cadenas son secuencias de caracteres encerradas entre comillas dobles. Admiten interpolación de plantillas, concatenación y un rico conjunto de operaciones integradas.
+Las cadenas de texto son secuencias de caracteres encerradas entre comillas dobles. Soportan interpolación de plantillas, concatenación y un conjunto rico de operaciones incorporadas.
 
 ---
 
-## 1. Literales de Cadena
+## 1. Literales de Cadena de Texto
 
 ```aly
 let greeting = "Hello, World!"
@@ -15,9 +15,9 @@ Secuencias de escape: `\n` (nueva línea), `\t` (tabulación), `\\` (barra inver
 
 ---
 
-## 2. Interpolación de Cadenas
+## 2. Interpolación de Cadenas de Texto
 
-Aly admite dos sintaxis de interpolación dentro de cadenas entre comillas dobles:
+Aly soporta dos sintaxis de interpolación dentro de cadenas de texto con comillas dobles:
 
 ### `$variable` — Referencia directa a variable
 
@@ -27,7 +27,7 @@ let msg = "Welcome to $name!"
 print(msg)   # Outputs: Welcome to Aly!
 ```
 
-### `&expression` — Evaluación de expresiones
+### `&expression` — Evaluación de expresión
 
 ```aly
 let a = 10
@@ -40,7 +40,7 @@ La sintaxis `$` funciona para nombres de variables simples. La sintaxis `&` eval
 
 ---
 
-## 3. Concatenación y Repetición de Cadenas
+## 3. Concatenación y Repetición de Cadenas de Texto
 
 ```aly
 let hello = "Hello" + " " + "World"   # "Hello World"
@@ -49,24 +49,24 @@ let repeated = "Ha" * 3               # "HaHaHa"
 
 ---
 
-## 4. Operaciones Integradas de Cadenas
+## 4. Operaciones Incorporadas de Cadenas de Texto
 
-Las cadenas tienen métodos accesibles a través del módulo `str`:
+Las cadenas de texto tienen métodos accesibles a través del módulo `str`:
 
 ```aly
 import str
 
 let text = "  Hello Aly  "
-print(str.trim(text))        # Elimina espacios en blanco: "Hello Aly"
-print(str.len(text))         # Longitud: 12
-print(str.lower(text))       # Minúsculas: "  hello aly  "
-print(str.upper(text))       # Mayúsculas: "  HELLO ALY  "
+print(str.trim(text))        # Removes whitespace: "Hello Aly"
+print(str.len(text))         # Length: 12
+print(str.lower(text))       # Lowercase: "  hello aly  "
+print(str.upper(text))       # Uppercase: "  HELLO ALY  "
 print(str.contains(text, "Aly"))  # true
 print(str.starts_with(text, "  He"))  # true
 print(str.ends_with(text, "  "))  # true
 ```
 
-### Indexación de Cadenas
+### Indexación de cadenas de texto
 
 ```aly
 let text = "Aly"
@@ -76,9 +76,9 @@ print(text[1])   # Outputs: "l"
 
 ---
 
-## 5. Cadenas Multilinea
+## 5. Cadenas de Texto Multilínea
 
-La continuación de líneas con barra invertida `\` permite dividir cadenas largas en varias líneas:
+La continuación de línea con la barra invertida `\` permite dividir cadenas de texto largas en varias líneas:
 
 ```aly
 let msg = "This is a very long string " \

@@ -1,24 +1,24 @@
-# JOT Data Format in Aly
+# Formato de Dados JOT no Aly
 
-JOT is a JSON-like data format and query language built into Aly for structured data manipulation.
-
----
-
-## 1. JOT Values
-
-JOT supports the following value types:
-
-- **Null**: Absence of value
-- **Boolean**: `true` or `false`
-- **Integer**: 64-bit signed integers
-- **Float**: 64-bit floating-point numbers
-- **String**: Text strings
-- **Array**: Ordered list of JOT values
-- **Object**: Key-value map of JOT values
+JOT é um formato de dados e linguagem de consulta semelhante ao JSON, integrado ao Aly para manipulação de dados estruturados.
 
 ---
 
-## 2. JOT Syntax
+## 1. Valores JOT
+
+O JOT suporta os seguintes tipos de valores:
+
+- **Null**: Ausência de valor
+- **Boolean**: `true` ou `false`
+- **Integer**: Inteiros com sinal de 64 bits
+- **Float**: Números de ponto flutuante de 64 bits
+- **String**: Cadeias de texto (strings)
+- **Array**: Lista ordenada de valores JOT
+- **Object**: Mapa de chave-valor de valores JOT
+
+---
+
+## 2. Sintaxe JOT
 
 ```aly
 let data = {
@@ -34,30 +34,30 @@ let data = {
 
 ---
 
-## 3. Querying with `pick`
+## 3. Consultando com `pick`
 
-The `pick` method traverses nested objects using a sequence of keys:
+O método `pick` percorre objetos aninhados usando uma sequência de chaves:
 
 ```aly
 let val = data.pick(["details", "author"])
 print(val)  # Outputs: "Jefferson"
 ```
 
-Returns `None` if any key in the chain does not exist.
+Retorna `None` se qualquer chave na cadeia não existir.
 
 ---
 
-## 4. Converting to String
+## 4. Convertendo para String
 
 ```aly
 let text = data.to_string()
 print(text)
 ```
 
-Outputs the JOT value as a formatted string, indented for readability.
+Gera o valor JOT como uma string formatada, recuada (indentada) para legibilidade.
 
 ---
 
-## 5. JOT Runtime
+## 5. Runtime do JOT
 
-The JOT runtime (`jot.rs`) provides parsing, formatting, and conversion utilities. It serves as the internal representation for structured data throughout the Aly runtime.
+O runtime do JOT (`jot.rs`) fornece utilitários de parsing, formatação e conversão. Ele serve como a representação interna para dados estruturados em todo o runtime do Aly.

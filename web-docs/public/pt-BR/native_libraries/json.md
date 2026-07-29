@@ -1,10 +1,10 @@
-# JSON Module in Aly
+# Módulo JSON no Aly
 
-The `json` module provides parsing and serialization of JSON data.
+O módulo `json` fornece análise e serialização de dados JSON.
 
 ---
 
-## 1. Parsing JSON
+## 1. Analisando JSON
 
 ```aly
 import json
@@ -14,17 +14,17 @@ print(data.name)      # Outputs: Aly
 print(data.version)   # Outputs: 1.0
 ```
 
-Parsed JSON maps to native Aly types:
-- JSON object -> Aly object
-- JSON array -> Aly vector
-- JSON string -> Aly string
-- JSON number -> Aly int or float
-- JSON boolean -> Aly bool
-- JSON null -> Aly `None`
+JSON analisado é mapeado para os tipos nativos do Aly:
+- JSON object -> objeto Aly
+- JSON array -> vetor Aly
+- JSON string -> string Aly
+- JSON number -> int ou float Aly
+- JSON boolean -> bool Aly
+- JSON null -> `None` Aly
 
 ---
 
-## 2. Serializing to JSON
+## 2. Serializando para JSON
 
 ```aly
 import json
@@ -35,4 +35,4 @@ print(text)
 # Outputs: {"name": "Aly", "version": 1.0}
 ```
 
-The `stringify` function converts Aly values back to JSON text format.
+A função `stringify` converte valores Aly de volta para o formato de texto JSON.

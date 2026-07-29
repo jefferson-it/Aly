@@ -1,49 +1,49 @@
 # Sistema, Ambiente e Utilitários de SO em Aly
 
-Aly disponibiliza bibliotecas para aceder a variáveis de ambiente principais, verificar configurações, ler perfis de configuração e gerir terminais de sistema.
+O Aly fornece bibliotecas para aceder a variáveis de ambiente principais, verificar configurações, ler perfis de configuração e gerir terminais do sistema.
 
 ---
 
 ## 1. Perfis de Ambiente (`dotenv`)
 
-Carregar variáveis `.env` directamente em ligações de ambiente activas:
+Carregue variáveis `.env` diretamente nas vinculações de ambiente ativas:
 ```aly
 import dotenv
 
-dotenv.load() # Lê o ficheiro .env na raiz do projeto
+dotenv.load() # Reads .env file in project root
 
 let api_key = dotenv.get("API_KEY")
-print("Chave API: ")
+print("API Key: $api_key")
 ```
 
 ---
 
 ## 2. Geração de UUID (`uuid`)
 
-Gerar cadeias de identificadores únicos nativamente:
+Gere cadeias de identificadores únicos de forma nativa:
 ```aly
 import uuid
 
 let id = uuid.v4()
-print("Identificador Único Gerado: ")
+print("Generated Unique ID: $id")
 ```
 
 ---
 
-## 3. Controlo de Terminal/Consola (`console`)
+## 3. Controlo de Terminal (`console`)
 
-Controlar saídas, cores e ler entradas de terminal/consola padrão:
+Controle saídas, cores e leia as entradas padrão do terminal:
 ```aly
 import console
 
-# Limpar o ecrã do terminal/consola
+# Clear terminal screen
 console.clear()
 
-# Saídas de terminal/consola coloridas utilizando cores ANSI
-console.print_color("Texto de sucesso verde", "green")
-console.print_color("Mensagem de erro vermelha", "red")
+# Colored terminal outputs using ANSI colors
+console.print_color("Green success text", "green")
+console.print_color("Red error message", "red")
 
-# Ler input do utilizador directamente
-let name = console.input("Introduza o nome: ")
-print("Olá, ")
+# Read user input directly
+let name = console.input("Enter name: ")
+print("Hello, $name")
 ```

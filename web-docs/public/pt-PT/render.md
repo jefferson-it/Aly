@@ -1,6 +1,6 @@
-# Renderização Gráfica em Aly
+# Renderização Gráfica no Aly
 
-Aly fornece renderização gráfica acelerada por hardware através de backends OpenGL, Vulkan e DirectX.
+O Aly fornece renderização gráfica acelerada por hardware através dos backends OpenGL, Vulkan e DirectX.
 
 ---
 
@@ -14,7 +14,7 @@ render.opengl.clear(0.0, 0.0, 0.0, 1.0)  # RGBA
 
 let shader = render.opengl.compile_shader(vertex_src, fragment_src)
 let vao = render.opengl.create_vao()
-render.opengl.draw_arrays(vao, 3)  # Desenhar 3 vértices
+render.opengl.draw_arrays(vao, 3)  # Desenha 3 vértices
 render.opengl.swap_buffers(ctx)
 ```
 
@@ -45,4 +45,4 @@ render.directx.clear(device, 0.2, 0.3, 0.4, 1.0)
 render.directx.present(swapchain)
 ```
 
-> **Nota**: DirectX está apenas disponível em alvos Windows.
+> **Nota**: O DirectX está disponível apenas em alvos Windows.

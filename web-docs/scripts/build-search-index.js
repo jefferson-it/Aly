@@ -40,6 +40,7 @@ async function buildSearchIndex() {
     if (!fs.existsSync(langDir)) continue;
 
     const files = walkDir(langDir);
+    const langDocs = [];
 
     for (const filePath of files) {
       const md = fs.readFileSync(filePath, 'utf-8');
@@ -48,13 +49,21 @@ async function buildSearchIndex() {
       const title = extractTitle(md) || pathToTitle(relPath);
       const content = extractContent(md);
 
-      allDocs.push({
+      const doc = {
         lang,
         path: relPath,
         title,
         content
-      });
+      };
+      allDocs.push(doc);
+      langDocs.push(doc);
     }
+
+    fs.writeFileSync(
+      path.join(langDir, 'index.json'),
+      JSON.stringify(langDocs, null, 2)
+    );
+    console.log(`Generated search index for ${lang} with ${langDocs.length} documents`);
   }
 
   const outputDir = path.join('dist');
@@ -67,7 +76,7 @@ async function buildSearchIndex() {
     JSON.stringify(allDocs)
   );
 
-  console.log(`Generated search index with ${allDocs.length} documents`);
+  console.log(`Generated global search index with ${allDocs.length} documents`);
 }
 
 function pathToTitle(path) {

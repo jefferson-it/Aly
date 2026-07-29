@@ -1,12 +1,12 @@
-# Constants and the `tomb` Freezing Mechanism in Aly
+# Constantes e o Mecanismo de Congelamento `tomb` no Aly
 
-Aly supports traditional compile-time constants as well as dynamic mutability freezing at runtime.
+O Aly suporta constantes tradicionais em tempo de compilação, bem como congelamento de mutabilidade dinâmico em tempo de execução.
 
 ---
 
-## 1. Constants (`const`)
+## 1. Constantes (`const`)
 
-Constants are declared at compile-time and cannot be rebound or mutated.
+Constantes são declaradas em tempo de compilação e não podem ser reatribuídas ou mutadas.
 
 ```aly
 const MAX_LIMIT = 100
@@ -14,9 +14,9 @@ const MAX_LIMIT = 100
 
 ---
 
-## 2. Dynamic Freezing (`tomb`)
+## 2. Congelamento Dinâmico (`tomb`)
 
-The native function `tomb(&variable)` locks a mutable variable, converting it into a constant at runtime. Any subsequent attempts to mutate or rebind the variable will fail.
+A função nativa `tomb(&variable)` bloqueia uma variável mutável, convertendo-a em uma constante em tempo de execução. Quaisquer tentativas subsequentes de mutar ou reatribuir a variável falharão.
 
 ```aly
 let name = "Pedro"
@@ -31,4 +31,4 @@ tomb(&name)
 # name = "John" # Error: Reassignment to frozen variable
 ```
 
-This feature is useful for ensuring data safety, defining runtime configurations that must not change after setup, and locking states.
+Esse recurso é útil para garantir a segurança dos dados, definir configurações de tempo de execução que não devem mudar após a configuração e bloquear estados.

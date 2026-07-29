@@ -1,10 +1,10 @@
-# Cadeias de Caracteres em Aly
+# Strings em Aly
 
-Cadeias de caracteres são sequências de caracteres entre aspas duplas. Suportam interpolação de modelos, concatenação e um conjunto rico de operações integradas.
+As strings são sequências de caracteres delimitadas por aspas duplas. Suportam interpolação de modelos, concatenação e um conjunto rico de operações integradas.
 
 ---
 
-## 1. Literais de Cadeia de Caracteres
+## 1. Literais de String
 
 ```aly
 let greeting = "Hello, World!"
@@ -15,16 +15,16 @@ Sequências de escape: `\n` (nova linha), `\t` (tabulação), `\\` (barra invert
 
 ---
 
-## 2. Interpolação de Cadeia de Caracteres
+## 2. Interpolação de String
 
-Aly suporta duas sintaxes de interpolação dentro de cadeias de caracteres entre aspas duplas:
+O Aly suporta duas sintaxes de interpolação dentro de strings com aspas duplas:
 
-### `` — Referência direta de variável
+### `$variable` — Referência direta à variável
 
 ```aly
 let name = "Aly"
-let msg = "Welcome to !"
-print(msg)   # Resultado: Welcome to Aly!
+let msg = "Welcome to $name!"
+print(msg)   # Outputs: Welcome to Aly!
 ```
 
 ### `&expression` — Avaliação de expressão
@@ -33,14 +33,14 @@ print(msg)   # Resultado: Welcome to Aly!
 let a = 10
 let b = 5
 let msg = "Sum is &(a + b)"
-print(msg)   # Resultado: Sum is 15
+print(msg)   # Outputs: Sum is 15
 ```
 
 A sintaxe `$` funciona para nomes de variáveis simples. A sintaxe `&` avalia expressões arbitrárias.
 
 ---
 
-## 3. Concatenação e Repetição de Cadeias de Caracteres
+## 3. Concatenação e Repetição de Strings
 
 ```aly
 let hello = "Hello" + " " + "World"   # "Hello World"
@@ -49,36 +49,36 @@ let repeated = "Ha" * 3               # "HaHaHa"
 
 ---
 
-## 4. Operações Integradas de Cadeia de Caracteres
+## 4. Operações Integradas de Strings
 
-As cadeias de caracteres têm métodos acessíveis através do módulo `str`:
+As strings possuem métodos acessíveis através do módulo `str`:
 
 ```aly
 import str
 
 let text = "  Hello Aly  "
-print(str.trim(text))        # Remove espaços em branco: "Hello Aly"
-print(str.len(text))         # Comprimento: 12
-print(str.lower(text))       # Minúsculas: "  hello aly  "
-print(str.upper(text))       # Maiúsculas: "  HELLO ALY  "
+print(str.trim(text))        # Removes whitespace: "Hello Aly"
+print(str.len(text))         # Length: 12
+print(str.lower(text))       # Lowercase: "  hello aly  "
+print(str.upper(text))       # Uppercase: "  HELLO ALY  "
 print(str.contains(text, "Aly"))  # true
 print(str.starts_with(text, "  He"))  # true
 print(str.ends_with(text, "  "))  # true
 ```
 
-### Indexação de Cadeias de Caracteres
+### Indexação de strings
 
 ```aly
 let text = "Aly"
-print(text[0])   # Resultado: "A"
-print(text[1])   # Resultado: "l"
+print(text[0])   # Outputs: "A"
+print(text[1])   # Outputs: "l"
 ```
 
 ---
 
-## 5. Cadeias de Caracteres de Várias Linhas
+## 5. Strings de Várias Linhas
 
-Continuação de linha com barra invertida `\` permite dividir cadeias longas em várias linhas:
+A continuação de linha com barra invertida `\` permite dividir strings longas em várias linhas:
 
 ```aly
 let msg = "This is a very long string " \

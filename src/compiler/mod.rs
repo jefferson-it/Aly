@@ -625,9 +625,14 @@ pub fn compile_to_binary(source: &str, options: &CompileOptions, output_path: &s
         .map_err(|e| format!("Failed to write C file: {}", e))?;
     
     let header = include_str!("runtime_aly.h");
-    let header_path = format!("{}/runtime_aly.h", Path::new(&c_path).parent().unwrap_or(Path::new(".")).display());
+    let parent = Path::new(&c_path).parent().unwrap_or(Path::new("."));
+    let header_path = if parent.as_os_str().is_empty() {
+        Path::new("runtime_aly.h").to_path_buf()
+    } else {
+        parent.join("runtime_aly.h")
+    };
     std::fs::write(&header_path, header)
-        .map_err(|e| format!("Failed to write runtime header: {}", e))?;
+        .map_err(|e| format!("Failed to write runtime header to '{}': {}", header_path.display(), e))?;
     
     let mut cmd = std::process::Command::new("gcc");
     cmd.args([options.opt_level.gcc_flag(), "-march=native", "-flto"]);
@@ -678,9 +683,13 @@ pub fn compile_and_write_to_file(aly_path: &str, output_name: &str) -> Result<()
     let tmp_dir = std::path::Path::new(&tmp_c)
         .parent()
         .unwrap_or(std::path::Path::new("."));
-    let header_path = format!("{}/runtime_aly.h", tmp_dir.display());
+    let header_path = if tmp_dir.as_os_str().is_empty() {
+        std::path::Path::new("runtime_aly.h").to_path_buf()
+    } else {
+        tmp_dir.join("runtime_aly.h")
+    };
     std::fs::write(&header_path, header)
-        .map_err(|e| format!("Compiler Error: Failed to write runtime_aly.h '{}': {}", header_path, e))?;
+        .map_err(|e| format!("Compiler Error: Failed to write runtime_aly.h '{}': {}", header_path.display(), e))?;
 
     let status = std::process::Command::new("gcc")
         .args(["-O3", "-march=native", "-flto", "-S", "-x", "c", "-std=gnu11", "-w", "-o", &asm_path, &tmp_c])

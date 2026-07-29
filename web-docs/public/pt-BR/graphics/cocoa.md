@@ -1,12 +1,12 @@
-# Cocoa GUI Backend in Aly
+# Backend GUI Cocoa no Aly
 
-The Cocoa backend maps Aly widgets directly to AppKit classes (`NSWindow`, `NSButton`, etc.) on macOS systems.
+O backend Cocoa mapeia os widgets do Aly diretamente para classes AppKit (`NSWindow`, `NSButton`, etc.) em sistemas macOS.
 
 ---
 
-## 1. Activation
+## 1. Ativação
 
-To force native Apple AppKit rendering:
+Para forçar a renderização nativa Apple AppKit:
 
 ```aly
 gui.useBackend("cocoa")
@@ -14,6 +14,6 @@ gui.useBackend("cocoa")
 
 ---
 
-## 2. Platform Compliance
+## 2. Conformidade com a Plataforma
 
-By utilizing standard AppKit runtime selectors, Cocoa windows automatically comply with macOS layout conventions, Apple Menu bars, and system font renderings.
+Ao utilizar seletores padrão do runtime AppKit, as janelas Cocoa automaticamente obedecem às convenções de layout do macOS, barras de menu Apple e renderizações de fonte do sistema.

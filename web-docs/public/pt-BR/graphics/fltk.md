@@ -1,12 +1,12 @@
-# FLTK GUI Backend in Aly
+# Backend GUI FLTK no Aly
 
-FLTK (Fast Light Toolkit) is the default cross-platform GUI backend in Aly due to its speed and low footprint.
+FLTK (Fast Light Toolkit) é o backend GUI multiplataforma padrão no Aly devido à sua velocidade e baixo consumo de recursos.
 
 ---
 
-## 1. Activation
+## 1. Ativação
 
-No additional configuration is required to use FLTK, but you can explicitly specify it:
+Nenhuma configuração adicional é necessária para usar o FLTK, mas você pode especificá-lo explicitamente:
 
 ```aly
 gui.useBackend("fltk")
@@ -14,8 +14,8 @@ gui.useBackend("fltk")
 
 ---
 
-## 2. Features
+## 2. Recursos
 
-* **Lightweight**: Compiles statically into the output binary without requiring heavy dynamically linked system libraries.
-* **Speed**: Instantaneous window initialization and minimal rendering lag.
-* **Portability**: Operates consistently across Linux, Windows, and macOS.
+* **Leve**: Compila estaticamente no binário de saída sem exigir bibliotecas de sistema dinâmicas pesadas.
+* **Velocidade**: Inicialização instantânea de janelas e atraso mínimo de renderização.
+* **Portabilidade**: Opera de forma consistente em Linux, Windows e macOS.

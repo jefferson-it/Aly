@@ -1,10 +1,10 @@
-# System Utilities in Aly
+# Utilitários de Sistema no Aly
 
-Aly provides system-level utilities for desktop notifications, system tray, and clipboard access.
+O Aly fornece utilitários de nível de sistema para notificações na área de trabalho, bandeja do sistema e acesso à área de transferência.
 
 ---
 
-## 1. Desktop Notifications
+## 1. Notificações na Área de Trabalho
 
 ```aly
 import system.notification
@@ -15,7 +15,7 @@ system.notification.schedule("Reminder", "Meeting in 5 minutes", 300)  # 300 sec
 
 ---
 
-## 2. System Tray
+## 2. Bandeja do Sistema
 
 ```aly
 import system.tray
@@ -28,7 +28,7 @@ system.tray.run(tray)
 
 ---
 
-## 3. Clipboard
+## 3. Área de Transferência
 
 ```aly
 import system.clipboard

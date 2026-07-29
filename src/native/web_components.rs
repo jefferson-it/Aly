@@ -76,7 +76,7 @@ pub struct ComponentLifecycle {
     pub form_state_restore: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ShadowMode {
     Open,
     Closed,
@@ -764,6 +764,6 @@ pub fn wc_define_from_file(args: String) -> Box<dyn Validator> {
         reg.defined_tags.insert(comp_file.tag_name, true);
         ok_str("None".to_string())
     } else {
-        ok_str("Invalid component file format")
+        ok_str("Invalid component file format".to_string())
     }
 }
