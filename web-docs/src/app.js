@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 
-const BASE = '/aly/';
+const BASE = '/';
 const LANG_KEY = 'aly-docs-lang';
 const THEME_KEY = 'aly-docs-theme';
 const AVAILABLE_LANGS = ['pt-BR', 'pt-PT', 'en-US', 'es-ES'];
