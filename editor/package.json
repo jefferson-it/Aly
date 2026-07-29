@@ -1,0 +1,41 @@
+{
+  "name": "aly-lang",
+  "displayName": "Aly Programming Language",
+  "description": "VS Code support for Aly: syntax highlighting, autocompletion, snippets, and interactive hovers/IDE tools.",
+  "version": "0.1.0",
+  "publisher": "jefferson-it",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:aly"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "aly",
+        "aliases": ["Aly", "aly"],
+        "extensions": [".aly"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "aly",
+        "scopeName": "source.aly",
+        "path": "./syntaxes/aly.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "aly",
+        "path": "./snippets/snippets.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,178 @@
+// Aly Web Module Test: SSR, SSG, SPA, PWA, CSS
+
+// Web Server with SSR/SSG/SPA/PWA
+web.serve("3001", "static", "true", "true")
+
+// Add routes
+web.addRoute("/", `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{styles}}
+</head>
+<body>
+  <div class="container">
+    <h1>{{title}}</h1>
+    <p>{{content}}</p>
+    <aly-button variant="primary" data-aly-hydrate="aly-button" data-aly-props='{"variant": "primary"}'>Click Me</aly-button>
+  </div>
+  <script src="/hydrate.js"></script>
+</body>
+</html>
+`, '{"title": "Aly Web App", "content": "Welcome to Server-Side Rendering!"}')
+
+web.addRoute("/blog/:slug", `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}} - Blog</title>
+  {{styles}}
+</head>
+<body>
+  <article class="container">
+    <h1>{{title}}</h1>
+    <div class="content">{{content}}</div>
+    <time>{{date}}</time>
+  </article>
+  <script src="/hydrate.js"></script>
+</body>
+</html>
+`, '{"title": "Blog Post", "content": "This is a blog post rendered with SSR", "date": "2024-01-15"}')
+
+// Add layout
+web.addLayout("main", `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{styles}}
+  {{scripts}}
+  {{meta}}
+</head>
+<body>
+  <div id="app">{{content}}</div>
+</body>
+</html>
+`)
+
+// Configure PWA
+web.pwaConfig("Aly Web App", "AlyWeb", "Aly Programming Language Web App", "/", "standalone", "#0f0f13", "#6366f1")
+
+// Generate static site (SSG)
+web.ssgGenerate("./dist")
+
+// CSS Module
+css.create("main")
+css.addRule("main", ".container", '{"display": "flex", "flex-direction": "column", "gap": "var(--spacing-md)", "padding": "var(--spacing-lg)", "max-width": "800px", "margin": "0 auto"}', "", "")
+css.addRule("main", "h1", '{"color": "var(--color-primary)", "font-size": "var(--font-size-2xl)", "font-weight": "var(--font-weight-bold)", "margin": "0"}', "", "")
+css.addRule("main", "p", '{"color": "var(--color-text)", "line-height": "1.6", "margin": "0"}', "", "")
+css.addRule("main", ".btn", '{"background": "var(--color-primary)", "color": "white", "padding": "var(--spacing-sm) var(--spacing-md)", "border-radius": "var(--border-radius-md)", "border": "none", "cursor": "pointer", "font-weight": "500"}', "", "")
+css.addRule("main", ".btn:hover", '{"background": "var(--color-primary-hover)"}', "", ":hover")
+css.addRule("main", "@media (max-width: 768px)", '{"padding": "var(--spacing-sm)"}', "(max-width: 768px)", "")
+
+// Theme
+css.themeCreate("dark", '{"primary": "#6366f1", "primary-hover": "#4f46e5", "background": "#0f0f13", "text": "#f1f1f7", "text-muted": "#a1a1aa", "border": "rgba(255,255,255,0.08)"}', '{"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px"}', '{"font-family": "Outfit, -apple-system, sans-serif", "font-size-base": "16px", "font-weight-normal": "400", "font-weight-bold": "600"}', '{"sm": "640px", "md": "768px", "lg": "1024px"}', '{"md": "0 4px 6px rgba(0,0,0,0.1)"}', '{"md": "8px"}', '{"normal": "200ms ease"}')
+css.themeSet("dark")
+
+// Render CSS
+let cssOutput = css.render("main", "dark")
+console.log("Generated CSS:")
+console.log(cssOutput)
+
+// SSR Render
+let ssrHtml = web.renderSSR("/", '{"title": "Test Page", "content": "SSR Content"}')
+console.log("SSR Rendered HTML:")
+console.log(ssrHtml)
+
+// Web Components
+wc.define("my-counter", `
+  <div class="counter">
+    <span class="count">{{count}}</span>
+    <div class="actions">
+      <slot name="decrement"><button class="btn" onclick="this.getRootNode().host.decrement()">-</button></slot>
+      <slot name="increment"><button class="btn" onclick="this.getRootNode().host.increment()">+</button></slot>
+    </div>
+  </div>
+`, `
+  .counter { display: flex; align-items: center; gap: 16px; padding: 16px; }
+  .count { font-size: 2rem; font-weight: bold; min-width: 60px; text-align: center; }
+  .actions { display: flex; gap: 8px; }
+  .btn { padding: 8px 16px; border: none; border-radius: 4px; background: #6366f1; color: white; cursor: pointer; }
+  .btn:hover { background: #4f46e5; }
+`, `
+  class MyCounter extends HTMLElement {
+    static get observedAttributes() { return ['count']; }
+    
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this.count = 0;
+    }
+    
+    connectedCallback() {
+      this.render();
+      this.shadowRoot.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (e.target.textContent === '+') this.increment();
+          else this.decrement();
+        });
+      });
+    }
+    
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (name === 'count') {
+        this.count = parseInt(newValue) || 0;
+        this.render();
+      }
+    }
+    
+    render() {
+      this.shadowRoot.innerHTML = \`
+        <style>
+          .counter { display: flex; align-items: center; gap: 16px; padding: 16px; }
+          .count { font-size: 2rem; font-weight: bold; min-width: 60px; text-align: center; }
+          .actions { display: flex; gap: 8px; }
+          .btn { padding: 8px 16px; border: none; border-radius: 4px; background: #6366f1; color: white; cursor: pointer; }
+          .btn:hover { background: #4f46e5; }
+        </style>
+        <div class="counter">
+          <span class="count">\${this.count}</span>
+          <div class="actions">
+            <slot name="decrement"><button class="btn">-</button></slot>
+            <slot name="increment"><button class="btn">+</button></slot>
+          </div>
+        </div>
+      \`;
+      this.shadowRoot.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (e.target.textContent === '+') this.increment();
+          else this.decrement();
+        });
+      });
+    }
+    
+    increment() { this.count++; this.setAttribute('count', this.count); }
+    decrement() { this.count--; this.setAttribute('count', this.count); }
+  }
+  
+  customElements.define('my-counter', MyCounter);
+  window.AlyComponents = window.AlyComponents || {};
+  window.AlyComponents['my-counter'] = MyCounter;
+`, "count", "open", '{"count": {"type": "number", "default": "0", "reflect": true}}')
+
+// Render component
+let counterHtml = wc.render("my-counter", '{"count": 5}')
+console.log("Counter HTML:")
+console.log(counterHtml)
+
+// Generate bundle
+let bundle = wc.bundle()
+console.log("Bundle generated, length:", bundle.length)
+
+// Hydration
+wc.hydrate("#app")
+
+console.log("Web module test completed!")

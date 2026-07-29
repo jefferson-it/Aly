@@ -1,0 +1,17 @@
+# Static File Server Example
+# Serve files from a directory
+
+http.serve(8080)
+
+# Serve files from ./public directory
+http.static("/", "./public")
+
+# Custom route that wraps with API
+http.get("/api/info", fun(req) {
+    '{"name":"Aly Static Server","version":"1.0"}'
+})
+
+http.listen(fun() {
+    print("Static server running on http://localhost:8080")
+    print("Serving files from: ./public")
+})

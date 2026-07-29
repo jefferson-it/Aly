@@ -1,0 +1,37 @@
+# len property by type
+let arr = [1, 2, 3]
+let word = "Hello"
+let n = 10
+let f = 10.5
+
+print("Array len (expected 3): $arr.len")
+print("String len (expected 5): $word.len")
+print("Int len (expected 2): $n.len")
+print("Float len (expected [2, 1]): $f.len")
+
+# Math native functions
+let p = pow(2, 3)
+print("pow(2, 3) => $p")
+let s = sqrt(16)
+print("sqrt(16) (expected 4) => $s")
+let r = round(2.6)
+print("round(2.6) (expected 3) => $r")
+let up = roundUp(2.1)
+print("roundUp(2.1) (expected 3) => $up")
+let down = roundDown(2.9)
+print("roundDown(2.9) (expected 2) => $down")
+let rnd = random()
+print("random() => $rnd")
+
+# Numeric utility
+let fixed = to_fixed(2.5, 2)
+print("to_fixed(2.5, 2) (expected 2.50) => $fixed")
+
+# Tomb keyword: turns a mutable variable immutable
+let user = "Joao"
+tomb user
+print("user after tomb => $user")
+
+# Enhanced template strings with & interpolation
+let people = { name: "Joao" }
+print("Hello, my name is &people.name")

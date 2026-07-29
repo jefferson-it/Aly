@@ -1,0 +1,57 @@
+// Simple SSR/SSG/SPA/PWA Test
+
+web.useSSR(true)
+web.useSPA(false)
+
+web.serve("3001", "public", "true", "false")
+
+web.addRoute("/", `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  <style>
+    {{styles}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{{title}}</h1>
+    <p>{{message}}</p>
+    <div class="card">
+      <h2>Features</h2>
+      <ul>
+        {{#each features}}
+        <li>{{this}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </div>
+  <script src="/hydrate.js"></script>
+</body>
+</html>
+`, '{"title": "Aly SSR Demo", "message": "Server-Side Rendering with Aly!", "features": ["SSR - Server Side Rendering", "SSG - Static Site Generation", "SPA - Single Page Application", "PWA - Progressive Web App", "CSS - CSS-in-Aly", "Web Components", "WASM - WebAssembly"]}')
+
+web.addLayout("main", `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{styles}}
+  {{scripts}}
+  {{meta}}
+</head>
+<body>
+  {{content}}
+</body>
+</html>
+`)
+
+web.pwaConfig("Aly Demo", "Aly", "Aly Language Demo", "/", "standalone", "#0f0f13", "#6366f1")
+
+web.ssgGenerate("./dist")
+
+console.log("SSR/SSG/SPA/PWA server started on http://localhost:3001")
+console.log("Run 'web.ssgGenerate(\"./dist\")' to generate static site")

@@ -1,0 +1,6 @@
+let x = 10
+
+import "lib/calc.aly"
+
+print(x)
+print(add(3, 4))

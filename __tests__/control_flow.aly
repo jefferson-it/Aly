@@ -1,0 +1,15 @@
+let x = 15
+
+if x gt 10 {
+    print("x is greater than 10")
+} else {
+    print("x is less than or equal to 10")
+}
+
+let sum = 0
+let i = 1
+loop i lte 5 {
+    sum = sum + i
+    i = i + 1
+}
+print("Sum from 1 to 5 is: $sum")

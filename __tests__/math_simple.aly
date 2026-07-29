@@ -1,0 +1,13 @@
+let a = 10
+let b = 20
+let c = a + b * 2
+let d = (a + b) * 2
+let e = b / 2
+let f = b - a
+
+print("a: $a")
+print("b: $b")
+print("c: $c")
+print("d: $d")
+print("e: $e")
+print("f: $f")

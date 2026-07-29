@@ -1,0 +1,6 @@
+# Loop example
+let i = 0
+loop i lt 5 {
+    print(i)
+    i = i + 1
+}

@@ -1,0 +1,9 @@
+fun main_loop(i) {
+    print("Loop step $i")
+    if i lt 3 {
+        let next = i + 1
+        main_loop(next)
+    }
+}
+
+main_loop(1)

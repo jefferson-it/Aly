@@ -1,0 +1,74 @@
+# Comprehensive Showcase of Aly Language features
+# From basic syntax up to GUI window styling
+
+print("=== 1. Basic Variables and Arithmetic ===")
+let name = "Jefferson"
+let version = 2.0
+let age = 30
+let is_developer = true
+
+print("Developer: $name")
+print("Age: $age")
+print("Interpreter Version: $version")
+
+let result = 10 + 20 * 5 / 2 - 5
+print("Math result (10 + 20 * 5 / 2 - 5): $result")
+
+print("\n=== 2. Comparisons & Control Flow ===")
+if age gte 18 {
+    print("$name is an adult.")
+} else {
+    print("$name is a minor.")
+}
+
+let count = 1
+let sum = 0
+loop count lte 5 {
+    sum = sum + count
+    count = count + 1
+}
+print("Sum from 1 to 5: $sum")
+
+print("\n=== 3. Functions & Recursion ===")
+fun factorial(n) {
+    if n lte 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+let fact = factorial(5)
+print("Factorial of 5: $fact")
+
+print("\n=== 4. Objects and Lists ===")
+let list = [1, 2, 3, 4]
+print("List value: $list")
+
+print("\n=== 5. GUI Window Setup ===")
+# Draw a beautiful window using object-oriented GUI wrapper
+const win = new Window("Aly Comprehensive Showcase", 400, 300)
+
+const hdr = new Header("Aly GUI System!")
+const lbl = new Label("Interact with the button below:")
+const input = new Input("Enter text here...")
+const btn = new Button("Click to Action")
+
+fun on_btn_click() {
+    let val = input.value
+    lbl.innerText = "Text entered: " + val
+    lbl.style("color: #34c759; font-size: 20")
+    print("Action triggered! Entered text: " + val)
+}
+
+btn.onClick(on_btn_click)
+
+win.insert(hdr)
+win.insert(lbl)
+win.insert(input)
+win.insert(btn)
+
+# Inline style overrides
+hdr.style("color: #007aff; font-size: 24; font-weight: bold")
+btn.style("background-color: #007aff; color: #ffffff; border-radius: 8")
+
+print("GUI Window is fully initialized. Opening loop...")
+win.loop()

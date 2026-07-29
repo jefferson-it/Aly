@@ -1,0 +1,128 @@
+{
+  "Function Declaration": {
+    "prefix": "fun",
+    "body": [
+      "fun ${1:name}(${2:params}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare a function"
+  },
+  "Async Function Declaration": {
+    "prefix": "afun",
+    "body": [
+      "async fun ${1:name}(${2:params}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Declare an async function"
+  },
+  "If Statement": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition} {",
+      "\t$2",
+      "}"
+    ],
+    "description": "If statement"
+  },
+  "If-Else Statement": {
+    "prefix": "ifelse",
+    "body": [
+      "if ${1:condition} {",
+      "\t$2",
+      "} else {",
+      "\t$3",
+      "}"
+    ],
+    "description": "If-Else statement"
+  },
+  "Elif Statement": {
+    "prefix": "elif",
+    "body": [
+      "elif ${1:condition} {",
+      "\t$2",
+      "}"
+    ],
+    "description": "Elif statement"
+  },
+  "Loop Statement": {
+    "prefix": "loop",
+    "body": [
+      "loop ${1:i} = 0 ; ${1:i} lt ${2:limit} ; ${1:i}++ {",
+      "\t$0",
+      "}"
+    ],
+    "description": "For/C-style loop"
+  },
+  "Infinite/Simple Loop": {
+    "prefix": "iloop",
+    "body": [
+      "loop {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Infinite or block loop"
+  },
+  "Match Statement": {
+    "prefix": "match",
+    "body": [
+      "match ${1:expression} {",
+      "\t${2:pattern} => ${3:action}",
+      "\t_ => ${4:fallback}",
+      "}"
+    ],
+    "description": "Pattern matching"
+  },
+  "Try-Catch Block": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "\t$1",
+      "} catch ${2:error} {",
+      "\t$3",
+      "}"
+    ],
+    "description": "Try-Catch error handling"
+  },
+  "Constant Declaration": {
+    "prefix": "const",
+    "body": "const ${1:name} = ${2:value}",
+    "description": "Declare a constant"
+  },
+  "Variable Declaration": {
+    "prefix": "let",
+    "body": "let ${1:name} = ${2:value}",
+    "description": "Declare a variable"
+  },
+  "Print statement": {
+    "prefix": "print",
+    "body": "print($1)",
+    "description": "Print to stdout"
+  },
+  "Input statement": {
+    "prefix": "input",
+    "body": "input(\"${1:prompt}\")",
+    "description": "Prompt user input"
+  },
+  "FS Read File": {
+    "prefix": "fs.read",
+    "body": "fs.read(${1:path})",
+    "description": "Read file content as string"
+  },
+  "FS Write File": {
+    "prefix": "fs.write",
+    "body": "fs.write(${1:path}, ${2:content})",
+    "description": "Write string content to file"
+  },
+  "HTTP GET Request": {
+    "prefix": "http.get",
+    "body": "http.get(${1:url})",
+    "description": "Send a GET request"
+  },
+  "HTTP POST Request": {
+    "prefix": "http.post",
+    "body": "http.post(${1:url}, ${2:body})",
+    "description": "Send a POST request"
+  }
+}

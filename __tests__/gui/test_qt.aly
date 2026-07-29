@@ -1,0 +1,22 @@
+gui.useBackend("qt")
+
+let win = gui.window("Minha Janela Qt", 400, 300)
+let div = gui.div("vertical")
+let lbl = gui.label("Olá, Aly GUI com Qt6!")
+let btn = gui.button("Clique Aqui")
+let input = gui.input("Digite algo...")
+
+gui.insert(win, div)
+gui.insert(div, lbl)
+gui.insert(div, btn)
+gui.insert(div, input)
+
+fun myHandler() {
+    let val = gui.get(input, "value")
+    gui.set(lbl, "label", "Você digitou: " + val)
+    console.log("Botão clicado! Valor: " + val)
+}
+
+gui.on(btn, "onClick", myHandler)
+
+gui.run()

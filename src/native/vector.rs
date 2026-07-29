@@ -1,9 +1,15 @@
 mod vector {
-    use crate::{aly::Aly, lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, runtime::interpreter::exec, tokens::Tokens, validators::structures::{is_close, is_opened}};
+    use crate::{lexer::Lexer, native::{process_value, types::{Validator, ValueData}}, runtime::interpreter::exec, tokens::Tokens, validators::structures::{is_close, is_opened}};
 
 
     #[derive(Clone)]
     pub struct Vector(Vec<ValueData>);
+
+    impl PartialEq for Vector {
+        fn eq(&self, other: &Self) -> bool {
+            self.0 == other.0
+        }
+    }
 
     impl Vector {
         pub fn new(value: Vec<ValueData>) -> Vector {
@@ -26,8 +32,14 @@ mod vector {
             ValueData::String(String::from("None"))
         }
 
+        pub fn set_index(&mut self, index: usize, value: ValueData) {
+            if index < self.0.len() {
+                self.0[index] = value;
+            }
+        }
+
         pub fn to_string(&self, json: bool) -> String {
-            let mut string = String::from("Object (#data");
+            let mut string = String::from("Vector (#data");
 
             if json {
                 string = string.replace("#data", &self.to_json(0));
@@ -36,6 +48,66 @@ mod vector {
             string.push_str(")");
 
             string
+        }
+
+        pub fn map<F>(&self, f: F) -> Vector 
+        where F: Fn(&ValueData) -> ValueData {
+            Vector(self.0.iter().map(f).collect())
+        }
+
+        pub fn filter<F>(&self, f: F) -> Vector 
+        where F: Fn(&ValueData) -> bool {
+            Vector(self.0.iter().filter(|x| f(x)).cloned().collect())
+        }
+
+        pub fn reduce<F, T>(&self, initial: T, f: F) -> T
+        where F: Fn(T, &ValueData) -> T {
+            self.0.iter().fold(initial, f)
+        }
+
+        pub fn each<F>(&self, f: F) 
+        where F: Fn(&ValueData) {
+            self.0.iter().for_each(f);
+        }
+
+        pub fn find<F>(&self, f: F) -> Option<&ValueData>
+        where F: Fn(&ValueData) -> bool {
+            self.0.iter().find(|x| f(x))
+        }
+
+        pub fn len(&self) -> usize {
+            self.0.len()
+        }
+
+        pub fn get_elements(&self) -> &Vec<ValueData> {
+            &self.0
+        }
+
+        pub fn sort(&mut self) {
+            // Note: Simplistic sort, assuming ValueData supports ordering.
+            // For complex types, this may need custom comparison.
+            self.0.sort_by(|a, b| {
+                a.to_string(false).partial_cmp(&b.to_string(false)).unwrap()
+            });
+        }
+
+        pub fn slice(&self, start: usize, end: usize) -> Vector {
+            Vector(self.0[start..end].to_vec())
+        }
+
+        pub fn flat(&self) -> Vector {
+            let mut flattened = Vec::new();
+            for item in &self.0 {
+                match item {
+                    ValueData::Vec(v) => flattened.extend(v.0.clone()),
+                    _ => flattened.push(item.clone()),
+                }
+            }
+            Vector(flattened)
+        }
+
+        pub fn concat(&mut self, other: Vector) {
+            self.0.extend(other.0);
         }
 
         pub fn to_json(&self, child: i32) -> String {
@@ -73,10 +145,11 @@ mod vector {
 
     // Pub create
 
-    pub fn create_array(run: &mut Aly, lexer: Vec<Lexer>) -> Box<dyn Validator>{
+    pub fn create_array(lexer: Vec<Lexer>) -> Box<dyn Validator>{
         let mut another = 0;
         let mut new_vec = vec![];
         let mut values = vec![];
+        // let run = get_runtime();
 
         for item in lexer[1..lexer.len() - 1].to_vec() {
             if item.token.id() == Tokens::Comma.id() { continue; }
@@ -93,7 +166,7 @@ mod vector {
                 if another == 0 {
                     let mut res: Box<dyn Validator> = Box::new(String::new());
 
-                    exec(run, &mut new_vec, &mut res);
+                    exec(&mut new_vec, &mut res);
     
                     new_vec.clear();
     
@@ -108,7 +181,7 @@ mod vector {
                 continue;
             }
 
-            let val = process_value(run, vec![item.clone()]);
+            let val = process_value(vec![item.clone()]);
 
             values.push(val.clone());
         } 

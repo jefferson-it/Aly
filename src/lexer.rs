@@ -1,6 +1,7 @@
 mod lexer {
     use crate::tokens::Tokens;
 
+    #[derive(PartialEq)]
     pub struct Lexer {
         pub token: Tokens,
         pub literal: String,

@@ -1,0 +1,388 @@
+// Web Components Test
+
+wc.define("aly-card", `
+  <article class="card" part="card">
+    <header class="card-header">
+      <slot name="header">Card Title</slot>
+    </header>
+    <div class="card-content">
+      <slot>Card content goes here</slot>
+    </div>
+    <footer class="card-footer">
+      <slot name="footer">Card footer</slot>
+    </footer>
+  </article>
+`, `
+  :host {
+    display: block;
+    font-family: inherit;
+  }
+  .card {
+    background: var(--card-bg, #191923);
+    border: 1px solid var(--card-border, rgba(255,255,255,0.08));
+    border-radius: var(--card-radius, 12px);
+    padding: var(--card-padding, 20px);
+    box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.1));
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .card:hover {
+    box-shadow: var(--card-shadow-hover, 0 8px 24px rgba(0,0,0,0.15));
+    transform: translateY(-2px);
+  }
+  .card-header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border, rgba(255,255,255,0.08));
+  }
+  .card-header ::slotted(*) {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--card-title-color, #f1f1f7);
+  }
+  .card-content {
+    color: var(--card-text-color, #d1d5db);
+    line-height: 1.6;
+  }
+  .card-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--card-border, rgba(255,255,255,0.08));
+    display: flex;
+    gap: 8px;
+  }
+  .card-footer ::slotted(button) {
+    flex: 1;
+  }
+`, `
+  class AlyCard extends HTMLElement {
+    static get observedAttributes() { return ['elevated', 'interactive']; }
+    
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this.elevated = false;
+      this.interactive = false;
+    }
+    
+    connectedCallback() {
+      this.render();
+      if (this.interactive) {
+        this.addEventListener('click', this.handleClick);
+        this.addEventListener('keydown', this.handleKeydown);
+      }
+    }
+    
+    disconnectedCallback() {
+      if (this.interactive) {
+        this.removeEventListener('click', this.handleClick);
+        this.removeEventListener('keydown', this.handleKeydown);
+      }
+    }
+    
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (oldValue !== newValue) {
+        this[name] = newValue === 'true' || newValue === '';
+        this.render();
+      }
+    }
+    
+    handleClick = () => {
+      this.dispatchEvent(new CustomEvent('aly-card-click', { 
+        bubbles: true, 
+        composed: true,
+        detail: { card: this }
+      }));
+    };
+    
+    handleKeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.handleClick();
+      }
+    };
+    
+    render() {
+      const elevated = this.elevated ? 'elevated' : '';
+      this.shadowRoot.innerHTML = \`
+        <style>
+          :host { display: block; }
+          .card { 
+            background: var(--card-bg, #191923);
+            border: 1px solid var(--card-border, rgba(255,255,255,0.08));
+            border-radius: var(--card-radius, 12px);
+            padding: var(--card-padding, 20px);
+            box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.1));
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+          }
+          .card.\${elevated} {
+            box-shadow: var(--card-shadow-hover, 0 8px 24px rgba(0,0,0,0.15));
+          }
+          .card:hover { 
+            box-shadow: var(--card-shadow-hover, 0 8px 24px rgba(0,0,0,0.15));
+            transform: translateY(-2px);
+          }
+          .card-header { 
+            margin-bottom: 12px; 
+            padding-bottom: 12px; 
+            border-bottom: 1px solid var(--card-border, rgba(255,255,255,0.08));
+          }
+          .card-header ::slotted(*) { 
+            margin: 0; 
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            color: var(--card-title-color, #f1f1f7); 
+          }
+          .card-content { 
+            color: var(--card-text-color, #d1d5db); 
+            line-height: 1.6; 
+          }
+          .card-footer { 
+            margin-top: 16px; 
+            padding-top: 12px; 
+            border-top: 1px solid var(--card-border, rgba(255,255,255,0.08));
+            display: flex; 
+            gap: 8px; 
+          }
+        </style>
+        <article class="card \${elevated}" part="card">
+          <header class="card-header">
+            <slot name="header">Card Title</slot>
+          </header>
+          <div class="card-content">
+            <slot>Card content goes here</slot>
+          </div>
+          <footer class="card-footer">
+            <slot name="footer">Card footer</slot>
+          </footer>
+        </article>
+      \`;
+    }
+    
+    get elevated() { return this.hasAttribute('elevated'); }
+    set elevated(val) { 
+      if (val) this.setAttribute('elevated', ''); 
+      else this.removeAttribute('elevated'); 
+    }
+    
+    get interactive() { return this.hasAttribute('interactive'); }
+    set interactive(val) { 
+      if (val) this.setAttribute('interactive', ''); 
+      else this.removeAttribute('interactive'); 
+    }
+  }
+  
+  customElements.define('aly-card', AlyCard);
+  window.AlyComponents = window.AlyComponents || {};
+  window.AlyComponents['aly-card'] = AlyCard;
+`, "elevated,interactive", "open", '{}')
+
+wc.addProperty("aly-card", "elevated", "boolean", "false", "true", "elevated", "false")
+wc.addProperty("aly-card", "interactive", "boolean", "false", "true", "interactive", "false")
+wc.addMethod("aly-card", "focus", "[]", "this.shadowRoot.querySelector('.card')?.focus()", "false")
+wc.addEvent("aly-card", "aly-card-click")
+
+wc.define("aly-button", `
+  <button class="btn" part="button">
+    <span class="btn-content">
+      <slot name="icon"></slot>
+      <slot>Button</slot>
+    </span>
+    <span class="btn-loader" part="loader" hidden></span>
+  </button>
+`, `
+  :host {
+    display: inline-flex;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: var(--btn-bg, #6366f1);
+    color: var(--btn-color, white);
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--btn-hover-bg, #4f46e5);
+    transform: translateY(-1px);
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--btn-focus, #6366f1);
+    outline-offset: 2px;
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  .btn-loader[hidden] {
+    display: none;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .btn.variant-primary { --btn-bg: #6366f1; --btn-hover-bg: #4f46e5; }
+  .btn.variant-secondary { --btn-bg: #6b7280; --btn-hover-bg: #4b5563; }
+  .btn.variant-success { --btn-bg: #22c55e; --btn-hover-bg: #16a34a; }
+  .btn.variant-danger { --btn-bg: #ef4444; --btn-hover-bg: #dc2626; }
+  .btn.variant-ghost { --btn-bg: transparent; --btn-hover-bg: rgba(255,255,255,0.1); --btn-color: #f1f1f7; }
+  .btn.size-sm { padding: 6px 12px; font-size: 13px; }
+  .btn.size-lg { padding: 14px 28px; font-size: 16px; }
+`, `
+  class AlyButton extends HTMLElement {
+    static get observedAttributes() { return ['variant', 'size', 'disabled', 'loading']; }
+    
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+      this.variant = 'primary';
+      this.size = 'md';
+      this.disabled = false;
+      this.loading = false;
+    }
+    
+    connectedCallback() {
+      this.render();
+      this.shadowRoot.querySelector('.btn').addEventListener('click', this.handleClick);
+    }
+    
+    disconnectedCallback() {
+      this.shadowRoot.querySelector('.btn')?.removeEventListener('click', this.handleClick);
+    }
+    
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (oldValue !== newValue) {
+        this[name] = name === 'disabled' || name === 'loading' 
+          ? newValue === 'true' || newValue === '' 
+          : newValue;
+        this.render();
+      }
+    }
+    
+    handleClick = (e) => {
+      if (this.disabled || this.loading) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      this.dispatchEvent(new CustomEvent('aly-button-click', { 
+        bubbles: true, 
+        composed: true,
+        detail: { button: this, originalEvent: e }
+      }));
+    };
+    
+    render() {
+      const variant = \`variant-\${this.variant}\`;
+      const size = \`size-\${this.size}\`;
+      this.shadowRoot.innerHTML = \`
+        <style>
+          :host { display: inline-flex; }
+          .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: 14px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            background: var(--btn-bg, #6366f1); 
+            color: var(--btn-color, white); 
+          }
+          .btn:hover:not(:disabled) { background: var(--btn-hover-bg, #4f46e5); transform: translateY(-1px); }
+          .btn:active:not(:disabled) { transform: translateY(0); }
+          .btn:focus-visible { outline: 2px solid var(--btn-focus, #6366f1); outline-offset: 2px; }
+          .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+          .btn-loader { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+          .btn-loader[hidden] { display: none; }
+          @keyframes spin { to { transform: rotate(360deg); } }
+          .btn.variant-primary { --btn-bg: #6366f1; --btn-hover-bg: #4f46e5; }
+          .btn.variant-secondary { --btn-bg: #6b7280; --btn-hover-bg: #4b5563; }
+          .btn.variant-success { --btn-bg: #22c55e; --btn-hover-bg: #16a34a; }
+          .btn.variant-danger { --btn-bg: #ef4444; --btn-hover-bg: #dc2626; }
+          .btn.variant-ghost { --btn-bg: transparent; --btn-hover-bg: rgba(255,255,255,0.1); --btn-color: #f1f1f7; }
+          .btn.size-sm { padding: 6px 12px; font-size: 13px; }
+          .btn.size-lg { padding: 14px 28px; font-size: 16px; }
+        </style>
+        <button class="btn \${variant} \${size}" part="button" \${this.disabled ? 'disabled' : ''} \${this.loading ? 'aria-busy="true"' : ''}>
+          <span class="btn-content">
+            <slot name="icon"></slot>
+            <slot>Button</slot>
+          </span>
+          <span class="btn-loader" part="loader" \${this.loading ? '' : 'hidden'}></span>
+        </button>
+      \`;
+    }
+    
+    get variant() { return this.getAttribute('variant') || 'primary'; }
+    set variant(val) { this.setAttribute('variant', val); }
+    
+    get size() { return this.getAttribute('size') || 'md'; }
+    set size(val) { this.setAttribute('size', val); }
+    
+    get disabled() { return this.hasAttribute('disabled'); }
+    set disabled(val) { if (val) this.setAttribute('disabled', ''); else this.removeAttribute('disabled'); }
+    
+    get loading() { return this.hasAttribute('loading'); }
+    set loading(val) { if (val) this.setAttribute('loading', ''); else this.removeAttribute('loading'); }
+    
+    async click() { 
+      if (!this.disabled && !this.loading) {
+        this.shadowRoot.querySelector('.btn').click();
+      }
+    }
+  }
+  
+  customElements.define('aly-button', AlyButton);
+  window.AlyComponents = window.AlyComponents || {};
+  window.AlyComponents['aly-button'] = AlyButton;
+`, "variant,size,disabled,loading", "open", '{"variant": {"type": "string", "default": "primary", "reflect": true}, "size": {"type": "string", "default": "md", "reflect": true}, "disabled": {"type": "boolean", "default": "false", "reflect": true}, "loading": {"type": "boolean", "default": "false", "reflect": true}}')
+
+wc.addProperty("aly-button", "variant", "string", "primary", "true", "variant", "false")
+wc.addProperty("aly-button", "size", "string", "md", "true", "size", "false")
+wc.addProperty("aly-button", "disabled", "boolean", "false", "true", "disabled", "false")
+wc.addProperty("aly-button", "loading", "boolean", "false", "true", "loading", "false")
+wc.addMethod("aly-button", "click", "[]", "this.shadowRoot.querySelector('.btn')?.click()", "false")
+wc.addEvent("aly-button", "aly-button-click")
+
+// Test rendering
+let cardHtml = wc.render("aly-card", '{}')
+console.log("Card HTML:", cardHtml)
+
+let btnHtml = wc.render("aly-button", '{"variant": "primary", "size": "md"}')
+console.log("Button HTML:", btnHtml)
+
+// Generate bundle
+let bundle = wc.bundle()
+console.log("Bundle generated, length:", bundle.length)
+
+// Hydration
+wc.hydrate("#app")
+
+// List components
+console.log("Defined components:", wc.list(""))
+
+console.log("Web Components test completed!")

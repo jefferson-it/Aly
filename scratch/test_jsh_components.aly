@@ -1,0 +1,25 @@
+let home = sys_env("HOME")
+let user = sys_env("USER")
+let os_name = sys_platform()
+
+let icon = "🐧"
+if os_name eq "macos" {
+    icon = "🍎"
+} elif os_name eq "windows" {
+    icon = "🪟"
+}
+
+let cwd = sys_cwd()
+let display_dir = cwd
+if str_starts_with(cwd, home) {
+    display_dir = str_replace(cwd, home, "~")
+}
+
+let branch = os_exec("git branch --show-current 2>/dev/null")
+let git_info = ""
+if branch neq "" and branch neq "None" {
+    git_info = " ($branch)"
+}
+
+print("Prompt Preview:")
+print("$icon $user $display_dir$git_info > ")

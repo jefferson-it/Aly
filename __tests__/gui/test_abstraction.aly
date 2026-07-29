@@ -1,0 +1,26 @@
+gui.useBackend("fltk")
+
+let win = gui.window("Minha Janela", 600, 400)
+let div = gui.div("vertical")
+let btn = gui.button("Clique Aqui")
+let lbl = gui.label("Olá, Aly GUI!")
+let input = gui.input("Digite algo...")
+
+gui.insert(win, div)
+gui.insert(div, lbl)
+gui.insert(div, btn)
+gui.insert(div, input)
+
+gui.set(lbl, "label", "Bem-vindo ao Aly GUI!")
+gui.set(btn, "label", "OK")
+
+let texto = gui.get(lbl, "label")
+console.log(texto)
+
+fun myHandler() {
+    console.log("Botão clicado!")
+}
+
+gui.on(btn, "onClick", myHandler)
+
+gui.run()

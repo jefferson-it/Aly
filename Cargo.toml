@@ -3,8 +3,156 @@ name = "Aly"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "Aly"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+jot-embed = ["jot-core", "jot-parser", "jot-serializer"]
+gui = ["gtk4", "qtrs", "fltk", "wayland-backend"]
+wayland-backend = ["smithay-client-toolkit", "tiny-skia", "ab_glyph"]
+ios = ["objc2", "objc2-foundation", "objc2-ui-kit", "objc2-core-bluetooth", "objc2-core-location", "objc2-core-nfc", "objc2-av-foundation", "objc2-core-motion"]
+android = ["jni", "jni-sys"]
+android-hardware = ["android"]
+windows = ["dep:windows"]
+ai = ["ai-candle"]
+ai-candle = ["candle-core", "candle-nn"]
+ai-onnx = ["ort"]
+
+ai-llama = ["llm-rs"]
+ai-tensorflow = ["tch"]
+ai-pytorch = ["tch"]
+ai-embeddings = []
+
+iot-esp32 = ["serialport"]
+iot-arduino = ["serialport"]
+iot-raspberry-pi = ["rppal", "rpi-gpio"]
+iot = ["iot-esp32", "iot-arduino", "iot-raspberry-pi", "mqtt"]
+mqtt = ["rumqttc"]
+serial = ["serialport", "lazy_static"]
+rpi-gpio = ["rppal"]
+rpi-i2c = ["rppal"]
+rpi-spi = ["rppal"]
+rpi-uart = ["rppal"]
+
 [dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+hex = "0.4"
+sha2 = "0.10"
 regex = "1.3.9"
-crossterm = "0.20"
-eval = "^0.4"
+clap = { version = "4", features = ["derive"] }
+crossterm = "0.28.1"
 linked-hash-map = "0.5.4"
+once_cell = "1.19"
+fltk = { version = "1.4", features = ["fltk-bundled"], optional = true }
+reqwest = { version = "0.12", features = ["blocking", "json", "rustls-tls"], default-features = false }
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+tower = "0.4"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+libc = "0.2"
+argon2 = "0.5"
+bcrypt = "0.16"
+chrono = { version = "0.4", features = ["serde"] }
+base64 = "0.22"
+md-5 = "0.10"
+hmac = "0.12"
+uuid = { version = "1", features = ["v4"] }
+flate2 = "1"
+csv = "1"
+tar = "0.4"
+tungstenite = { version = "0.24", default-features = false }
+toml = "0.8"
+dirs = "5.0"
+gtk4 = { version = "0.9", optional = true }
+libloading = "0.8"
+qtrs = { version = "0.4.1", optional = true }
+smithay-client-toolkit = { version = "0.19", optional = true, default-features = false, features = ["calloop"] }
+tiny-skia = { version = "0.8", optional = true }
+rumqttc = { version = "0.18", optional = true, default-features = false, features = ["tokio-rustls"] }
+serialport = { version = "4.9", optional = true, default-features = false }
+rppal = { version = "0.12", optional = true }
+jot-core = { path = "/home/jefferson/Desktop/projects/JOT/jot/core", optional = true }
+jot-parser = { path = "/home/jefferson/Desktop/projects/JOT/jot/parser", optional = true }
+jot-serializer = { path = "/home/jefferson/Desktop/projects/JOT/jot/serializer", optional = true }
+jni = { version = "0.21", optional = true }
+jni-sys = { version = "0.3", optional = true }
+lazy_static = { version = "1.4", optional = true }
+ab_glyph = { version = "0.2", optional = true }
+objc2 = { version = "0.6", optional = true }
+objc2-foundation = { version = "0.3", optional = true }
+objc2-ui-kit = { version = "0.3", optional = true }
+objc2-core-bluetooth = { version = "0.3", optional = true }
+objc2-core-location = { version = "0.3", optional = true }
+objc2-core-nfc = { version = "0.3", optional = true }
+objc2-av-foundation = { version = "0.3", optional = true }
+objc2-core-motion = { version = "0.3", optional = true }
+windows = { version = "0.58", optional = true, default-features = false, features = [
+    "Win32_System_SystemInformation",
+    "Win32_System_Memory",
+    "Win32_System_Threading",
+    "Win32_System_Console",
+    "Win32_System_ProcessStatus",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_NetworkManagement_Ndis",
+    "Win32_System_Registry",
+    "Win32_Security",
+    "Win32_Foundation",
+    "Win32_System_Time",
+    "Win32_System_Performance",
+] }
+candle-core = { version = "0.8", optional = true }
+candle-nn = { version = "0.8", optional = true }
+llm-rs = { version = "0.1", optional = true }
+tch = { version = "0.16", optional = true }
+ort = { version = "2.0.0-rc.13", optional = true }
+ash = { version = "0.37", optional = true }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = { version = "0.21", default-features = false }
+android-activity = { version = "0.5", default-features = false }
+android_logger = { version = "0.15", default-features = false }
+jni-sys = { version = "0.3", default-features = false }
+ndk-glue = { version = "0.7", default-features = false }
+ndk-sys = { version = "0.5", default-features = false }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.59", features = [
+    "Win32_System_SystemInformation",
+    "Win32_System_Memory",
+    "Win32_System_Threading",
+    "Win32_System_Console",
+    "Win32_System_ProcessStatus",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_NetworkManagement_Ndis",
+    "Win32_System_Registry",
+    "Win32_Security",
+    "Win32_Foundation",
+    "Win32_System_Time",
+    "Win32_System_Performance",
+    "Win32_System_Diagnostics_Debug",
+    "Win32_System_JobObjects",
+    "Win32_System_ProcessStatus",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_UI_Controls",
+    "Win32_Graphics_Gdi",
+    "Win32_System_LibraryLoader",
+] }
+
+[[bin]]
+name = "aly"
+path = "src/bin/aly.rs"
+
+[[bin]]
+name = "apg"
+path = "src/bin/apg.rs"
+
+[[bin]]
+name = "alyc"
+path = "src/bin/alyc.rs"
+
+[dev-dependencies]
+proptest = "1.11.0"

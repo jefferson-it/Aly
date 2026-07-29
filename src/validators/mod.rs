@@ -29,7 +29,7 @@ mod validators {
     }
 
     pub fn is_num(item: &str) -> bool {
-        let re = Regex::new("[0-9]").unwrap();
+        let re = Regex::new("[0-9_]").unwrap();
 
         re.is_match(item)
     }
@@ -50,10 +50,23 @@ mod validators {
         }
     }
 
+    // Compound assignment operators
+    pub fn is_compound_assign(tok: Tokens) -> bool {
+        matches!(
+            tok,
+            Tokens::PlusEqual
+                | Tokens::MinusEqual
+                | Tokens::TimesEqual
+                | Tokens::DivideEqual
+                | Tokens::ModulusEqual
+        )
+    }
+
     // Conversor
 
     pub fn conversor_to_int(item: String) -> i32 {
-        match item.parse::<i32>() {
+        let clean = item.replace('_', "");
+        match clean.parse::<i32>() {
             Ok(int) => int,
             Err(_) => {
                 -1
@@ -61,7 +74,8 @@ mod validators {
         }
     }
     pub fn conversor_to_float(item: String) -> f32 {
-        match item.parse::<f32>() {
+        let clean = item.replace('_', "");
+        match clean.parse::<f32>() {
             Ok(float) => float,
             Err(_) => {
                 -1.0

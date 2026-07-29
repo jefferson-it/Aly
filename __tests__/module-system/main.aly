@@ -1,0 +1,9 @@
+import "lib/math.aly"
+
+let r1 = square(5)
+let r2 = cube(3)
+let r3 = double(7)
+
+print(r1)
+print(r2)
+print(r3)

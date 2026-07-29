@@ -1,0 +1,17 @@
+plugin import "examples/plugin_math.so" as math
+
+let result = math.fibonacci(10)
+console_log("Fib(10) =")
+console_log(result)
+
+let f = math.factorial(5)
+console_log("Fat(5) =")
+console_log(f)
+
+let s = math.add(3, 7)
+console_log("add(3, 7) =")
+console_log(s)
+
+let m = math.multiply(4, 5)
+console_log("mul(4, 5) =")
+console_log(m)

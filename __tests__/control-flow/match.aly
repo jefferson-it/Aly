@@ -1,0 +1,45 @@
+# Pattern matching tests
+
+# 1. Literal match with single-expression arms
+let x = 2
+match x {
+    1 => print("one"),
+    2 => print("two (expected)"),
+    3 => print("three"),
+    _ => print("default")
+}
+
+# 2. Wildcard/default
+let y = 99
+match y {
+    1 => print("one"),
+    _ => print("default (expected)")
+}
+
+# 3. Multiple values with `or`
+let z = 3
+match z {
+    1 or 2 => print("one or two"),
+    3 or 4 or 5 => print("three/four/five (expected)"),
+    _ => print("default")
+}
+
+# 4. Range pattern (inclusive)
+let n = 12
+match n {
+    0..9 => print("single digit"),
+    10..14 => print("range 10..14 (expected)"),
+    _ => print("default")
+}
+
+# 5. Block body with multiple statements
+let s = "hi"
+match s {
+    "hi" => {
+        let greeting = "matched hi (expected)"
+        print(greeting)
+    }
+    _ => {
+        print("default")
+    }
+}

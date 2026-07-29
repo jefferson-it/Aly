@@ -1,0 +1,141 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Aly Loop Examples - Todos os tipos de loop suportados
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── 1. Loop infinito (com break) ──────────────────────────────────────────────
+let contador = 0
+loop {
+    print(contador)
+    contador++
+    if contador eq 5 {
+        break
+    }
+}
+
+# ── 2. Loop com condição (while) ─────────────────────────────────────────────
+let x = 0
+loop x lt 5 {
+    print(x)
+    x++
+}
+
+# ── 3. Loop C-style (init ; condition ; update) ──────────────────────────────
+loop i = 0 ; i lt 10 ; i++ {
+    print(i)
+}
+
+# ── 4. Loop com decremento ───────────────────────────────────────────────────
+loop i = 10 ; i gt 0 ; i-- {
+    print(i)
+}
+
+# ── 5. Loop com step customizado ─────────────────────────────────────────────
+loop i = 0 ; i lt 20 ; i = i + 3 {
+    print(i)
+}
+
+# ── 6. Soma de 1 a 100 ──────────────────────────────────────────────────────
+let soma = 0
+loop i = 1 ; i lte 100 ; i++ {
+    soma = soma + i
+}
+print("Soma de 1 a 100: " & soma)
+
+# ── 7. Tabuada ───────────────────────────────────────────────────────────────
+let num = 7
+loop i = 1 ; i lte 10 ; i++ {
+    print(num & " x " & i & " = " & (num * i))
+}
+
+# ── 8. Fatorial ──────────────────────────────────────────────────────────────
+let n = 10
+let fatorial = 1
+loop i = 1 ; i lte n ; i++ {
+    fatorial = fatorial * i
+}
+print("Fatorial de " & n & " = " & fatorial)
+
+# ── 9. Fibonacci (primeiros 10) ─────────────────────────────────────────────
+let a = 0
+let b = 1
+loop i = 0 ; i lt 10 ; i++ {
+    print(a)
+    let temp = a
+    a = b
+    b = temp + b
+}
+
+# ── 10. Tabuada dupla (2 a 9) ───────────────────────────────────────────────
+loop i = 2 ; i lte 9 ; i++ {
+    print("--- Tabuada do " & i & " ---")
+    loop j = 1 ; j lte 10 ; j++ {
+        print(i & " x " & j & " = " & (i * j))
+    }
+}
+
+# ── 11. Contar digitos ──────────────────────────────────────────────────────
+let num2 = 123456789
+let digitos = 0
+let temp2 = num2
+loop temp2 gt 0 {
+    temp2 = temp2 / 10
+    digitos++
+}
+print("Digitos de " & num2 & ": " & digitos)
+
+# ── 12. Verificar se e primo ─────────────────────────────────────────────────
+let teste = 17
+let is_primo = true
+let div = 2
+loop div * div lte teste {
+    if teste | div eq 0 {
+        is_primo = false
+        break
+    }
+    div++
+}
+print(teste & " e primo? " & is_primo)
+
+# ── 13. Potencia (base^expoente) ─────────────────────────────────────────────
+let base = 2
+let expoente = 10
+let resultado = 1
+loop i = 0 ; i lt expoente ; i++ {
+    resultado = resultado * base
+}
+print(base & "^" & expoente & " = " & resultado)
+
+# ── 14. Loop com break e continue ────────────────────────────────────────────
+loop i = 0 ; i lt 20 ; i++ {
+    if i | 2 eq 0 {
+        continue
+    }
+    if i gt 15 {
+        break
+    }
+    print("Impar: " & i)
+}
+
+# ── 15. Piramide de asteriscos ───────────────────────────────────────────────
+let niveis = 5
+loop i = 1 ; i lte niveis ; i++ {
+    let estrelas = ""
+    loop j = 0 ; j lt i ; j++ {
+        estrelas = estrelas & "* "
+    }
+    print(estrelas)
+}
+
+# ── 16. Loops aninhados (tabuada 5x5) ───────────────────────────────────────
+loop i = 1 ; i lte 5 ; i++ {
+    let linha = ""
+    loop j = 1 ; j lte 5 ; j++ {
+        let produto = i * j
+        if produto lt 10 {
+            linha = linha & " " & produto & " "
+        } else {
+            linha = linha & produto & " "
+        }
+    }
+    print(linha)
+}

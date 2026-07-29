@@ -6,7 +6,7 @@ nome = "Pedro" ## Variável Nome ##
 ##
 A função nativa 'tomb' faz com que uma variável ou mais, seja imutável
 Exemplo do código, nome poderia ser alterada a qualquer momento, mas ao passar &nome para tomb, 
-none passou a ser uma constante
+nome passou a ser uma constante
 ##
 tomb(&nome)
 

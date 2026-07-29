@@ -1,1 +1,86 @@
-/target
+# ══════════════════════════════════════════════
+#  Aly — .gitignore
+# ══════════════════════════════════════════════
+
+# ── Rust / Cargo ─────────────────────────────
+/target/
+**/*.rs.bk
+*.pdb
+.cargo/credentials
+.cargo/credentials.toml
+.cargo/registry/
+.cargo/git/
+
+**/node_modules
+./web-docs/dist
+# ── Benchmarks ───────────────────────────────
+/benchmarks/
+
+# ── VSCode Extension (editor/) ───────────────
+editor/node_modules/
+editor/*.vsix
+editor/out/
+editor/dist/
+editor/.vscode-test/
+
+# ── Plugin SDK — artefatos compilados ────────
+plugin_sdk/*.o
+plugin_sdk/*.so
+plugin_sdk/*.dylib
+plugin_sdk/*.dll
+
+# ── Arquivos temporários / scratch ───────────
+/scratch/
+*.tmp
+*.temp
+*~
+
+# ── OS ───────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+
+# ── IDEs / Editores ─────────────────────────
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ── Variáveis de ambiente / Secrets ──────────
+.env
+.env.*
+!.env.example
+
+# ── Logs ─────────────────────────────────────
+*.log
+
+# ── Flatpak (GUI backends) ───────────────────
+.flatpak/
+build-dir/
+*.flatpak
+
+# ── Python (scripts auxiliares) ──────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# ── Cobertura / Profiling ────────────────────
+*.profraw
+*.profdata
+lcov.info
+tarpaulin-report.html
+coverage/

@@ -1,0 +1,33 @@
+let i = 0
+let sum = 0
+
+# Test conditional loop
+loop i lt 5 {
+    sum = sum + i
+    i++
+}
+
+print("Conditional loop sum (expected 10): $sum")
+print("Conditional loop index (expected 5): $i")
+
+# Test three-part loop
+let sum2 = 0
+let j = 0
+loop j = 1 ; j lte 5 ; j++ {
+    sum2 = sum2 + j
+}
+
+print("Three-part loop sum2 (expected 15): $sum2")
+
+# Test nested control flow (if inside loop)
+let k = 0
+let even_count = 0
+loop k lt 5 {
+    # k | 2 is the modulus (k % 2)
+    if k | 2 eq 0 {
+        even_count++
+    }
+    k++
+}
+
+print("Nested if in loop even_count (expected 3): $even_count")

@@ -1,0 +1,31 @@
+# Compound Assignment Operators Test
+let x = 10
+print("Initial x: $x")
+
+# Addition assignment
+x += 5
+print("After x += 5: $x")  # Should be 15
+
+# Subtraction assignment
+x -= 3
+print("After x -= 3: $x")  # Should be 12
+
+# Multiplication assignment
+x *= 2
+print("After x *= 2: $x")  # Should be 24
+
+# Division assignment
+x /= 4
+print("After x /= 4: $x")  # Should be 6
+
+# Percentage assignment
+x %= 150
+print("After x %= 150: $x")  # Should be 90 (6 is 6% of 150)
+
+# Test with another variable
+let y = 100
+y -= 25
+print("y -= 25: $y")  # Should be 75
+
+y *= 2
+print("y *= 2: $y")  # Should be 150

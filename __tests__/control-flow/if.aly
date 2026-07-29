@@ -1,0 +1,48 @@
+let x = 10
+let executed_if = false
+let executed_elif = false
+let executed_else = false
+
+if x eq 10 {
+    executed_if = true
+}
+
+print("Basic if: expected true, got $executed_if")
+
+if x eq 20 {
+    print("Should not print this")
+}
+else {
+    executed_else = true
+}
+
+print("Basic else: expected true, got $executed_else")
+
+# Reset variables
+executed_if = false
+executed_elif = false
+executed_else = false
+
+if x eq 5 {
+    executed_if = true
+}
+elif x eq 10 {
+    executed_elif = true
+}
+else {
+    executed_else = true
+}
+
+print("elif match: expected true for elif, got if=$executed_if, elif=$executed_elif, else=$executed_else")
+
+# Nested if test
+let y = 5
+let nested_exec = false
+
+if x eq 10 {
+    if y eq 5 {
+        nested_exec = true
+    }
+}
+
+print("Nested if: expected true, got $nested_exec")

@@ -1,0 +1,14 @@
+const PI = 3
+const E = 2
+
+fun square(x) {
+    return x * x
+}
+
+fun cube(x) {
+    return x * x * x
+}
+
+fun double(x) {
+    return x + x
+}

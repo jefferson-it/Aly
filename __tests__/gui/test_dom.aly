@@ -1,0 +1,33 @@
+gui.useBackend("dom")
+
+let win = gui.window("App DOM Live", 400, 450)
+let div = gui.div("vertical")
+let lbl = gui.label("Olá! Digite seu nome e clique no botão.")
+let input = gui.input("Seu nome...")
+let btn = gui.button("Enviar")
+let cb = gui.checkbox("Aceitar termos de uso")
+let pb = gui.progressbar(10)
+
+gui.insert(win, div)
+gui.insert(div, lbl)
+gui.insert(div, input)
+gui.insert(div, btn)
+gui.insert(div, cb)
+gui.insert(div, pb)
+
+fun myHandler() {
+    let name = gui.get(input, "value")
+    let checked = gui.get(cb, "checked")
+    if checked == "true" {
+        gui.set(lbl, "label", "Bem-vindo(a), " + name + "! Obrigado por aceitar os termos.")
+        gui.set(pb, "value", "100")
+    } else {
+        gui.set(lbl, "label", "Olá, " + name + "! Você precisa aceitar os termos.")
+        gui.set(pb, "value", "50")
+    }
+    console.log("Botao clicado! Nome: " + name + ", Termos: " + checked)
+}
+
+gui.on(btn, "onClick", myHandler)
+
+gui.run()

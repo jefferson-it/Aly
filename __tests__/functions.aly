@@ -1,0 +1,22 @@
+fun add(a, b) {
+    return a + b
+}
+
+fun multiply(a, b) {
+    return a * b
+}
+
+fun factorial(n) {
+    if n lte 1 {
+        return 1
+    }
+    return n * factorial(n - 1)
+}
+
+let sum = add(10, 20)
+let prod = multiply(5, 6)
+let fact = factorial(5)
+
+print("sum: $sum")
+print("prod: $prod")
+print("fact: $fact")

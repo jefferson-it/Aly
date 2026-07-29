@@ -1,0 +1,20 @@
+# Test inheritance
+Schema Base {
+    field1: "default_base",
+    fun method_base() {
+        print("base")
+    }
+}
+
+Schema Sub extends Base {
+    field2: "default_sub",
+    fun method_sub() {
+        print("sub")
+    }
+}
+
+let s = new Sub()
+print("Base field: " + s.field1)
+print("Sub field: " + s.field2)
+s.method_base()
+s.method_sub()

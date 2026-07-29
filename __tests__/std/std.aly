@@ -1,0 +1,26 @@
+# Standard library tests: fs.*, str.*, sys.*
+
+# --- str module ---
+print(str.upper("hello"))          # HELLO
+print(str.lower("WORLD"))          # world
+print(str.trim("  spaced  "))      # spaced
+print(str.contains("hello", "ell"))# true
+print(str.replace("a-b-c", "-", "_")) # a_b_c
+print(str.starts_with("hello", "he")) # true
+print(str.ends_with("hello", "lo"))    # true
+print(str.index_of("hello", "l"))      # 2
+print(str.repeat("ab", 3))             # ababab
+
+# --- sys module ---
+print(sys.platform())              # linux/windows/macos
+print(sys.cwd())                   # current dir
+
+# --- fs module ---
+let path = "__tests__/_std_tmp.txt"
+print(fs.write(path, "content"))   # true
+print(fs.exists(path))             # true
+print(fs.read(path))               # content
+print(fs.append(path, "!"))        # true
+print(fs.read(path))               # content!
+print(fs.remove(path))             # true
+print(fs.exists(path))             # false

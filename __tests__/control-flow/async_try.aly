@@ -1,0 +1,44 @@
+# 1. Test try/catch with error
+let caught = false
+try {
+    # This will fail because c is not a function
+    let c = 5
+    c()
+} catch err {
+    caught = true
+    print("Caught expected error: $err")
+}
+
+if caught {
+    print("Try/catch error handling works! (expected)")
+} else {
+    print("ERROR: try/catch failed to catch error!")
+}
+
+# 2. Test try/catch without error
+let success = false
+try {
+    let temp = 10 + 20
+    success = true
+} catch err {
+    print("ERROR: catch block executed when no error occurred!")
+}
+
+if success {
+    print("Try/catch normal flow works!")
+}
+
+# 3. Test async/await
+async fun fetch_data(x) {
+    let res = x * 2
+    return res
+}
+
+let p = fetch_data(15)
+print("Async function call returns: $p")
+
+let resolved = await p
+print("Resolved promise value (expected 30): $resolved")
+
+let direct_await = await 42
+print("Await on non-promise value (expected 42): $direct_await")

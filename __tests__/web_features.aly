@@ -1,0 +1,196 @@
+// Test file for Aly Web features: SSR, SSG, SPA, PWA, CSS, Web Components, WASM
+
+// Web Server with SSR/SSG/SPA/PWA
+web.useSSR(true)
+web.useSPA(true)
+
+web.serve("3000", "static", "true", "true")
+
+// Add routes
+web.addRoute("/", `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{title}}</title>
+  {{styles}}
+</head>
+<body>
+  <h1>{{title}}</h1>
+  <p>{{content}}</p>
+  <aly-button data-aly-hydrate="my-button" data-aly-props='{"label": "Click me"}'></aly-button>
+  <script src="/hydrate.js"></script>
+</body>
+</html>
+`, '{"title": "Aly Web App", "content": "Welcome to Server-Side Rendering!"}')
+
+web.addRoute("/about", `
+<!DOCTYPE html>
+<html>
+<head>
+  <title>About - {{title}}</title>
+  {{styles}}
+</head>
+<body>
+  <h1>About {{title}}</h1>
+  <p>This page was rendered with {{mode}} mode.</p>
+</body>
+</html>
+`, '{"title": "Aly Web", "mode": "SSR"}')
+
+// Add layout
+web.addLayout("main", `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  {{styles}}
+  {{scripts}}
+  {{meta}}
+</head>
+<body>
+  <div id="app">{{content}}</div>
+</body>
+</html>
+`)
+
+// Configure PWA
+web.pwaConfig("Aly Web App", "AlyWeb", "Aly Programming Language Web App", "/", "standalone", "#0f0f13", "#6366f1")
+
+// Generate static site (SSG)
+web.ssgGenerate("./dist")
+
+// CSS Module
+css.create("main")
+css.addRule("main", ".container", '{"display": "flex", "flex-direction": "column", "gap": "var(--spacing-md)", "padding": "var(--spacing-lg)"}', "", "")
+css.addRule("main", "h1", '{"color": "var(--color-primary)", "font-size": "var(--font-size-2xl)", "font-weight": "var(--font-weight-bold)"}', "", "")
+css.addRule("main", ".btn", '{"background": "var(--color-primary)", "color": "white", "padding": "var(--spacing-sm) var(--spacing-md)", "border-radius": "var(--border-radius-md)", "border": "none", "cursor": "pointer"}', "", "")
+css.addRule("main", ".btn:hover", '{"background": "var(--color-primary-hover)"}', "", ":hover")
+css.addRule("main", "@media (max-width: 768px)", '{"padding": "var(--spacing-sm)"}', "(max-width: 768px)", "")
+
+// Theme
+css.themeCreate("dark", '{"primary": "#6366f1", "primary-hover": "#4f46e5", "background": "#0f0f13", "text": "#f1f1f7"}', '{"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px"}', '{"font-family": "Outfit, sans-serif", "font-size-base": "16px"}', '{"sm": "640px", "md": "768px"}', '{"md": "0 4px 6px rgba(0,0,0,0.1)"}', '{"md": "8px"}', '{"normal": "200ms ease"}')
+css.themeSet("dark")
+
+// Web Components
+wc.define("my-button", `
+  <button class="btn" part="button">
+    <slot>Button</slot>
+  </button>
+`, `
+  .btn {
+    background: var(--btn-bg, #6366f1);
+    color: var(--btn-color, white);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  .btn:hover {
+    background: var(--btn-hover-bg, #4f46e5);
+  }
+  .btn:focus {
+    outline: 2px solid var(--btn-focus, #6366f1);
+    outline-offset: 2px;
+  }
+`, `
+  class MyButton extends HTMLElement {
+    static get observedAttributes() { return ['label', 'disabled']; }
+    
+    constructor() {
+      super();
+      this.attachShadow({ mode: 'open' });
+    }
+    
+    connectedCallback() {
+      this.render();
+      this.shadowRoot.querySelector('button').addEventListener('click', () => {
+        this.dispatchEvent(new CustomEvent('click', { bubbles: true, composed: true }));
+      });
+    }
+    
+    attributeChangedCallback(name, oldValue, newValue) {
+      if (oldValue !== newValue) {
+        this.render();
+      }
+    }
+    
+    render() {
+      const label = this.getAttribute('label') || 'Button';
+      const disabled = this.hasAttribute('disabled');
+      this.shadowRoot.innerHTML = \`
+        <style>
+          .btn {
+            background: var(--btn-bg, #6366f1);
+            color: var(--btn-color, white);
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: \${disabled ? 'not-allowed' : 'pointer'};
+            font-family: inherit;
+            font-size: 14px;
+            opacity: \${disabled ? 0.6 : 1};
+          }
+          .btn:hover:not(:disabled) {
+            background: var(--btn-hover-bg, #4f46e5);
+          }
+        </style>
+        <button class="btn" part="button" \${disabled ? 'disabled' : ''}>
+          <slot>\${label}</slot>
+        </button>
+      \`;
+    }
+    
+    get label() { return this.getAttribute('label') || 'Button'; }
+    set label(val) { this.setAttribute('label', val); }
+    
+    get disabled() { return this.hasAttribute('disabled'); }
+    set disabled(val) { if (val) this.setAttribute('disabled', ''); else this.removeAttribute('disabled'); }
+  }
+  
+  customElements.define('my-button', MyButton);
+  window.AlyComponents = window.AlyComponents || {};
+  window.AlyComponents['my-button'] = MyButton;
+`, "label,disabled", "open", '{"label": {"type": "string", "default": "Button", "reflect": true}, "disabled": {"type": "boolean", "default": "false", "reflect": true}}')
+
+wc.addProperty("my-button", "variant", "string", "primary", "true", "variant", "false")
+wc.addMethod("my-button", "focus", "[]", "this.shadowRoot.querySelector('button')?.focus()", "false")
+wc.addEvent("my-button", "click")
+
+// Render component
+let btnHtml = wc.render("my-button", '{"label": "Click Me!", "variant": "primary"}')
+console.log("Button HTML:", btnHtml)
+
+// Hydration
+wc.hydrate("#app")
+
+// Bundle all components
+let bundle = wc.bundle()
+console.log("Component bundle generated")
+
+// WASM Compilation
+wasm.compile(`
+fun main() {
+  let x = 42
+  let y = 58
+  return x + y
+}
+`, "test-module")
+
+// HTTP API
+http.serve("8080")
+http.get("/api/users", "getUsersHandler")
+http.post("/api/users", "createUserHandler")
+
+fun getUsersHandler(req) {
+  return json.stringify([{"id": 1, "name": "User 1"}, {"id": 2, "name": "User 2"}])
+}
+
+fun createUserHandler(req) {
+  return json.stringify({"success": true, "message": "User created"})
+}
+
+console.log("Web features test completed!")

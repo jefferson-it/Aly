@@ -1,0 +1,4 @@
+import "lib/math.aly"
+
+let r = square(5)
+print(r)
