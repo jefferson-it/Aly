@@ -35,8 +35,9 @@ mod aly {
         error::{AlyError, AlyResult},
         lexer::Lexer,
         native::{
-            fs::read_file, fun_input, fun_print, fun_drop, process_value, tomb,
-            types::{Type, Validator, ValueData},
+            fs::read_file, fun_input, fun_print, fun_drop, fun_addr, fun_deref, fun_store,
+            fun_alloc, fun_alloc_typed, fun_free, fun_is_null, fun_ptr_type, process_value, tomb,
+            types::{coerce, parse_type_annotation, Type, Validator, ValueData},
             vars::*,
             http_api::http_api_serve,
         },
@@ -168,7 +169,47 @@ Ok(Aly {
             ));
             self.datas.push(Var::new(
                 String::from("tomb"),
-                tomb as fn(String) -> Box<dyn Validator>,
+                tomb as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("addr"),
+                fun_addr as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("deref"),
+                fun_deref as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("store"),
+                fun_store as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("alloc"),
+                fun_alloc as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("alloc_typed"),
+                fun_alloc_typed as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("free"),
+                fun_free as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("is_null"),
+                fun_is_null as fn(&[ValueData]) -> ValueData,
+                false,
+            ));
+            self.datas.push(Var::new(
+                String::from("ptr_type"),
+                fun_ptr_type as fn(&[ValueData]) -> ValueData,
                 false,
             ));
             self.datas.push(Var::new(
@@ -1031,6 +1072,7 @@ self.datas.push(Var::new(String::from("str.rstrip"), str_rstrip as fn(String) ->
 
         pub fn drop_var(&mut self, name: &str) {
             self.datas.retain(|v| v.get_name() != name);
+            crate::runtime::memory::with_heap(|h| h.forget_name(name));
         }
 
         pub fn get_schema(&self, name: &str) -> Option<&SchemaDef> {
@@ -1216,7 +1258,18 @@ self.datas.push(Var::new(String::from("str.rstrip"), str_rstrip as fn(String) ->
                             eprintln!("BorrowError: variável '{}' está emprestada.", name.literal);
                             return;
                         }
-                        let final_value = process_value(value_lexers);
+                        let raw = process_value(value_lexers);
+                        let ty = v.get_type().clone();
+                        let final_value = match ty {
+                            Type::Fixed(_) | Type::Pointer(_) => match coerce(raw, &ty) {
+                                Ok(x) => x,
+                                Err(e) => {
+                                    eprintln!("TypeError: {}", e);
+                                    return;
+                                }
+                            },
+                            _ => raw,
+                        };
                         if let Err(err) = v.change_value(final_value) {
                             eprintln!("TypeError na linha {}: {}", name.line, err);
                         }
@@ -1252,6 +1305,57 @@ self.datas.push(Var::new(String::from("str.rstrip"), str_rstrip as fn(String) ->
                     return;
                 }
             };
+
+            if identifier.token == Tokens::Colon {
+                // Declaração tipada: `let name : i8 = value`
+                if lexers.len() < 4 {
+                    eprintln!(
+                        "SyntaxError: esperado o tipo após ':' na linha {}.",
+                        name.line
+                    );
+                    return;
+                }
+                let ty_name = lexers[3].literal.clone();
+                let ty = match parse_type_annotation(&ty_name) {
+                    Some(t) => t,
+                    None => {
+                        eprintln!(
+                            "TypeError: tipo desconhecido '{}' na linha {}.",
+                            ty_name, name.line
+                        );
+                        return;
+                    }
+                };
+
+                if lexers.len() == 4 {
+                    // `let x : i8` — sem valor inicial
+                    match Var::new_typed(
+                        name.literal.to_string(),
+                        ValueData::String("None".to_owned()),
+                        true,
+                        ty,
+                    ) {
+                        Ok(var) => self.datas.push(var),
+                        Err(e) => eprintln!("TypeError: {}", e),
+                    }
+                    return;
+                }
+
+                if lexers.get(4).map(|l| l.token.clone()) != Some(Tokens::Identifier) {
+                    eprintln!(
+                        "SyntaxError: esperado '=' após o tipo na linha {}.",
+                        name.line
+                    );
+                    return;
+                }
+
+                let value = process_value(lexers[5..].to_vec());
+                match Var::new_typed(name.literal.to_string(), value, true, ty) {
+                    Ok(var) => self.datas.push(var),
+                    Err(e) => eprintln!("TypeError: {}", e),
+                }
+                return;
+            }
 
             if identifier.token != Tokens::Identifier {
                 eprintln!(
@@ -1468,6 +1572,13 @@ self.datas.push(Var::new(String::from("str.rstrip"), str_rstrip as fn(String) ->
                                         process_value(params).to_string(false),
                                     );
                                     fun(param)
+                                }
+                                ValueData::NativeData(fun) => {
+                                    let mut args = Vec::with_capacity(params.len());
+                                    for p in &params {
+                                        args.push(process_value(vec![p.clone()]).valid().1);
+                                    }
+                                    Box::new(fun(&args))
                                 }
                                 ValueData::PluginFunction { namespace, func_name } => {
                                     let param = params.iter()

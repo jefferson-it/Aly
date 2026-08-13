@@ -9,14 +9,16 @@ mod interpreter {
         native::{
             conditions::exec_cond,
             create_object::create_object,
+            normalize_pointer_blocks,
+            process_value,
             tuple::create_tuple,
             exec_rust,
-            process_value,
-            types::{Validator, ValueData, Type},
+            types::{Validator, ValueData, Type, parse_type_annotation},
             vars::{is_const_declaration, is_var_declaration},
             vector::create_array,
         },
         plugin::load_plugin,
+        runtime::memory::heap_store,
         tokens::Tokens,
         validators::{
             is_compound_assign,
@@ -35,6 +37,40 @@ mod interpreter {
     }
 
         pub fn exec(lexers: &mut Vec<Lexer>, val: &mut Box<dyn Validator>) {
+        normalize_pointer_blocks(lexers);
+
+        // <*p> = valor — atribuição através do ponteiro (como *p = v em C)
+        if lexers.len() >= 2
+            && lexers[0].token == Tokens::Pointer
+            && lexers[0].literal.starts_with('*')
+            && lexers[1].token == Tokens::Identifier
+        {
+            let target_name = lexers[0].literal.trim_start_matches('*').to_string();
+            let run = get_runtime();
+            match run.get_var_per_name(target_name.clone()) {
+                Ok(var) => match var.get_value() {
+                    ValueData::Pointer(ptr) => {
+                        let new_val = process_value(lexers[2..].to_vec());
+                        if let Err(e) = heap_store(ptr.address, new_val) {
+                            eprintln!("RuntimeError: {}", e);
+                        }
+                    }
+                    other => {
+                        eprintln!(
+                            "TypeError: '{}' não é um ponteiro (é {}).",
+                            target_name,
+                            other.type_name()
+                        );
+                    }
+                },
+                Err(err) => {
+                    eprintln!("ReferenceError: {}", err);
+                }
+            }
+            lexers.clear();
+            return;
+        }
+
         let mut to_made = "none";
         let mut ind = 0;
         let mut previous: Vec<Lexer> = vec![];
@@ -707,16 +743,15 @@ mod interpreter {
                 if previous.len() >= 4 && previous[2].literal == "=" {
                     let alias_name = previous[1].literal.clone();
                     let target_type_str = previous[3].literal.clone();
-                    
-                    let target_type = match target_type_str.as_str() {
-                        "int" => Type::Int,
-                        "float" => Type::Float,
-                        "string" => Type::String,
-                        "boolean" => Type::Bool,
-                        "vector" => Type::Vec,
-                        _ => Type::None,
+
+                    let target_type = match parse_type_annotation(&target_type_str) {
+                        Some(t) => t,
+                        None => {
+                            eprintln!("TypeError: tipo desconhecido '{}'.", target_type_str);
+                            return;
+                        }
                     };
-                    
+
                     run.register_type_alias(alias_name, target_type);
                 }
             }

@@ -4,3 +4,4 @@ pub mod prompt;
 pub mod jot;
 pub mod jot_embed;
 pub mod jot_external;
+pub mod memory;

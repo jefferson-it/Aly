@@ -94,7 +94,7 @@ mod native {
         error::AlyError,
         lexer::Lexer,
         math_eval::eval_math,
-        runtime::interpreter::exec,
+        runtime::{interpreter::exec, memory::{address_of_var, heap_alloc, heap_alloc_typed, heap_exists, heap_free, heap_load, heap_pointer, heap_set_mutable, heap_store}},
         tokens::Tokens,
         validators::{
             is_any_value,
@@ -103,7 +103,50 @@ mod native {
         },
     };
 
-    use super::types::{Validator, ValueData};
+    use super::types::{Pointer, Validator, ValueData};
+
+    /// Colapsa os blocos de ponteiro `<&x>` e `<*p>` em tokens sintéticos:
+    /// - `[<, &x, >]` → `[&x]` (endereço de x)
+    /// - `[<, *, p, >]` → `[*p]` (desreferência de p)
+    /// Idempotente: tokens já colapsados não casam mais com os padrões.
+    pub fn normalize_pointer_blocks(lexers: &mut Vec<Lexer>) {
+        let mut out: Vec<Lexer> = Vec::with_capacity(lexers.len());
+        let mut i = 0;
+        while i < lexers.len() {
+            let is_addr = lexers[i].token == Tokens::LessThan
+                && i + 2 < lexers.len()
+                && lexers[i + 1].literal.starts_with('&')
+                && lexers[i + 2].token == Tokens::GreaterThan;
+            if is_addr {
+                out.push(Lexer::new(
+                    Tokens::Pointer,
+                    lexers[i + 1].literal.clone(),
+                    lexers[i + 1].line,
+                ));
+                i += 3;
+                continue;
+            }
+
+            let is_deref = lexers[i].token == Tokens::LessThan
+                && i + 3 < lexers.len()
+                && lexers[i + 1].token == Tokens::Multiplication
+                && lexers[i + 2].token == Tokens::Reference
+                && lexers[i + 3].token == Tokens::GreaterThan;
+            if is_deref {
+                out.push(Lexer::new(
+                    Tokens::Pointer,
+                    format!("*{}", lexers[i + 2].literal),
+                    lexers[i + 2].line,
+                ));
+                i += 4;
+                continue;
+            }
+
+            out.push(lexers[i].clone());
+            i += 1;
+        }
+        *lexers = out;
+    }
 
     pub fn exec_rust(expression: String) -> Result<String, AlyError> {
         eval_math(&expression).map_err(|e| {
@@ -114,35 +157,165 @@ mod native {
         })
     }
 
-        pub fn tomb(x: String) -> Box<dyn Validator> {
-        let run = get_runtime();
-        let variables: Vec<&str> = x.split(' ').collect();
-
-        for var in variables {
-            if var.starts_with("address_") {
-                let name = var[8..].to_string();
-
-                match run.get_var_per_name(name.clone()) {
-                    Ok(v) => {
-                        if let Err(err) = v.in_mut() {
-                            eprintln!("RuntimeError: {}", err);
+        pub fn tomb(args: &[ValueData]) -> ValueData {
+        for arg in args {
+            match arg {
+                ValueData::Pointer(ptr) => {
+                    let run = get_runtime();
+                    if let Err(e) = heap_set_mutable(ptr.address, false) {
+                        eprintln!("RuntimeError: {}", e);
+                        continue;
+                    }
+                    // Congela também a variável nomeada (in_mut), se houver.
+                    let name = run
+                        .get_vars()
+                        .iter()
+                        .find(|v| v.get_value() == arg.clone())
+                        .map(|v| v.get_name());
+                    if let Some(name) = name {
+                        if let Ok(v) = run.get_var_per_name(name) {
+                            if let Err(err) = v.in_mut() {
+                                eprintln!("RuntimeError: {}", err);
+                            }
                         }
                     }
-                    Err(err) => {
-                        eprintln!("RuntimeError: {}", err);
-                    }
                 }
-            } else {
-                eprintln!(
-                    "RuntimeError: tomb não aceita valores, apenas endereços de variáveis (use &nome)"
-                );
+                other => {
+                    eprintln!(
+                        "RuntimeError: tomb não aceita valores, apenas endereços de variáveis (use <&nome>); recebido: {}",
+                        other.type_name()
+                    );
+                }
             }
         }
 
-        Box::new("None".to_owned())
+        ValueData::String("None".to_owned())
+    }
+
+    pub fn fun_addr(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(ValueData::Pointer(p)) => ValueData::Pointer(p.clone()),
+            Some(other) => {
+                eprintln!(
+                    "TypeError: addr espera um ponteiro, recebeu {}.",
+                    other.type_name()
+                );
+                ValueData::String("None".to_owned())
+            }
+            None => {
+                eprintln!("TypeError: addr espera 1 argumento.");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_deref(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(ValueData::Pointer(p)) => match heap_load(p.address) {
+                Ok(v) => v,
+                Err(e) => {
+                    eprintln!("RuntimeError: {}", e);
+                    ValueData::String("None".to_owned())
+                }
+            },
+            Some(other) => {
+                eprintln!(
+                    "TypeError: deref espera um ponteiro, recebeu {}.",
+                    other.type_name()
+                );
+                ValueData::String("None".to_owned())
+            }
+            None => {
+                eprintln!("TypeError: deref espera 1 argumento.");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_store(args: &[ValueData]) -> ValueData {
+        match args {
+            [ValueData::Pointer(p), value] => match heap_store(p.address, value.clone()) {
+                Ok(()) => ValueData::String("None".to_owned()),
+                Err(e) => {
+                    eprintln!("RuntimeError: {}", e);
+                    ValueData::String("None".to_owned())
+                }
+            },
+            _ => {
+                eprintln!("TypeError: store espera (ponteiro, valor).");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_alloc(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(v) => heap_alloc(v.clone()),
+            None => {
+                eprintln!("TypeError: alloc espera 1 valor.");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_alloc_typed(args: &[ValueData]) -> ValueData {
+        match args {
+            [ValueData::String(ty), v] => heap_alloc_typed(ty, v.clone()),
+            _ => {
+                eprintln!("TypeError: alloc_typed espera (\"i8\", valor).");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_free(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(ValueData::Pointer(p)) => match heap_free(p.address) {
+                Ok(()) => ValueData::String("None".to_owned()),
+                Err(e) => {
+                    eprintln!("RuntimeError: {}", e);
+                    ValueData::String("None".to_owned())
+                }
+            },
+            Some(other) => {
+                eprintln!(
+                    "TypeError: free espera um ponteiro, recebeu {}.",
+                    other.type_name()
+                );
+                ValueData::String("None".to_owned())
+            }
+            None => {
+                eprintln!("TypeError: free espera 1 argumento.");
+                ValueData::String("None".to_owned())
+            }
+        }
+    }
+
+    pub fn fun_is_null(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(ValueData::Pointer(p)) => {
+                ValueData::Bool(p.is_null || !heap_exists(p.address))
+            }
+            Some(ValueData::String(s)) => {
+                ValueData::Bool(s.trim() == "null" || s.trim() == "None")
+            }
+            _ => ValueData::Bool(false),
+        }
+    }
+
+    pub fn fun_ptr_type(args: &[ValueData]) -> ValueData {
+        match args.first() {
+            Some(ValueData::Pointer(p)) => match &p.ty {
+                Some(t) => ValueData::String(t.to_string()),
+                None => ValueData::String("ptr".to_string()),
+            },
+            _ => ValueData::String("None".to_string()),
+        }
     }
 
     pub fn process_value(mut lexers: Vec<Lexer>) -> ValueData {
+        normalize_pointer_blocks(&mut lexers);
+
         let aly = get_runtime();
 
         let mut resolved_lexers = Vec::new();
@@ -183,8 +356,54 @@ mod native {
             let val = lexers[0].clone();
             let mut res = String::new();
 
-            if val.literal.starts_with(&Tokens::Pointer.literal()) {
-                res = format!("address_{}", val.literal.replace('&', ""));
+            if val.literal.starts_with('&') {
+                // <&x> — endereço real de x (ou endereço numérico bruto: &3)
+                let name = val.literal.trim_start_matches('&').to_string();
+                if let Ok(addr) = name.parse::<usize>() {
+                    return heap_pointer(addr);
+                }
+                match address_of_var(aly, name, val.line) {
+                    Ok(p) => return p,
+                    Err(e) => {
+                        eprintln!("RuntimeError: {}", e);
+                        return ValueData::String("None".to_owned());
+                    }
+                }
+            } else if val.literal.starts_with('*') {
+                // <*p> — desreferência do ponteiro p (ou endereço numérico: *3)
+                let name = val.literal.trim_start_matches('*').to_string();
+                if let Ok(addr) = name.parse::<usize>() {
+                    match heap_load(addr) {
+                        Ok(v) => return v,
+                        Err(e) => {
+                            eprintln!("RuntimeError: {}", e);
+                            return ValueData::String("None".to_owned());
+                        }
+                    }
+                }
+                match aly.get_var_per_name(name.clone()) {
+                    Ok(var) => match var.get_value() {
+                        ValueData::Pointer(ptr) => match heap_load(ptr.address) {
+                            Ok(v) => return v,
+                            Err(e) => {
+                                eprintln!("RuntimeError: {}", e);
+                                return ValueData::String("None".to_owned());
+                            }
+                        },
+                        other => {
+                            eprintln!(
+                                "TypeError: '{}' não é um ponteiro (é {}).",
+                                name,
+                                other.type_name()
+                            );
+                            return ValueData::String("None".to_owned());
+                        }
+                    },
+                    Err(err) => {
+                        eprintln!("ReferenceError: {}", err);
+                        return ValueData::String("None".to_owned());
+                    }
+                }
             } else if is_any_value(&val.literal) {
                 if is_template_str(&val.literal) {
                     res = use_template_str(val.literal);

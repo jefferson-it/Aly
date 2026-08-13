@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [features]
 default = []
-jot-embed = ["jot-core", "jot-parser", "jot-serializer"]
+jot-embed = []
 gui = ["gtk4", "qtrs", "fltk", "wayland-backend"]
 wayland-backend = ["smithay-client-toolkit", "tiny-skia", "ab_glyph"]
 ios = ["objc2", "objc2-foundation", "objc2-ui-kit", "objc2-core-bluetooth", "objc2-core-location", "objc2-core-nfc", "objc2-av-foundation", "objc2-core-motion"]
@@ -75,9 +75,9 @@ tiny-skia = { version = "0.8", optional = true }
 rumqttc = { version = "0.18", optional = true, default-features = false, features = ["tokio-rustls"] }
 serialport = { version = "4.9", optional = true, default-features = false }
 rppal = { version = "0.12", optional = true }
-jot-core = { path = "/home/jefferson/Desktop/projects/JOT/jot/core", optional = true }
-jot-parser = { path = "/home/jefferson/Desktop/projects/JOT/jot/parser", optional = true }
-jot-serializer = { path = "/home/jefferson/Desktop/projects/JOT/jot/serializer", optional = true }
+# jot-core = { path = "/home/jefferson/Desktop/projects/JOT/jot/core", optional = true }
+# jot-parser = { path = "/home/jefferson/Desktop/projects/JOT/jot/parser", optional = true }
+# jot-serializer = { path = "/home/jefferson/Desktop/projects/JOT/jot/serializer", optional = true }
 jni = { version = "0.21", optional = true }
 jni-sys = { version = "0.3", optional = true }
 lazy_static = { version = "1.4", optional = true }

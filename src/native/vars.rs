@@ -3,7 +3,7 @@ mod vars {
     
 
     use crate::{
-        lexer::Lexer, native::types::{Type, Validator, ValueData}, tokens::Tokens
+        lexer::Lexer, native::types::{coerce, Type, Validator, ValueData}, tokens::Tokens
     };
 
     #[derive(Clone)]
@@ -27,6 +27,20 @@ mod vars {
                 data_type: d_type,
                 borrow_count: 0,
             }
+        }
+
+        /// Cria uma variável com tipo fixo declarado (`let x : i8 = 5`),
+        /// coagindo o valor inicial para o tipo alvo (com checagem de overflow).
+        pub fn new_typed<T: Validator>(name: String, value: T, mut_: bool, ty: Type) -> Result<Var, String> {
+            let (_, val) = value.valid();
+            let coerced = coerce(val, &ty)?;
+            Ok(Var {
+                name,
+                mutable: mut_,
+                value: coerced,
+                data_type: ty,
+                borrow_count: 0,
+            })
         }
 
         pub fn borrow(&mut self) -> Result<(), String> {
@@ -70,11 +84,19 @@ mod vars {
             match self.data_type {
                 Type::None => {
                     self.data_type = d_type;
-                    self.value = val;
+                    if let ValueData::Shared(rc) = &self.value {
+                        *rc.borrow_mut() = val;
+                    } else {
+                        self.value = val;
+                    }
                 },
                 _ => {
                     if self.data_type.to_string() == d_type.to_string() {
-                        self.value = val;
+                        if let ValueData::Shared(rc) = &self.value {
+                            *rc.borrow_mut() = val;
+                        } else {
+                            self.value = val;
+                        }
                     } else {
                         return Err(
                             String::from(
@@ -122,7 +144,16 @@ mod vars {
         }
 
         pub fn get_value(&self) -> ValueData {
-            self.value.clone()
+            match &self.value {
+                ValueData::Shared(rc) => rc.borrow().clone(),
+                v => v.clone(),
+            }
+        }
+
+        /// Substituição interna sem checagens — usada para boxar a variável
+        /// numa célula do heap quando `&nome` é tomado.
+        pub fn set_raw_value(&mut self, value: ValueData) {
+            self.value = value;
         }
 
                 pub fn get_type(&self) -> &Type {

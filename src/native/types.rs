@@ -31,6 +31,8 @@ mod types {
         NativeFunction,
         PluginFunction,
         Shared(Box<Type>),
+        Fixed(FixedIntTy),
+        Pointer(Box<Type>),
     }
 
     impl fmt::Display for Type {
@@ -54,6 +56,14 @@ mod types {
                 Type::Shared(t) => format!("Shared<{}>", t),
                 Type::Result => "result".to_string(),
                 Type::None => "None".to_string(),
+                Type::Fixed(t) => format!("{}", t),
+                Type::Pointer(t) => {
+                    if **t == Type::None {
+                        "ptr".to_string()
+                    } else {
+                        format!("ptr<{}>", t)
+                    }
+                },
 
                 Type::Obj => "obj".to_string(),
                 Type::Struct(s) => format!("Struct({})", s),
@@ -64,6 +74,125 @@ mod types {
             };
 
             write!(f, "{}", res)
+        }
+    }
+
+    #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+    pub enum FixedIntTy {
+        I8,
+        I16,
+        I32,
+        I64,
+        U8,
+        U16,
+        U32,
+        U64,
+        F32,
+        F64,
+    }
+
+    impl FixedIntTy {
+        pub fn from_str(s: &str) -> Option<FixedIntTy> {
+            match s.trim() {
+                "i8" => Some(FixedIntTy::I8),
+                "i16" => Some(FixedIntTy::I16),
+                "i32" => Some(FixedIntTy::I32),
+                "i64" => Some(FixedIntTy::I64),
+                "u8" => Some(FixedIntTy::U8),
+                "u16" => Some(FixedIntTy::U16),
+                "u32" => Some(FixedIntTy::U32),
+                "u64" => Some(FixedIntTy::U64),
+                "f32" => Some(FixedIntTy::F32),
+                "f64" => Some(FixedIntTy::F64),
+                _ => None,
+            }
+        }
+
+        pub fn bits(&self) -> u32 {
+            match self {
+                FixedIntTy::I8 | FixedIntTy::U8 => 8,
+                FixedIntTy::I16 | FixedIntTy::U16 => 16,
+                FixedIntTy::I32 | FixedIntTy::U32 | FixedIntTy::F32 => 32,
+                FixedIntTy::I64 | FixedIntTy::U64 | FixedIntTy::F64 => 64,
+            }
+        }
+
+        pub fn is_signed(&self) -> bool {
+            matches!(self, FixedIntTy::I8 | FixedIntTy::I16 | FixedIntTy::I32 | FixedIntTy::I64)
+        }
+
+        pub fn is_float(&self) -> bool {
+            matches!(self, FixedIntTy::F32 | FixedIntTy::F64)
+        }
+
+        pub fn min_int(&self) -> i64 {
+            match self {
+                FixedIntTy::I8 => i8::MIN as i64,
+                FixedIntTy::I16 => i16::MIN as i64,
+                FixedIntTy::I32 => i32::MIN as i64,
+                FixedIntTy::I64 => i64::MIN,
+                FixedIntTy::U8 => 0,
+                FixedIntTy::U16 => 0,
+                FixedIntTy::U32 => 0,
+                FixedIntTy::U64 => 0,
+                FixedIntTy::F32 | FixedIntTy::F64 => 0,
+            }
+        }
+
+        pub fn max_int(&self) -> i64 {
+            match self {
+                FixedIntTy::I8 => i8::MAX as i64,
+                FixedIntTy::I16 => i16::MAX as i64,
+                FixedIntTy::I32 => i32::MAX as i64,
+                FixedIntTy::I64 => i64::MAX,
+                FixedIntTy::U8 => u8::MAX as i64,
+                FixedIntTy::U16 => u16::MAX as i64,
+                FixedIntTy::U32 => u32::MAX as i64,
+                FixedIntTy::U64 => u64::MAX as i64,
+                FixedIntTy::F32 | FixedIntTy::F64 => 0,
+            }
+        }
+    }
+
+    impl fmt::Display for FixedIntTy {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            let s = match self {
+                FixedIntTy::I8 => "i8",
+                FixedIntTy::I16 => "i16",
+                FixedIntTy::I32 => "i32",
+                FixedIntTy::I64 => "i64",
+                FixedIntTy::U8 => "u8",
+                FixedIntTy::U16 => "u16",
+                FixedIntTy::U32 => "u32",
+                FixedIntTy::U64 => "u64",
+                FixedIntTy::F32 => "f32",
+                FixedIntTy::F64 => "f64",
+            };
+            write!(f, "{}", s)
+        }
+    }
+
+    #[derive(Clone, Copy, PartialEq, Debug)]
+    pub enum FixedRepr {
+        Int(i64),
+        Float(f64),
+    }
+
+    /// Um ponteiro real: endereço opaco no heap do Aly.
+    #[derive(Clone, PartialEq, Debug)]
+    pub struct Pointer {
+        pub address: usize,
+        pub ty: Option<Type>,
+        pub is_null: bool,
+    }
+
+    impl Pointer {
+        pub fn new(address: usize) -> Pointer {
+            Pointer {
+                address,
+                ty: None,
+                is_null: address == 0,
+            }
         }
     }
 
@@ -89,6 +218,9 @@ pub enum ValueData {
         PluginFunction { namespace: String, func_name: String },
         Shared(Rc<RefCell<ValueData>>),
         JotInstance(Box<dyn crate::runtime::jot::JotInstanceValidator>),
+        FixedInt { ty: FixedIntTy, val: FixedRepr },
+        Pointer(Pointer),
+        NativeData(fn(&[ValueData]) -> ValueData),
     }
 
     impl ValueData {
@@ -170,6 +302,15 @@ pub enum ValueData {
                 ValueData::PluginFunction { .. } => "PluginFunction".to_owned(),
                 ValueData::Object(obj) => obj.to_string(false),
                 ValueData::JotInstance(jot) => jot.jot_to_string(None),
+                ValueData::FixedInt { ty, val } => format_fixed_value(*ty, *val),
+                ValueData::Pointer(p) => {
+                    if p.is_null {
+                        "null".to_string()
+                    } else {
+                        format!("&{}", p.address)
+                    }
+                },
+                ValueData::NativeData(_) => "NativeFunction".to_owned(),
             }
         }
 
@@ -200,6 +341,15 @@ pub enum ValueData {
                 ValueData::PluginFunction { .. } => "PluginFunction".to_owned(),
                 ValueData::Object(obj) => obj.to_string(false),
                 ValueData::JotInstance(jot) => jot.jot_to_string(None),
+                ValueData::FixedInt { ty, val } => format_fixed_value(*ty, *val),
+                ValueData::Pointer(p) => {
+                    if p.is_null {
+                        "null".to_string()
+                    } else {
+                        format!("&{}", p.address)
+                    }
+                },
+                ValueData::NativeData(_) => "NativeFunction".to_owned(),
             }
         }
 
@@ -226,6 +376,9 @@ pub enum ValueData {
                 ValueData::Shared(_) => Box::new("Shared".to_string()),
                 ValueData::Result(_, _) => Box::new("Result".to_string()),
                 ValueData::JotInstance(jot) => Box::new(jot.jot_to_string(None)),
+                ValueData::FixedInt { .. } => Box::new("FixedInt".to_string()),
+                ValueData::Pointer(_) => Box::new("Pointer".to_string()),
+                ValueData::NativeData(_) => Box::new("NativeFunction".to_string()),
             }
         } 
 
@@ -252,6 +405,9 @@ pub enum ValueData {
                 ValueData::NativeFunction(_) => "native",
                 ValueData::PluginFunction { .. } => "plugin",
                 ValueData::JotInstance(_) => "jot",
+                ValueData::FixedInt { .. } => "fixed",
+                ValueData::Pointer(_) => "pointer",
+                ValueData::NativeData(_) => "native",
             }
         }
 
@@ -421,6 +577,13 @@ pub enum ValueData {
                 (ValueData::Shared(a), ValueData::Shared(b)) => *a.borrow() == *b.borrow(),
                 (ValueData::Object(a), ValueData::Object(b)) => a == b,
                 (ValueData::JotInstance(_), ValueData::JotInstance(_)) => false,
+                (ValueData::FixedInt { ty: a, val: b }, ValueData::FixedInt { ty: c, val: d }) => {
+                    a == c && b == d
+                }
+                (ValueData::Pointer(a), ValueData::Pointer(b)) => a == b,
+                (ValueData::NativeData(a), ValueData::NativeData(b)) => {
+                    *a as usize == *b as usize
+                }
                 _ => false,
             }
         }
@@ -459,6 +622,9 @@ pub enum ValueData {
                     // This should not be called in practice since JOT is immutable
                     panic!("JotInstance clone not supported directly")
                 }
+                ValueData::FixedInt { ty, val } => ValueData::FixedInt { ty: *ty, val: *val },
+                ValueData::Pointer(p) => ValueData::Pointer(p.clone()),
+                ValueData::NativeData(fun) => ValueData::NativeData(*fun),
             }
         }
     }
@@ -514,6 +680,14 @@ pub enum ValueData {
                 ValueData::JotInstance(_) => {
                     (Type::Obj, ValueData::String("JotInstance".to_string()))
                 }
+                ValueData::FixedInt { ty, val } => {
+                    (Type::Fixed(*ty), ValueData::FixedInt { ty: *ty, val: *val })
+                }
+                ValueData::Pointer(p) => {
+                    let inner = p.ty.clone().unwrap_or(Type::None);
+                    (Type::Pointer(Box::new(inner)), ValueData::Pointer(p.clone()))
+                }
+                ValueData::NativeData(fun) => (Type::NativeFunction, ValueData::NativeData(*fun)),
             }
         }
     }
@@ -522,6 +696,12 @@ pub enum ValueData {
     impl Validator for fn(String) -> Box<dyn Validator> {
         fn valid(&self) -> (Type, ValueData) {
             (Type::NativeFunction, ValueData::NativeFunction(*self)) 
+        }
+    }
+
+    impl Validator for fn(&[ValueData]) -> ValueData {
+        fn valid(&self) -> (Type, ValueData) {
+            (Type::NativeFunction, ValueData::NativeData(*self))
         }
     }
 
@@ -574,6 +754,7 @@ pub enum ValueData {
         pub fn as_int(&self) -> Option<i32> {
             match self {
                 ValueData::Int(i) => Some(*i),
+                ValueData::FixedInt { ty: _, val: FixedRepr::Int(i) } => Some(*i as i32),
                 _ => None,
             }
         }
@@ -581,6 +762,7 @@ pub enum ValueData {
         pub fn as_float(&self) -> Option<f32> {
             match self {
                 ValueData::Float(f) => Some(*f),
+                ValueData::FixedInt { ty: _, val: FixedRepr::Float(f) } => Some(*f as f32),
                 _ => None,
             }
         }
@@ -590,6 +772,166 @@ pub enum ValueData {
                 ValueData::JotInstance(jot) => Some(jot.as_ref()),
                 _ => None,
             }
+        }
+    }
+
+    /// Interpreta uma anotação de tipo da linguagem (`i8`, `u32`, `ptr`, ...).
+    pub fn parse_type_annotation(s: &str) -> Option<Type> {
+        match s.trim() {
+            "int" => Some(Type::Int),
+            "float" => Some(Type::Float),
+            "string" => Some(Type::String),
+            "boolean" | "bool" => Some(Type::Bool),
+            "vector" => Some(Type::Vec),
+            "ptr" => Some(Type::Pointer(Box::new(Type::None))),
+            _ => FixedIntTy::from_str(s).map(Type::Fixed),
+        }
+    }
+
+    pub fn format_fixed_value(ty: FixedIntTy, val: FixedRepr) -> String {
+        match (ty, val) {
+            (FixedIntTy::F32, FixedRepr::Float(f)) => (f as f32).to_string(),
+            (FixedIntTy::F64, FixedRepr::Float(f)) => f.to_string(),
+            (_, FixedRepr::Float(f)) => (f as i64).to_string(),
+            (FixedIntTy::I8, FixedRepr::Int(i)) => (i as i8).to_string(),
+            (FixedIntTy::I16, FixedRepr::Int(i)) => (i as i16).to_string(),
+            (FixedIntTy::I32, FixedRepr::Int(i)) => (i as i32).to_string(),
+            (FixedIntTy::I64, FixedRepr::Int(i)) => i.to_string(),
+            (FixedIntTy::U8, FixedRepr::Int(i)) => (i as u8).to_string(),
+            (FixedIntTy::U16, FixedRepr::Int(i)) => (i as u16).to_string(),
+            (FixedIntTy::U32, FixedRepr::Int(i)) => (i as u32).to_string(),
+            (FixedIntTy::U64, FixedRepr::Int(i)) => (i as u64).to_string(),
+            (FixedIntTy::F32 | FixedIntTy::F64, FixedRepr::Int(i)) => i.to_string(),
+        }
+    }
+
+    /// Coage um `ValueData` para um tipo-alvo, validando intervalos
+    /// (overflow de i8/u32/etc. gera erro em vez de wrap).
+    pub fn coerce(value: ValueData, ty: &Type) -> Result<ValueData, String> {
+        match ty {
+            Type::Fixed(ft) => coerce_fixed(value, *ft),
+            Type::Pointer(_) => match value {
+                ValueData::Pointer(p) => Ok(ValueData::Pointer(p)),
+                other => Err(format!(
+                    "TypeError: não é possível converter {} para ptr.",
+                    other.type_name()
+                )),
+            },
+            Type::Int => match value {
+                ValueData::Int(i) => Ok(ValueData::Int(i)),
+                ValueData::FixedInt { ty: _, val: FixedRepr::Int(i) } => {
+                    if i > i32::MAX as i64 || i < i32::MIN as i64 {
+                        return Err(format!("TypeError: overflow int (i32) — valor {}.", i));
+                    }
+                    Ok(ValueData::Int(i as i32))
+                }
+                ValueData::Float(f) => Ok(ValueData::Int(f as i32)),
+                other => Err(format!(
+                    "TypeError: não é possível converter {} para int.",
+                    other.type_name()
+                )),
+            },
+            Type::Float => match value {
+                ValueData::Float(f) => Ok(ValueData::Float(f)),
+                ValueData::FixedInt { ty: _, val: FixedRepr::Float(f) } => Ok(ValueData::Float(f as f32)),
+                ValueData::Int(i) => Ok(ValueData::Float(i as f32)),
+                other => Err(format!(
+                    "TypeError: não é possível converter {} para float.",
+                    other.type_name()
+                )),
+            },
+            Type::String => match value {
+                ValueData::String(s) => Ok(ValueData::String(s)),
+                other => Ok(ValueData::String(other.to_string(false))),
+            },
+            _ => Ok(value),
+        }
+    }
+
+    fn coerce_fixed(value: ValueData, ft: FixedIntTy) -> Result<ValueData, String> {
+        let numeric = match value {
+            ValueData::FixedInt { ty: _, val } => val,
+            ValueData::Int(i) => FixedRepr::Int(i as i64),
+            ValueData::Float(f) => FixedRepr::Float(f as f64),
+            ValueData::String(s) => {
+                let cleaned = s.trim();
+                if ft.is_float() {
+                    match cleaned.parse::<f64>() {
+                        Ok(f) => FixedRepr::Float(f),
+                        Err(_) => {
+                            return Err(format!(
+                                "TypeError: '{}' não é um número válido para {}.",
+                                cleaned, ft
+                            ));
+                        }
+                    }
+                } else {
+                    match cleaned.parse::<i64>() {
+                        Ok(i) => FixedRepr::Int(i),
+                        Err(_) => {
+                            return Err(format!(
+                                "TypeError: '{}' não é um número válido para {}.",
+                                cleaned, ft
+                            ));
+                        }
+                    }
+                }
+            }
+            other => {
+                return Err(format!(
+                    "TypeError: não é possível converter {} para {}.",
+                    other.type_name(),
+                    ft
+                ));
+            }
+        };
+
+        match numeric {
+            FixedRepr::Float(f) if ft.is_float() => match ft {
+                FixedIntTy::F32 => {
+                    let cast = f as f32;
+                    if f.is_finite() && cast.is_infinite() {
+                        return Err(format!(
+                            "TypeError: overflow f32 — valor {} fora do intervalo.",
+                            f
+                        ));
+                    }
+                    Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Float(cast as f64) })
+                }
+                FixedIntTy::F64 => Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Float(f) }),
+                _ => unreachable!(),
+            },
+            FixedRepr::Float(f) if !ft.is_float() => {
+                let i = f.trunc() as i64;
+                if i < ft.min_int() || i > ft.max_int() {
+                    return Err(format!(
+                        "TypeError: overflow {} — valor {} fora do intervalo [{}, {}].",
+                        ft,
+                        f,
+                        ft.min_int(),
+                        ft.max_int()
+                    ));
+                }
+                Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Int(i) })
+            }
+            FixedRepr::Int(i) if !ft.is_float() => {
+                if i < ft.min_int() || i > ft.max_int() {
+                    return Err(format!(
+                        "TypeError: overflow {} — valor {} fora do intervalo [{}, {}].",
+                        ft,
+                        i,
+                        ft.min_int(),
+                        ft.max_int()
+                    ));
+                }
+                Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Int(i) })
+            }
+            FixedRepr::Int(i) if ft.is_float() => match ft {
+                FixedIntTy::F32 => Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Float(i as f32 as f64) }),
+                FixedIntTy::F64 => Ok(ValueData::FixedInt { ty: ft, val: FixedRepr::Float(i as f64) }),
+                _ => unreachable!(),
+            },
+            _ => Err(format!("TypeError: não é possível converter para {}.", ft)),
         }
     }
 }
